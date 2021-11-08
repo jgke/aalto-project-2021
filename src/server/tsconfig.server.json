@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "./server",
+    "outDir": "./dist",
     "moduleResolution": "node",
     "sourceMap": true
   },
@@ -19,6 +19,6 @@
     "./src/client"
   ],
   "include": [
-    "./src/server"
+    "."
   ]
 }

@@ -12,12 +12,5 @@
     "lib": [
       "DOM"
     ]
-  },
-  "exclude": [
-    "./src/server "
-  ],
-  "include": [
-    "./src/client/*",
-    "./src/client/types/**/*.d.ts"
-  ]
+  }
 }
