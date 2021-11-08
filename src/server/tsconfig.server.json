@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": ".",
+    "outDir": "./dist",
     "moduleResolution": "node",
     "sourceMap": true
   },
