@@ -88,13 +88,7 @@ export class App extends React.Component<AppProps, AppStates> {
                 <div>
                     <div>
                         <div>
-                            <h3>Onneksi olkoon!</h3>
-                            <img src="https://teknavi.fi/wp-content/uploads/2021/06/huijaus_telia.jpg" alt="onneksi olkoon" />
-                        </div>
-                    </div>
-                    <div>
-                        <div>
-                            <button onClick={this.testGet}>{"Test Get"}</button>
+                            <button onClick={this.testGet}>Test Get</button>
                         </div>
                         <label>{"Test for Get: "}</label>
                         <h2>{!!username && `Hello ${username}!`}</h2>
