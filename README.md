@@ -8,7 +8,7 @@ Front-end:
 cd src/client
 
 # Install dependencies (No need after first time)
-npm i
+npm install
 
 # Start development server
 npm run dev
@@ -20,10 +20,8 @@ Back-end:
 cd src/server
 
 # Install dependencies (No need after first time)
-npm i
+npm install
 
 # Start development server
 npm run dev
 ```
-
-# Testing branches T. Daniel
