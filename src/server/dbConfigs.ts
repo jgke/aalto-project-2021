@@ -1,41 +1,42 @@
-import mongoose, {Connection, Mongoose} from 'mongoose';
 import {configs} from './configs';
-import {IConfigs} from "./domain/IConfigs";
+import {Pool, PoolClient} from 'pg';
 
-class Database {
-    private readonly _config: IConfigs;
-    private readonly _mongo: Mongoose;
+const pool = new Pool(configs.poolConfig);
 
-    constructor(config: IConfigs, mongo: Mongoose) {
-        this._config = config;
-        this._mongo = mongo;
-    }
-
-    dbConnection(): Mongoose {
-        const {mongodb: {url, port, collection, password, username}} = this._config;
-        const mongoURL = (username && password)
-            ? `mongodb://${username}:${password}${url}:${port}/${collection}`
-            : `mongodb://${url}:${port}/${collection}`;
-        this._mongo
-            .connect(
-                mongoURL,
-                {useNewUrlParser: true, useUnifiedTopology: true}
-            );
-        const db: Connection = this._mongo.connection;
-        db.on('error', console.error.bind(console, 'connection error:'));
-        db.once('open', () => {
-            console.log("connected")
-        })
-        return mongoose;
-    }
-
-    get mongo() {
-        return this._mongo;
-    }
-
-    get config() {
-        return this._config;
-    }
+interface ExtendedPoolClient extends PoolClient {
+    lastQuery: any[];
 }
 
-export default Object.freeze(new Database(configs, mongoose));
+module.exports = {
+    async query(text, params) {
+      const start = Date.now();
+      const res = await pool.query(text, params);
+      const duration = Date.now() - start;
+      console.log('executed query', { text, duration, rows: res.rowCount });
+      return res;
+    },
+    async getClient() {
+      const client = await pool.connect() as ExtendedPoolClient;
+      const query = client.query;
+      const release = client.release;
+      // set a timeout of 5 seconds, after which we will log this client's last query
+      const timeout = setTimeout(() => {
+        console.error('A client has been checked out for more than 5 seconds!');
+        console.error(`The last executed query on this client was: ${client.lastQuery}`);
+      }, 5000);
+      // monkey patch the query method to keep track of the last query executed
+      client.query = (...args) => {
+        client.lastQuery = args;
+        return query.apply(client, args);
+      }
+      client.release = () => {
+        // clear our timeout
+        clearTimeout(timeout);
+        // set the methods back to their old un-monkey-patched version
+        client.query = query;
+        client.release = release;
+        return release.apply(client);
+      }
+      return client;
+    }
+  }

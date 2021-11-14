@@ -1,11 +1,5 @@
-export interface IConfigs {
-    mongodb: IMongo,
-}
+import { PoolConfig } from "pg";
 
-interface IMongo {
-    url: string,
-    port: number,
-    username: string,
-    password: string,
-    collection: string,
+export interface IConfigs {
+    poolConfig: PoolConfig,
 }
