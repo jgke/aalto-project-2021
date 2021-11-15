@@ -25,3 +25,9 @@ npm i
 # Start development server
 npm run dev
 ```
+
+Postgres:
+```bash
+# Go inside the directory
+docker-compose up -d
+```
