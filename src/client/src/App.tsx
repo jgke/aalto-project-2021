@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
+import { Graph } from './components/Graph';
 
 function App() {
 	const [ text, setText ] = useState('')
@@ -29,6 +30,9 @@ function App() {
 				</div>
 				<button type="submit">post blog</button>
 			</form>
+
+			<h2>This is a graph</h2>
+			<Graph />
 		</div>
 	);
 }
