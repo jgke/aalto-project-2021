@@ -5,7 +5,7 @@ import {AppProps, AppStates} from "../../server/domain/IApp";
 import {ITest} from "../../server/domain/ITest";
 import {Put, Post, Get, Delete} from "../Services";
 
-export default class App extends React.Component<AppProps, AppStates> {
+export class App extends React.Component<AppProps, AppStates> {
     state: AppStates = {
         username: '',
         textOfPostTest: '',
@@ -82,11 +82,14 @@ export default class App extends React.Component<AppProps, AppStates> {
 
     render() {
         const {username, textForPost, textForPut, textForDelete} = this.state;
-        const inputText = "Input text...";
+        const inputPlaceholder = "Input text...";
         return (
             <div>
                 <div>
                     <div>
+                        <div>
+                            <img src="https://i.imgur.com/MDRn4Dz.jpeg" alt="kurkku vitun mopo"/> 
+                        </div>
                         <div>
                             <button onClick={this.testGet}>{"Test Get"}</button>
                         </div>
@@ -94,7 +97,7 @@ export default class App extends React.Component<AppProps, AppStates> {
                         <h2>{!!username && `Hello ${username}!`}</h2>
                     </div>
                     <div>
-                        <input onChange={e => this.setState({textOfPostTest: e.target.value})} placeholder={inputText}/>
+                        <input onChange={e => this.setState({textOfPostTest: e.target.value})} placeholder={inputPlaceholder}/>
                         <button onClick={this.testPost}>{"Test Post"}</button>
                     </div>
                     <div>
@@ -102,7 +105,7 @@ export default class App extends React.Component<AppProps, AppStates> {
                         <h3>{textForPost}</h3>
                     </div>
                     <div>
-                        <input onChange={e => this.setState({textOfPutTest: e.target.value})} placeholder={inputText}/>
+                        <input onChange={e => this.setState({textOfPutTest: e.target.value})} placeholder={inputPlaceholder}/>
                         <button onClick={this.testPut}>{"Test Put"}</button>
                     </div>
                     <div>
