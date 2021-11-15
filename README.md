@@ -11,7 +11,7 @@ cd src/client
 npm install
 
 # Start development server
-npm run dev
+npm run start
 ```
 
 Back-end:
@@ -24,4 +24,10 @@ npm install
 
 # Start development server
 npm run dev
+```
+
+Postgres:
+```bash
+# Go inside the directory
+docker-compose up -d
 ```
