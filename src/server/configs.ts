@@ -3,6 +3,9 @@ import {IConfigs} from "./domain/IConfigs";
 export const configs: IConfigs = {
     poolConfig: {
         host: 'localhost',
-        user: 'database-user'
+        port: 5432,
+        user: 'postgres',
+        database: 'postgres',
+        password: 'example'
     }
 }

@@ -1,8 +1,8 @@
 import {userInfo} from 'os';
 import router from '../router';
-import {Test} from '../../models';
 import {Request, Response} from "express";
 import {IError} from '../../domain/IError';
+import db from '../../dbConfigs';
 
 router.route('/test')
     .get((req: Request, res: Response) => {
@@ -17,6 +17,14 @@ router.route('/test')
         res.json({username});
     })
     .post(async (req: Request, res: Response) => {
+        const { text } = req.body;
+        console.log(text)
+        try {
+            const returnval = await db.query("INSERT INTO ids(id) VALUES ($1);", [text])
+        } catch (error) {
+            console.log('err', error)
+        }
+        console.log(text)
         res.status(404).json({message: "Not implemented"});
         // const {text}: { text: string } = req.body;
         // const Text: ITest = new Test({text});
