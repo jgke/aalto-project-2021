@@ -25,7 +25,7 @@ router.route('/test')
             console.log('err', error)
         }
         console.log(text)
-        res.status(404).json({message: "Not implemented"});
+        res.status(200).json({text});
         // const {text}: { text: string } = req.body;
         // const Text: ITest = new Test({text});
         // try {

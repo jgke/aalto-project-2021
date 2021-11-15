@@ -1,159 +1,46 @@
-# Client side boilerplate with ReactJS library and Typescript
+# Getting Started with Create React App
 
-## Introduction
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-In the client side boilerplate, Typescript has been used to achieve a more structured and maintainable source code. ReactJS library which is one of the most important libraries for UI development alongside the other big names in the market, has been picked over to build the presentation layer of the application. Also for CSS, Less has been used to make CSS more functional.
+## Available Scripts
 
-### Less
+In the project directory, you can run:
 
-[Less](http://lesscss.org/) is a backwards-compatible language extension for CSS. Less helps to write CSS in a functional way and It's really easy to read and understand.
+### `yarn start`
 
-### ESLint
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-[ESLint](https://eslint.org/) is a pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript and Typescript.
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-[.eslintrc.json file](<(https://eslint.org/docs/user-guide/configuring)>) (alternatively configurations can be written in Javascript or YAML as well) is used describe the configurations required for ESLint. Below is the .eslintrc.json file which has been used.
+### `yarn test`
 
-```javascript
-{
-  "extends": ["airbnb"],
-  "env": {
-    "browser": true,
-    "node": true
-  },
-  "rules": {
-    "no-console": "off",
-    "comma-dangle": "off",
-    "react/jsx-filename-extension": "off"
-  }
-}
-```
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-[Airbnb's Javascript Style Guide](https://github.com/airbnb/javascript) which has been used by the majority of JavaScript and Typescript developers worldwide. Since the aim is support for both client (browser) and server side (Node.js) source code, the **env** has been set to browser and node. 
-Optionally, you can override the current settings by installing `eslint` globally and running `eslint --init` to change the configurations to suit your needs. [**no-console**](https://eslint.org/docs/rules/no-console), [**comma-dangle**](https://eslint.org/docs/rules/comma-dangle) and [**react/jsx-filename-extension**](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md) rules have been turned off.
+### `yarn build`
 
-### Webpack
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-[Webpack](https://webpack.js.org/) is a module bundler. Its main purpose is to capable Front-end developers to experience a modular programming style and bundle JavaScript and CSS files for usage in a browser.
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-[webpack.config.js](https://webpack.js.org/configuration/) file has been used to describe the configurations required for webpack. Below is the webpack.config.js file which has been used.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-```javascript
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+### `yarn eject`
 
-const outputDirectory = 'dist';
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-module.exports = {
-  entry: ['babel-polyfill', './src/client/index.tsx'],
-  output: {
-    path: path.join(__dirname, outputDirectory),
-    filename: './js/[name].bundle.js'
-  },
-  devtool: "source-map",
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
-      },
-      {
-        test: /\.tsx?$/,
-        use:[
-          {
-            loader: "awesome-typescript-loader"
-          },
-        ],
-        exclude: /node_modules/
-      },
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader"
-      },
-      {
-        test: /\.less$/,
-        use: [
-          { loader: 'style-loader' },
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: './Less',
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
-          { loader: 'css-loader' },
-          {
-            loader: 'less-loader',
-            options: {
-              strictMath: true,
-              noIeCompat: true,
-            }
-          },
-        ]
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000'
-      },
-    ]
-  },
-  resolve: {
-    extensions: ['*', '.ts', '.tsx', '.js', '.jsx', '.json', '.less']
-  },
-  devServer: {
-    port: 3000,
-    open: true,
-    proxy: {
-      '/api': 'http://localhost:8050'
-    }
-  },
-  plugins: [
-    new CleanWebpackPlugin([outputDirectory]),
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-      favicon: './public/favicon.ico',
-      title: "Book Manager",
-    }),
-    new MiniCssExtractPlugin({
-      filename: './css/[name].css',
-      chunkFilename: './css/[id].css',
-    }),
-    new CopyPlugin([
-      { from: './src/client/Assets', to: 'assets' },
-    ])
-  ],
-};
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-```
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-1.  **entry:** entry: ./src/client/index.tsx is where the application starts executing and Webpack starts bundling.
-    Note: babel-polyfill is added to support async/await. Read more [here](https://babeljs.io/docs/en/babel-polyfill#usage-in-node-browserify-webpack).
-2.  **output path and filename:** the target directory and the filename for the bundled output.
-3.  **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. CSS files are passed through [css-loaders](https://github.com/webpack-contrib/css-loader) and [style-loaders](https://github.com/webpack-contrib/style-loader) to load and bundle CSS files. Fonts and images are loaded through url-loader.
-4.  **Dev Server:** Configurations for the webpack-dev-server which will be described in coming section.
-5.  **plugins:** [clean-webpack-plugin](https://github.com/johnagan/clean-webpack-plugin) is a webpack plugin to remove the build directory before building. [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) simplifies creation of HTML files to serve your webpack bundles. It loads the template (public/index.html) and injects the output bundle.
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-### Webpack dev server
+## Learn More
 
-[Webpack dev server](https://webpack.js.org/configuration/dev-server/) is used along with webpack. It provides a development server that enables live reloading for the client side code changes.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-The devServer section of webpack.config.js contains the configuration required to run webpack-dev-server which is given below.
-
-```javascript
-devServer: {
-    port: 3000,
-    open: true,
-    proxy: {
-        "/api": "http://localhost:8050"
-    }
-}
-```
-
-[**Port**](https://webpack.js.org/configuration/dev-server/#devserver-port) specifies the Webpack dev server to listen on this particular port (3000 in this case). When [**open**](https://webpack.js.org/configuration/dev-server/#devserver-open) is set to true, it will automatically open the home page on start-up. [Proxying](https://webpack.js.org/configuration/dev-server/#devserver-proxy) URLs can be useful when you have a separate API backend development server, and you want to send API requests on the same domain.
+To learn React, check out the [React documentation](https://reactjs.org/).
