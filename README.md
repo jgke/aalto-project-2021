@@ -11,7 +11,7 @@ cd src/client
 npm install
 
 # Start development server
-npm run dev
+npm run start
 ```
 
 Back-end:

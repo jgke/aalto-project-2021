@@ -6,7 +6,11 @@ function path(url: string): IPathRoute {
             methods: ["POST", "GET", "PUT", "DELETE"]
         },
         "/node": {
+<<<<<<< HEAD
             methods: ["GET"]
+=======
+            methods: ["POST", "GET", "PUT", "DELETE"]
+>>>>>>> 07a358b5aa96c8aec67f5ea1e1a2d562ee87179e
         }
     }
     return allRoutes[url];
