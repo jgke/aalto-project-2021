@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
+import { Nodething } from './components/nodeModel';
 
 function App() {
 	const [ text, setText ] = useState('')
@@ -29,6 +30,7 @@ function App() {
 				</div>
 				<button type="submit">post blog</button>
 			</form>
+			<Nodething />
 		</div>
 	);
 }

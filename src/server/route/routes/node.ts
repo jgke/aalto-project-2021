@@ -4,7 +4,7 @@ import {INode} from '../../domain/INode';
 import {IError} from '../../domain/IError';
 import db from '../../dbConfigs';
 
-const node : INode = {
+const dummyNode : INode = {
     id: 1,
     description: "Our first node",
     status: "ToDo",
@@ -13,31 +13,14 @@ const node : INode = {
 
 router.route('/node')
     .get((req: Request, res: Response) => {
-        res.json(node);
+        res.json(dummyNode);
     })
     .post(async (req: Request, res: Response) => {
-        const { text } = req.body;
-        console.log(text)
-        try {
-            const returnval = await db.query("INSERT INTO ids(id) VALUES ($1);", [text])
-        } catch (error) {
-            console.log('err', error)
-        }
-        console.log(text)
-        res.status(200).json({text});
-        // const {text}: { text: string } = req.body;
-        // const Text: ITest = new Test({text});
-        // try {
-        //     const savedText: ITest = await Text.save();
-        //     res.status(201).json(savedText);
-        // } catch (e) {
-        //     const error: IError = {
-        //         status: 500,
-        //         message: "An error happened!"
-        //     }
-        //     console.error(e);
-        //     res.status(error.status).json({message: "An error happened"});
-        // }
+        console.log("Receiving node...")
+        const text: INode = req.body; //Might have to parse this
+        console.log(text.description)
+        const t = "Node received. Thanks!"
+        res.status(200).json(t);
     })
     .put((req: Request, res: Response) => {
         res.status(404).json({message: "Not implemented"});
