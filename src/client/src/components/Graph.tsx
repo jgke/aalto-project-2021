@@ -1,4 +1,4 @@
-import ReactFlow from 'react-flow-renderer';
+import ReactFlow, { MiniMap, Controls, Background } from 'react-flow-renderer';
 
 /*
 const elements = [
@@ -30,8 +30,27 @@ const elements = [
 const Graph = (props: any) => {
     const elements = props.elements
     return (
-        <div style={{ height: 300, width: 500, border: '5px solid gray' }}>
-            <ReactFlow elements={elements} />
+        <div style={{ height: 500, width: 'auto', border: '5px solid gray', margin: 'auto', backgroundColor: '#eeefff' }}>
+            <ReactFlow elements={elements} snapGrid={[15, 15]}>
+                <Controls />
+                <Background color="#aaa" gap={16} />
+                <MiniMap
+                    nodeStrokeColor={(n) => {
+                        if (n.style?.background) return n.style.background.toString();
+                        if (n.type === 'input') return '#0041d0';
+                        if (n.type === 'output') return '#ff0072';
+                        if (n.type === 'default') return '#1a192b';
+
+                        return '#eee';
+                    }}
+                    nodeColor={(n) => {
+                        if (n.style?.background) return n.style.background.toString();
+
+                        return '#fff';
+                    }}
+                    nodeBorderRadius={2}
+                />
+            </ReactFlow>
         </div>
     )
 }
