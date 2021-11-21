@@ -15,11 +15,14 @@ function App() {
 			setName(response.username);
 		});
 	}
+
+	/**
+	 * Fetches the elements from a supposed database
+	 */
 	const getElementsHook = () => {
 		// TODO: Api call here 
 
-
-		// Return dummy elements
+		// Dummy elements
 		setElements([
 			{
 				id: '1',
@@ -45,7 +48,7 @@ function App() {
 	}
 
 	/**
-	 * Creates a new node and stores it in the 'elements state. Disappears on page reload. 
+	 * Creates a new node and stores it in the 'elements' React state. Disappears on page reload. 
 	 */
 	const createNode = (): void => {
 		const newNode: FlowElement = {
@@ -53,9 +56,8 @@ function App() {
 			data: { label: nodeText },
 			position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
 		}
-		const newElements = elements.concat(newNode)
 		setNodeText('')
-		setElements(newElements)
+		setElements(elements.concat(newNode))
 	}
 
 	return (
