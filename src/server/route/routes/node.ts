@@ -1,8 +1,8 @@
 import router from '../router';
 import {Request, Response} from "express";
 import {INode} from '../../domain/INode';
-import {IError} from '../../domain/IError';
-import db from '../../dbConfigs';
+//import {IError} from '../../domain/IError';
+//import db from '../../dbConfigs';
 
 const dummyNode : INode = {
     id: 1,

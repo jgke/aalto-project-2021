@@ -4,10 +4,12 @@ import {Pool, PoolClient, QueryConfig} from 'pg';
 const pool = new Pool(configs.poolConfig);
 
 interface ExtendedPoolClient extends PoolClient {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lastQuery: any[];
 }
 
 class Database {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async query(text: string | QueryConfig<any>, params: any) {
       const start = Date.now();
       const res = await pool.query(text, params);
@@ -35,7 +37,7 @@ class Database {
     //     clearTimeout(timeout);
     //     // set the methods back to their old un-monkey-patched version
     //     client.query = query;
-    //     client.release = release;
+    //     client.release = relealinse;
     //     return release.apply(client);
     //   }
       return client;

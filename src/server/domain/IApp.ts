@@ -11,4 +11,4 @@ export interface AppStates {
     response?: ITest,
 }
 
-export interface AppProps {}
+//export interface AppProps {}
