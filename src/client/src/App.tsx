@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
-import { Elements, FlowElement, addEdge, removeElements } from 'react-flow-renderer';
+import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
 
 function App() {
 
@@ -10,6 +10,10 @@ function App() {
 	const [ nodeText, setNodeText ] = useState('')
 	const [ elements, setElements ] = useState<Elements>([])
 
+	interface FlowInstance {
+		fitView: () => void;
+	}
+	
 	const hook = () => {
 		testService.getAll().then(response => {
 			setName(response.username);
@@ -61,11 +65,11 @@ function App() {
 		setElements(elements.concat(newNode))
 	}
 
-	const onConnect = (params: any) => setElements( els => addEdge(params, els) )
+	const onConnect = (params: Edge<any> | Connection) => setElements( els => addEdge(params, els) )
 	const onElementsRemove = (elementsToRemove: Elements) => {
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
-	const onLoad = (reactFlowInstance: any) => reactFlowInstance.fitView();
+	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
 		<div>
