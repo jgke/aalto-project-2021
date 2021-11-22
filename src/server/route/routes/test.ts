@@ -2,11 +2,7 @@ import {userInfo} from 'os';
 import router from '../router';
 import {Request, Response} from "express";
 import {IError} from '../../domain/IError';
-<<<<<<< HEAD
-//import db from '../../dbConfigs'; //to be used
-=======
-import {db} from '../../dbConfigs';
->>>>>>> origin/database-migration
+//import {db} from '../../dbConfigs'; //We might still use this
 
 router.route('/test')
     .get((req: Request, res: Response) => {

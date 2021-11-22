@@ -3,9 +3,8 @@ import { INode } from "../types"
 const baseUrl = "/api/node"
 
 // Should be possible to give "getAll" a return type
-const getAll: () => Promise<INode> = async () => {
-  const node = await axios.get<INode>(baseUrl)
-  console.log("Here is the node: ")
+const getAll: () => Promise<INode[]> = async () => {
+  const node = await axios.get<INode[]>(baseUrl)
   console.log(node.data)
   return node.data
 }
@@ -20,11 +19,19 @@ const sendNode: () => Promise<{msg:string}> = async() => {
     status: "ToDo"
   }
   const response = await axios.post(baseUrl, node)
-  console.log(response.data)
+  console.log("Node added", response.data)
+  return response.data
+}
+
+//Return type is not void!!
+const deleteNode: () => Promise<void> = async() => {
+  const nodes: INode[] = await getAll()
+  const response = await axios.delete(`${baseUrl}/${nodes[0].id}`)
   return response.data
 }
 
 export {
   getAll,
-  sendNode
+  sendNode,
+  deleteNode
 }
