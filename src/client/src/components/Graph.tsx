@@ -36,7 +36,7 @@ const graphStyle = {
     backgroundImage: 'linear-gradient(to bottom right, #00164f, #4e009c, #290066)'
 }
 
-const Graph = (props: ReactFlowProps) => {
+export const Graph = (props: ReactFlowProps) => {
     const elements = props.elements
     const onConnect = props.onConnect
     const onElementsRemove = props.onElementsRemove
@@ -71,4 +71,3 @@ const Graph = (props: ReactFlowProps) => {
         </div>
     )
 }
-export { Graph };
