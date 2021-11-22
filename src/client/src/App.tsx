@@ -34,7 +34,8 @@ function App() {
 				id: '2',
 				data: { label: 'Another default node' },
 				position: { x: 50, y: 100 }
-			}
+			},
+			{ id: 'e2-1', source: '2', target: '1' }
 		])
 	}
 
@@ -81,7 +82,7 @@ function App() {
 				</div>
 			</div>
 			<div>
-				<Graph elements={elements}/>
+				<Graph elements={elements} />
 			</div>
 
 		</div>
