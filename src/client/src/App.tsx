@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Nodething } from './components/nodeModel';
 
-function App() {
+const App : React.FC = () =>  {
 	const [ text, setText ] = useState('')
 	const [ name, setName ] = useState('')
 

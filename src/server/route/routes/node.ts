@@ -19,7 +19,7 @@ router.route('/node')
         console.log("Receiving node...")
         const text: INode = req.body; //Might have to parse this
         console.log(text.description)
-        const t = "Node received. Thanks!"
+        const t = { text : "Node received. Thanks!"}
         res.status(200).json(t);
     })
     .put((req: Request, res: Response) => {
