@@ -35,6 +35,8 @@ db.getClient().then((client) => {
   console.log("running migrations");
   migrate({ client }, "./migrations").catch( async () => { 
     console.log("migration failed, dropping all tables");
+    //migration failed, probably because of existing data
+    //therefore, during development, drop all tables and try again
 
     await client.query(
       `DROP SCHEMA public CASCADE;
@@ -46,7 +48,7 @@ db.getClient().then((client) => {
 
     console.log("rerunning migrations");
     return migrate({client}, "./migrations");
-  }); 
+  }).then(() => { console.log("migrations done"); }); 
 });
 
 export { db };
