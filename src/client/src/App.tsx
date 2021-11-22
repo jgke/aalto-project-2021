@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
-import { Elements, FlowElement, addEdge } from 'react-flow-renderer';
+import { Elements, FlowElement, addEdge, removeElements } from 'react-flow-renderer';
 
 function App() {
 
@@ -62,6 +62,10 @@ function App() {
 	}
 
 	const onConnect = (params: any) => setElements( els => addEdge(params, els) )
+	const onElementsRemove = (elementsToRemove: Elements) => {
+		setElements((els) => removeElements(elementsToRemove, els))
+	}
+	const onLoad = (reactFlowInstance: any) => reactFlowInstance.fitView();
 
 	return (
 		<div>
@@ -84,7 +88,12 @@ function App() {
 				</div>
 			</div>
 			<div>
-				<Graph elements={elements} onConnect={onConnect} />
+				<Graph
+					elements={elements}
+					onConnect={onConnect}
+					onElementsRemove={onElementsRemove}
+					onLoad={onLoad}
+				/>
 			</div>
 
 		</div>

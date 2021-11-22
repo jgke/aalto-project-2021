@@ -1,4 +1,4 @@
-import ReactFlow, { MiniMap, Controls, Background } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, Controls, Background, ReactFlowProps } from 'react-flow-renderer';
 
 /*
 const elements = [
@@ -27,12 +27,27 @@ const elements = [
 ];
 */
 
-const Graph = (props: any) => {
+const graphStyle = {
+    height: 500, 
+    width: 'auto', 
+    border: '5px solid gray', 
+    margin: 'auto', 
+    backgroundColor: '#eeefff', 
+    backgroundImage: 'linear-gradient(to bottom right, #00164f, #4e009c, #290066)'
+}
+
+const Graph = (props: ReactFlowProps) => {
     const elements = props.elements
     const onConnect = props.onConnect
+    const onElementsRemove = props.onElementsRemove
+    const onLoad = props.onLoad
     return (
-        <div style={{ height: 500, width: 'auto', border: '5px solid gray', margin: 'auto', backgroundColor: '#eeefff', backgroundImage: 'linear-gradient(to bottom right, #00164f, #4e009c, #290066)' }}>
-            <ReactFlow elements={elements} onConnect={onConnect} snapGrid={[15, 15]}>
+        <div style={graphStyle}>
+            <ReactFlow 
+                elements={elements}
+                onConnect={onConnect} 
+                onElementsRemove={onElementsRemove}
+                onLoad={onLoad}>
                 <Controls />
                 <Background color="#aaa" gap={16} />
                 <MiniMap
@@ -50,6 +65,7 @@ const Graph = (props: any) => {
                         return '#fff';
                     }}
                     nodeBorderRadius={2}
+                    maskColor='#69578c'
                 />
             </ReactFlow>
         </div>
