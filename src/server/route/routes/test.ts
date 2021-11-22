@@ -2,7 +2,11 @@ import {userInfo} from 'os';
 import router from '../router';
 import {Request, Response} from "express";
 import {IError} from '../../domain/IError';
+<<<<<<< HEAD
 //import db from '../../dbConfigs'; //to be used
+=======
+import {db} from '../../dbConfigs';
+>>>>>>> origin/database-migration
 
 router.route('/test')
     .get((req: Request, res: Response) => {
@@ -20,49 +24,12 @@ router.route('/test')
         const { text } = req.body;
         console.log(text)
         res.status(200).json({text});
-        // const {text}: { text: string } = req.body;
-        // const Text: ITest = new Test({text});
-        // try {
-        //     const savedText: ITest = await Text.save();
-        //     res.status(201).json(savedText);
-        // } catch (e) {
-        //     const error: IError = {
-        //         status: 500,
-        //         message: "An error happened!"
-        //     }
-        //     console.error(e);
-        //     res.status(error.status).json({message: "An error happened"});
-        // }
     })
     .put((req: Request, res: Response) => {
-        res.status(404).json({message: "Not implemented"});
-        // const {id, text}: {id: string, text: string} = req.body;
-        // Test.updateOne({_id: id}, {text}, {}, (err, test) => {
-        //     if (err){
-        //         const error: IError ={
-        //             status: 500,
-        //             message: "It can't be updated at this moment!"
-        //         }
-        //         console.error(err);
-        //         res.status(error.status).json(error);
-        //     }
-        //     else res.status(200).json({_id: id, text, ...test});
-        // })
+        res.status(500).json({message: "Not implemented"});
     })
     .delete((req: Request, res: Response) => {
-        res.status(404).json({message: "Not implemented"});
-        // const {id}: {id: string} = req.body;
-        // Test.deleteOne({_id: id}, {}, (err) => {
-        //     if (err){
-        //         const error: IError = {
-        //             status: 500,
-        //             message: "Resource can't be deleted!"
-        //         }
-        //         console.error(err);
-        //         res.status(error.status).json(error);
-        //     }
-        //     else res.status(200).json({_id: id, text: "deleted successfully"});
-        // })
+        res.status(500).json({message: "Not implemented"});
     });
 
 export default router;
