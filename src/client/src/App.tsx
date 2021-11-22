@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
-import { Elements, FlowElement } from 'react-flow-renderer';
+import { Elements, FlowElement, addEdge } from 'react-flow-renderer';
 
 function App() {
 
@@ -61,6 +61,8 @@ function App() {
 		setElements(elements.concat(newNode))
 	}
 
+	const onConnect = (params: any) => setElements( els => addEdge(params, els) )
+
 	return (
 		<div>
 			<h2>Hello, {name}</h2>
@@ -82,7 +84,7 @@ function App() {
 				</div>
 			</div>
 			<div>
-				<Graph elements={elements} />
+				<Graph elements={elements} onConnect={onConnect} />
 			</div>
 
 		</div>

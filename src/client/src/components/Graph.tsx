@@ -29,9 +29,10 @@ const elements = [
 
 const Graph = (props: any) => {
     const elements = props.elements
+    const onConnect = props.onConnect
     return (
         <div style={{ height: 500, width: 'auto', border: '5px solid gray', margin: 'auto', backgroundColor: '#eeefff', backgroundImage: 'linear-gradient(to bottom right, #00164f, #4e009c, #290066)' }}>
-            <ReactFlow elements={elements} snapGrid={[15, 15]}>
+            <ReactFlow elements={elements} onConnect={onConnect} snapGrid={[15, 15]}>
                 <Controls />
                 <Background color="#aaa" gap={16} />
                 <MiniMap
