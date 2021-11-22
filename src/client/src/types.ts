@@ -1,9 +1,8 @@
-
 type Status = "Done" | "Doing" | "ToDo"
 
 export interface INode {
-  id: Number, //Could there be a more specific ID than just number?
-  description: String,
+  id: number, //Could there be a more specific ID than just number?
+  description: string,
   status: Status,
-  priority: String
+  priority: string
 }
