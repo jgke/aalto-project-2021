@@ -36,11 +36,14 @@ router.route('/node')
         // })
     })
     .delete(async(req: Request, res: Response) => {
-        const d : INode = req.body
-        const q = await db.query("DELETE FROM nod WHERE ID = $1", [d.id])
-        console.log(`Deleting node ${d.id}`)
+        console.log("DELETE REQUEST MADE!!")
+        const u = req.url;
+        console.log(u)
+        const q = await db.query("DELETE FROM nod WHERE ID = $1", [2])
+        console.log(`Deleting node 2`)
         res.status(200).json(q)
 
     });
+
 
 export default router;

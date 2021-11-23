@@ -22,11 +22,17 @@ const sendNode = async(node: INode): Promise<{msg: string}> => {
   return response.data
 }
 
-//Return type is not void!!
-const deleteNode: () => Promise<void> = async() => {
-  const nodes: INode[] = await getAll()
-  const response = await axios.delete(`${baseUrl}/${nodes[0].id}`)
+const deleteNode = async(id: string): Promise<{msg: string}> => {
+  console.log("Going to delete node id ", id)
+  try {
+  const response = await axios.delete(`${baseUrl}/${id}`)
+  console.log(response.data)
   return response.data
+  } catch (e) {
+    console.log("Deletion failed")
+    console.log(e)
+    return {msg: "Deletion failed"}
+  }
 }
 
 export {
