@@ -5,7 +5,7 @@ import { Graph } from './components/Graph';
 import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
 import { Nodething } from './components/nodeModel'
 
-function App() {
+const App : React.FC = () => {
 
 	const [ text, setText ] = useState('')
 	const [ name, setName ] = useState('')
@@ -66,7 +66,10 @@ function App() {
 		setNodeText('')
 		setElements(elements.concat(newNode))
 	}
-
+	
+	// //eslint-disable-next-line @typescript-eslint/no-explicit-any
+	//Above comment (without the first two // and without this comment) will disable the any warning below. However,
+	//would be nice if the Edge had a proper type
 	const onConnect = (params: Edge<any> | Connection) => setElements( els => addEdge(params, els) )
 	const onElementsRemove = (elementsToRemove: Elements) => {
 		setElements((els) => removeElements(elementsToRemove, els))
