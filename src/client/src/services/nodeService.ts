@@ -1,6 +1,6 @@
 import axios from "axios"
 import { INode } from "../types"
-const baseUrl = "/api/node"
+export const baseUrl = "/api/node"
 
 // Should be possible to give "getAll" a return type
 const getAll: () => Promise<INode[]> = async () => {
@@ -11,13 +11,12 @@ const getAll: () => Promise<INode[]> = async () => {
 
 //What is the actual type? We are sending a JSON to the backend and
 //then return an object
-const sendNode: () => Promise<{msg:string}> = async() => {
-  const node: INode = {
-    description: "Node from front-end",
-    id: 99,
+const sendNode = async(node: INode): Promise<{msg: string}> => {
+  /* const node: INode = {
+    description: description,
     priority: "Not much",
     status: "ToDo"
-  }
+  } */
   const response = await axios.post(baseUrl, node)
   console.log("Node added", response.data)
   return response.data

@@ -12,8 +12,13 @@ router.route('/node')
     .post(async (req: Request, res: Response) => {
         console.log("Receiving node...")
         const text: INode = req.body; //Might have to parse this
-        const q = await db.query("INSERT INTO node (description, status, priority) VALUES ($1, $2, $3)", [text.description, text.status, text.priority])
-        res.status(200).json(q);
+        if(text.position && text.position.x && text.position.y){
+            const q = await db.query("INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5)", [text.description, text.status, text.priority, text.position.x, text.position.y])
+            res.status(200).json(q);
+        } else {
+            const q = await db.query("INSERT INTO node (description, status, priority", [text.description, text.status, text.priority])
+            res.status(200).json(q)
+        }
     })
     .put((req: Request, res: Response) => {
         res.status(404).json({message: "Not implemented"});

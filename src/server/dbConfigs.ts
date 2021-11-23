@@ -24,17 +24,15 @@ class Database {
     const client = await pool.connect();
     return client;
   }
-
-  async getPool(): Promise<Pool> {
-    if (!this._pool) {
-      const config = await getConfig();
-      this._pool = new Pool(config.poolConfig);
-    }
-
-    return this._pool;
-  }
+	async getPool(): Promise<Pool> {
+		if (!this._pool) {
+			const config = await getConfig();
+			this._pool = new Pool(config.poolConfig);
+		}
+		return this._pool;
+	}
 }
- 
+
 const db = new Database();
 db.getClient().then((client) => { 
   console.log("running migrations");
