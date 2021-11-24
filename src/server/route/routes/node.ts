@@ -36,12 +36,7 @@ router.route('/node')
         // })
     })
     .delete(async(req: Request, res: Response) => {
-        console.log("DELETE REQUEST MADE!!")
-        const u = req.url;
-        console.log(u)
-        const q = await db.query("DELETE FROM nod WHERE ID = $1", [2])
-        console.log(`Deleting node 2`)
-        res.status(200).json(q)
+        res.status(404).json({message: "Not implemented"})
 
     });
 

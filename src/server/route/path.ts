@@ -5,9 +5,6 @@ function path(url: string): IPathRoute {
         "/test": {
             methods: ["POST", "GET", "PUT", "DELETE"]
         },
-       /*  "/node/:id": {
-            methods: ["DELETE"]
-        }, */
         "/node": {
             methods: ["POST", "GET", "PUT", "DELETE"]
         }

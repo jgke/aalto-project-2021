@@ -12,7 +12,6 @@ export const Nodething: React.FC = () => {
     <div>
       <button onClick={() => n.getAll()}>Get nodes</button>
       <button onClick={() => n.sendNode(d)}>Add node</button>
-      <button onClick={() => n.deleteNode('1')}>Delete node id 1</button>
     </div>
   )
 }

@@ -22,21 +22,7 @@ const sendNode = async(node: INode): Promise<{msg: string}> => {
   return response.data
 }
 
-const deleteNode = async(id: string): Promise<{msg: string}> => {
-  console.log("Going to delete node id ", id)
-  try {
-  const response = await axios.delete(`${baseUrl}/${id}`)
-  console.log(response.data)
-  return response.data
-  } catch (e) {
-    console.log("Deletion failed")
-    console.log(e)
-    return {msg: "Deletion failed"}
-  }
-}
-
 export {
   getAll,
-  sendNode,
-  deleteNode
+  sendNode
 }
