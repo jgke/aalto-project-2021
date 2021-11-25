@@ -27,28 +27,28 @@ const App : React.FC = () => {
 	 * Fetches the elements from a supposed database
 	 */
 	const getElementsHook = (): void => {
-		nodeService.getAll().then(async (nodes) => {
-			const edges = await edgeService.getAll();
-
-			const nodeElements: Elements = nodes.map(n => (
-				{
-					id: String(n.id),
-					data: { label: <div>{n.description}</div>},
-					position: {x: n.x, y: n.y}
-				}
-			))
-
-			const edgeElements: Elements = edges.map(e => (
-				{
-					id: String(e.source_id) + "-" + String(e.target_id), 
-					source: String(e.source_id), 
-					target: String(e.target_id)
-				}
-			))
-			
-			setElements(nodeElements.concat(edgeElements));
-		})
-	}
+		nodeService.getAll().then(nodes => {
+			edgeService.getAll().then(edges => {
+				const nodeElements: Elements = nodes.map(n => (
+					{
+						id: String(n.id),
+						data: { label: <div>{n.description}</div>},
+						position: {x: n.x, y: n.y}
+					}
+				))
+	
+				const edgeElements: Elements = edges.map(e => (
+					{
+						id: String(e.source_id) + "-" + String(e.target_id), 
+						source: String(e.source_id), 
+						target: String(e.target_id)
+					}
+				))
+				
+				setElements(nodeElements.concat(edgeElements));
+			});
+		});
+	};
 
 	useEffect(hook, []);
 	useEffect(getElementsHook, [])
