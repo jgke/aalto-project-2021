@@ -9,3 +9,11 @@ CREATE TABLE node (
   x INTEGER NOT NULL,
   y INTEGER NOT NULL
 );
+
+CREATE TABLE edge (
+  node_from INTEGER REFERENCES node(id), 
+  node_to INTEGER REFERENCES node(id)
+);
+
+ALTER TABLE edge 
+ADD CONSTRAINT PK_edge PRIMARY KEY (node_from, node_to);
