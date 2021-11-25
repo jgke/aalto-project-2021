@@ -1,12 +1,19 @@
 import {getConfig} from './configs';
-import {Pool, PoolConfig, QueryConfig} from 'pg';
+import {Pool, QueryConfig} from 'pg'; //PoolConfig was unused
 import { migrate } from "postgres-migrations";
 
 class Database {
 	private _pool: Pool | null = null;
 
+  
+  //Below comment will remove the eslint error, but maybe it should be
+  //handled in another way. Need to find at a later time whether it can be given a type.
+  
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any -- /* eslint-disable ... */
   async query(text: string | QueryConfig<any>, params: unknown[]) {
     const start = Date.now();
+    console.log("Text: ", text)
+    console.log("Params: ", params)
     const pool = await this.getPool();
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
@@ -19,17 +26,15 @@ class Database {
     const client = await pool.connect();
     return client;
   }
-
-  async getPool(): Promise<Pool> {
-    if (!this._pool) {
-      const config = await getConfig();
-      this._pool = new Pool(config.poolConfig);
-    }
-
-    return this._pool;
-  }
+	async getPool(): Promise<Pool> {
+		if (!this._pool) {
+			const config = await getConfig();
+			this._pool = new Pool(config.poolConfig);
+		}
+		return this._pool;
+	}
 }
- 
+
 const db = new Database();
 db.getClient().then((client) => { 
   console.log("running migrations");
@@ -37,7 +42,6 @@ db.getClient().then((client) => {
     console.log("migration failed, dropping all tables");
     //migration failed, probably because of existing data
     //therefore, during development, drop all tables and try again
-
     await client.query(
       `DROP SCHEMA public CASCADE;
       CREATE SCHEMA public;

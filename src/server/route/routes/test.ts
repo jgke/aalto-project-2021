@@ -2,7 +2,7 @@ import {userInfo} from 'os';
 import router from '../router';
 import {Request, Response} from "express";
 import {IError} from '../../domain/IError';
-import {db} from '../../dbConfigs';
+//import {db} from '../../dbConfigs'; //to be used
 
 router.route('/test')
     .get((req: Request, res: Response) => {
@@ -18,12 +18,6 @@ router.route('/test')
     })
     .post(async (req: Request, res: Response) => {
         const { text } = req.body;
-        console.log(text)
-        try {
-            const returnval = await db.query("INSERT INTO ids(id) VALUES ($1);", [text])
-        } catch (error) {
-            console.log('err', error)
-        }
         console.log(text)
         res.status(200).json({text});
     })

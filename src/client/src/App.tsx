@@ -1,9 +1,12 @@
+
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
 import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
+import * as nodeService from './services/nodeService'
+import * as t from './types'
 
-function App() {
+const App : React.FC = () => {
 
 	const [ text, setText ] = useState('')
 	const [ name, setName ] = useState('')
@@ -23,24 +26,17 @@ function App() {
 	/**
 	 * Fetches the elements from a supposed database
 	 */
-	const getElementsHook = () => {
-		// TODO: Api call here 
-
-		// Dummy elements
-		setElements([
-			{
-				id: '1',
-				// you can also pass a React component as a label
-				data: { label: <div>Default Node</div> },
-				position: { x: 200, y: 200 },
-			},
-			{
-				id: '2',
-				data: { label: 'Another default node' },
-				position: { x: 50, y: 100 }
-			},
-			{ id: 'e2-1', source: '2', target: '1' }
-		])
+	const getElementsHook = (): void => {
+		nodeService.getAll().then(nodes => {
+			const els: FlowElement[] = nodes.map(n => (
+				{
+					id: String(n.id),
+					data: { label: <div>{n.description}</div>},
+					position: {x: n.x, y: n.y}
+				}
+			))
+			setElements(els)
+		})
 	}
 
 	useEffect(hook, []);
@@ -53,18 +49,34 @@ function App() {
 	}
 
 	/**
-	 * Creates a new node and stores it in the 'elements' React state. Disappears on page reload. 
+	 * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database. 
 	 */
-	const createNode = (): void => {
+	const createNode = async(): Promise<void> => {
 		const newNode: FlowElement = {
 			id: String(elements.length + 1),
 			data: { label: nodeText },
 			position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
 		}
+		const n: t.INode = {
+			id: elements.length + 1,
+			status: "ToDo",
+			description: nodeText,
+			priority: "Urgent",
+			x: 5 + elements.length * 10,
+			y: 5 + elements.length * 10 
+		}
+		try {
+			await nodeService.sendNode(n)
+		} catch (e) {
+			console.log("Failed to add node in backend: ")
+			console.log(e)
+		}
 		setNodeText('')
 		setElements(elements.concat(newNode))
 	}
-
+	
+	//Type for the edge does not need to be specified (interface Edge<T = any>)
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onConnect = (params: Edge<any> | Connection) => setElements( els => addEdge(params, els) )
 	const onElementsRemove = (elementsToRemove: Elements) => {
 		setElements((els) => removeElements(elementsToRemove, els))
