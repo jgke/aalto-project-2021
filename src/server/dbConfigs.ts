@@ -5,9 +5,11 @@ import { migrate } from "postgres-migrations";
 class Database {
 	private _pool: Pool | null = null;
 
+  
   //Below comment will remove the eslint error, but maybe it should be
-  //handled in another way.
-  // /* eslint-disable @typescript-eslint/no-explicit-any*/
+  //handled in another way. Need to find at a later time whether it can be given a type.
+  
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any -- /* eslint-disable ... */
   async query(text: string | QueryConfig<any>, params: unknown[]) {
     const start = Date.now();
     console.log("Text: ", text)

@@ -27,41 +27,16 @@ const App : React.FC = () => {
 	 * Fetches the elements from a supposed database
 	 */
 	const getElementsHook = (): void => {
-		// TODO: Api call here
-		const innerGet = async() => {
-			try {
-			const nodes: t.INode[] = await nodeService.getAll()
-			const els: FlowElement[] = []
-			nodes.forEach(x => {
-				els.push({
-					id: x.id ? String(x.id) : '1',
-					data: { label: <div>{x.description}</div>},
-					position: x.position ? x.position : {x: 200, y: 200}
-				})
-			})
+		nodeService.getAll().then(nodes => {
+			const els: FlowElement[] = nodes.map(n => (
+				{
+					id: String(n.id),
+					data: { label: <div>{n.description}</div>},
+					position: {x: n.x, y: n.y}
+				}
+			))
 			setElements(els)
-		} catch (e) {
-			console.log("Fething nodes failed:")
-			console.log(e)
-			}
-		}
-		innerGet()
-
-		// Dummy elements
-		/* setElements([
-			{
-				id: '1',
-				// you can also pass a React component as a label
-				data: { label: <div>Default Node</div> },
-				position: { x: 200, y: 200 },
-			},
-			{
-				id: '2',
-				data: { label: 'Another default node' },
-				position: { x: 50, y: 100 }
-			},
-			{ id: 'e2-1', source: '2', target: '1' }
-		]) */
+		})
 	}
 
 	useEffect(hook, []);
@@ -83,10 +58,12 @@ const App : React.FC = () => {
 			position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
 		}
 		const n: t.INode = {
+			id: elements.length + 1,
 			status: "ToDo",
 			description: nodeText,
 			priority: "Urgent",
-			position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
+			x: 5 + elements.length * 10,
+			y: 5 + elements.length * 10 
 		}
 		try {
 			await nodeService.sendNode(n)
@@ -98,9 +75,8 @@ const App : React.FC = () => {
 		setElements(elements.concat(newNode))
 	}
 	
-	// //eslint-disable-next-line @typescript-eslint/no-explicit-any
-	//Above comment (without the first two // and without this comment) will disable the any warning below. However,
-	//would be nice if the Edge had a proper type
+	//Type for the edge does not need to be specified (interface Edge<T = any>)
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onConnect = (params: Edge<any> | Connection) => setElements( els => addEdge(params, els) )
 	const onElementsRemove = (elementsToRemove: Elements) => {
 		setElements((els) => removeElements(elementsToRemove, els))
