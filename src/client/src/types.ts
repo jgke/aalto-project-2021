@@ -11,3 +11,8 @@ export interface INode {
   x: number,
   y: number
 }
+
+export interface IEdge {
+  source_id: number
+  target_id: number
+}
