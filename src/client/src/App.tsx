@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
 import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
-import { Nodething } from './components/nodeModel'
 import * as nodeService from './services/nodeService'
 import * as t from './types'
 
@@ -119,7 +118,6 @@ const App : React.FC = () => {
 				</div>
 				<button type="submit">post blog</button>
 			</form>
-			<Nodething />
 		
 			<h2>Tasks</h2>
 			<div>
