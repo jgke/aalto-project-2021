@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
 import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
+import * as edgeService from "./services/edgeService"
 import * as t from './types'
 
 const App : React.FC = () => {
@@ -28,16 +28,27 @@ const App : React.FC = () => {
 	 */
 	const getElementsHook = (): void => {
 		nodeService.getAll().then(nodes => {
-			const els: FlowElement[] = nodes.map(n => (
-				{
-					id: String(n.id),
-					data: { label: <div>{n.description}</div>},
-					position: {x: n.x, y: n.y}
-				}
-			))
-			setElements(els)
-		})
-	}
+			edgeService.getAll().then(edges => {
+				const nodeElements: Elements = nodes.map(n => (
+					{
+						id: String(n.id),
+						data: { label: <div>{n.description}</div>},
+						position: {x: n.x, y: n.y}
+					}
+				))
+	
+				const edgeElements: Elements = edges.map(e => (
+					{
+						id: String(e.source_id) + "-" + String(e.target_id), 
+						source: String(e.source_id), 
+						target: String(e.target_id)
+					}
+				))
+				
+				setElements(nodeElements.concat(edgeElements));
+			});
+		});
+	};
 
 	useEffect(hook, []);
 	useEffect(getElementsHook, [])
@@ -77,7 +88,19 @@ const App : React.FC = () => {
 	
 	//Type for the edge does not need to be specified (interface Edge<T = any>)
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const onConnect = (params: Edge<any> | Connection) => setElements( els => addEdge(params, els) )
+	const onConnect = (params: Edge<any> | Connection) => {
+		if (params.source && params.target) {
+			edgeService.sendEdge({ 
+				source_id: +params.source, 
+				target_id: +params.target
+			});
+		} else {
+			console.log("source or target of edge is null, unable to send to db");
+		}
+
+		setElements( els => addEdge(params, els) )
+	}
+
 	const onElementsRemove = (elementsToRemove: Elements) => {
 		setElements((els) => removeElements(elementsToRemove, els))
 	}

@@ -7,6 +7,9 @@ function path(url: string): IPathRoute {
         },
         "/node": {
             methods: ["POST", "GET", "PUT", "DELETE"]
+        },
+        "/edge": {
+            methods: ["POST", "GET", "PUT", "DELETE"]
         }
     }
     return allRoutes[url];
