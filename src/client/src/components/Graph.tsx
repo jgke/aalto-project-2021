@@ -1,4 +1,5 @@
 import ReactFlow, { MiniMap, Controls, Background, ReactFlowProps } from 'react-flow-renderer';
+import { Edge } from 'react-flow-renderer';
 
 const graphStyle = {
     height: 500, 
@@ -14,12 +15,17 @@ export const Graph = (props: ReactFlowProps): JSX.Element => {
     const onConnect = props.onConnect
     const onElementsRemove = props.onElementsRemove
     const onLoad = props.onLoad
+    const onEdgeContextMenu = props.onEdgeContextMenu
     return (
         <div style={graphStyle}>
             <ReactFlow 
                 elements={elements}
                 onConnect={onConnect} 
                 onElementsRemove={onElementsRemove}
+                onEdgeContextMenu={onEdgeContextMenu}
+                //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
+                // so it works as a hitbox detector
+                onEdgeUpdate={props.onEdgeUpdate}
                 onLoad={onLoad}>
                 <Controls />
                 <Background color="#aaa" gap={16} />

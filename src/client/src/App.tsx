@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import * as testService from './services/test'
 import { Graph } from './components/Graph';
 import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
@@ -8,19 +7,11 @@ import * as t from './types'
 
 const App : React.FC = () => {
 
-	const [ text, setText ] = useState('')
-	const [ name, setName ] = useState('')
 	const [ nodeText, setNodeText ] = useState('')
 	const [ elements, setElements ] = useState<Elements>([])
 
 	interface FlowInstance {
 		fitView: () => void;
-	}
-	
-	const hook = () => {
-		testService.getAll().then(response => {
-			setName(response.username);
-		});
 	}
 
 	/**
@@ -49,15 +40,7 @@ const App : React.FC = () => {
 			});
 		});
 	};
-
-	useEffect(hook, []);
 	useEffect(getElementsHook, [])
-
-	const postText = async (event: React.FormEvent) => {
-		event.preventDefault();
-		testService.create(text);
-		setText('');
-	}
 
 	/**
 	 * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database. 
@@ -102,22 +85,20 @@ const App : React.FC = () => {
 	}
 
 	const onElementsRemove = (elementsToRemove: Elements) => {
+		console.log("Was I called?") //This isn't called when below function removes element
 		setElements((els) => removeElements(elementsToRemove, els))
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const onEdgeContextMenu = (event: any, edge: Edge<any>) => {
+		event.preventDefault() //Prevents the drop-down menu from appearing
+		setElements(els => removeElements([edge], els))
+		console.log("You clicked", edge)
 	}
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
-		<div>
-			<h2>Hello, {name}</h2>
-			<form onSubmit={postText}>
-				<div>
-					title:
-					<input id="text" type="text" value={text} name="Text"
-						onChange={({ target }) => setText(target.value)} />
-				</div>
-				<button type="submit">post blog</button>
-			</form>
-		
+		<div>		
 			<h2>Tasks</h2>
 			<div>
 				<h3>Add task</h3>
@@ -131,7 +112,9 @@ const App : React.FC = () => {
 					elements={elements}
 					onConnect={onConnect}
 					onElementsRemove={onElementsRemove}
+					onEdgeContextMenu={onEdgeContextMenu}
 					onLoad={onLoad}
+					onEdgeUpdate={(o, s) => console.log("What are these?", o, s)}
 				/>
 			</div>
 
