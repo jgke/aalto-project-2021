@@ -11,10 +11,17 @@ function path(url: string): IPathRoute {
         "/edge": {
             methods: ["POST", "GET", "PUT", "DELETE"]
         },
-        "/edge/delete": {
-            methods: ["POST"]
+        "/edge/:source/:target": {
+            methods: ["DELETE"]
         }
     }
+    if(url.includes('/edge/')){
+        console.log("Returning weird edge url")
+        return allRoutes["/edge/:source/:target"]
+    } else {
+        console.log("Not it fam. It was", url)
+    }
+
     return allRoutes[url];
 }
 

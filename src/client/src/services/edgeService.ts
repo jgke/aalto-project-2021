@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Edge } from "react-flow-renderer";
 import { IEdge } from "../types";
 export const baseUrl = "/api/edge";
 
@@ -14,13 +15,11 @@ const sendEdge = async (edge: IEdge): Promise<{ msg: string }> => {
   return response.data;
 };
 
-const deleteEdge = async (edge: IEdge): Promise<void> => {
-  const response = await axios.post(baseUrl + '/delete', edge);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const deleteEdge = async(edge: Edge<any>): Promise<void> => {
+  const response = await axios.delete(`${baseUrl}/${edge.source}/${edge.target}`)
   if(response.status !== 200) {
-    console.log(`Removing edge ${edge} failed`)
-  }
-  else {
-    console.log("Edge removed", response.data)
+    console.log(`Removing Edge ${edge} failed`)
   }
 }
 

@@ -74,8 +74,8 @@ const App : React.FC = () => {
 	const onConnect = (params: Edge<any> | Connection) => {
 		if (params.source && params.target) {
 			edgeService.sendEdge({ 
-				source_id: +params.source, 
-				target_id: +params.target
+				source_id: Number(params.source), 
+				target_id: Number(params.target)
 			});
 		} else {
 			console.log("source or target of edge is null, unable to send to db");
@@ -85,12 +85,13 @@ const App : React.FC = () => {
 	}
 
 
-	const onElementsRemove = (elementsToRemove: Elements) => {
+	const onElementsRemove = async(elementsToRemove: Elements) => {
 		window.alert("Delete the selected items?")
 		//eslint-disable-next-line @typescript-eslint/no-explicit-any
 		elementsToRemove.forEach( (elem: any) => {    // Could be Edge or Node
 			if(elem.source && elem.target) {
-				edgeService.deleteEdge(elem).catch( (e: Error) => console.log(e) )
+				edgeService.deleteEdge(elem).catch( (e: Error) => console.log("ERROR WITH DELETION!",e) )
+				
 			} else {
 				console.log("Element was not an edge")
 			}
