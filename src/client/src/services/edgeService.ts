@@ -14,4 +14,14 @@ const sendEdge = async (edge: IEdge): Promise<{ msg: string }> => {
   return response.data;
 };
 
-export { getAll, sendEdge };
+const deleteEdge = async (edge: IEdge): Promise<void> => {
+  const response = await axios.post(baseUrl + '/delete', edge);
+  if(response.status !== 200) {
+    console.log(`Removing edge ${edge} failed`)
+  }
+  else {
+    console.log("Edge removed", response.data)
+  }
+}
+
+export { getAll, sendEdge, deleteEdge };

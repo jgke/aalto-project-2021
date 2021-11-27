@@ -84,10 +84,17 @@ const App : React.FC = () => {
 		setElements( els => addEdge(params, els) )
 	}
 
+
 	const onElementsRemove = (elementsToRemove: Elements) => {
-		window.alert("Are you sure you want to delete all this?")
-		//elementsToRemove.forEach(x => console.log(Object.values(x).includes('description')))
-		console.log(elementsToRemove[0])
+		window.alert("Delete the selected items?")
+		//eslint-disable-next-line @typescript-eslint/no-explicit-any
+		elementsToRemove.forEach( (elem: any) => {    // Could be Edge or Node
+			if(elem.source && elem.target) {
+				edgeService.deleteEdge(elem).catch( (e: Error) => console.log(e) )
+			} else {
+				console.log("Element was not an edge")
+			}
+		})
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
 
