@@ -7,7 +7,8 @@
     "start": "npm run server",
     "server": "tsc -p tsconfig.server.json && node ./",
     "dev": "nodemon",
-    "lint": "eslint --ext .ts ."
+    "lint": "eslint --ext .ts .",
+    "test": "jest --verbose"
   },
   "dependencies": {
     "@types/pg": "^8.6.1",
