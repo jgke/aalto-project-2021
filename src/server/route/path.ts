@@ -10,6 +10,9 @@ function path(url: string): IPathRoute {
         },
         "/edge": {
             methods: ["POST", "GET", "PUT", "DELETE"]
+        },
+        "/edge/delete": {
+            methods: ["POST"]
         }
     }
     return allRoutes[url];

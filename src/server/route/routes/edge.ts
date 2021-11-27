@@ -3,6 +3,24 @@ import { Request, Response } from "express";
 import { IEdge } from "../../domain/IEdge";
 import { db } from "../../dbConfigs";
 
+router.route("/edge/delete")
+  .post( async (req: Request, res: Response) => {
+    try {
+      const body = req.body
+      if(!body.target || !body.source) {
+        res.status(400)
+      } else {
+        const q = await db
+          .query(
+            "DELETE FROM edge WHERE source_id = $1 AND target_id = $2", [body.source, body.target]
+          )
+          .then( () => res.status(200))
+          .catch( (e: Error) => console.log(e) )
+      }
+    }
+    catch { (e:Error) => console.log(e) }
+  })
+
 router.route("/edge")
   .get(async (req: Request, res: Response) => {
     const q = await db.query("SELECT * FROM edge", []);
