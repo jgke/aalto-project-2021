@@ -12,7 +12,7 @@ router.route('/node')
     .post(async (req: Request, res: Response) => {
         console.log("Receiving node...")
         const text: INode = req.body; //Might have to parse this
-        const q = await db.query("INSERT INTO node (description, status, priority, x, y, id) VALUES ($1, $2, $3, $4, $5, $6)", [text.description, text.status, text.priority, text.x, text.y, text.id])
+        const q = await db.query("INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id", [text.description, text.status, text.priority, text.x, text.y])
         res.status(200).json(q);
         
     })

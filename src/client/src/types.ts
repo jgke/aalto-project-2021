@@ -7,7 +7,7 @@ export interface INode {
   description: string,
   status: Status,
   priority: string,
-  id: number, //Could there be a more specific ID than just number?
+  id?: number, //Could there be a more specific ID than just number?
   x: number,
   y: number
 }

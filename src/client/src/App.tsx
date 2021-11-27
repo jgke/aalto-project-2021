@@ -46,13 +46,7 @@ const App : React.FC = () => {
 	 * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database. 
 	 */
 	const createNode = async(): Promise<void> => {
-		const newNode: FlowElement = {
-			id: String(elements.length + 1),
-			data: { label: nodeText },
-			position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
-		}
 		const n: t.INode = {
-			id: elements.length + 1,
 			status: "ToDo",
 			description: nodeText,
 			priority: "Urgent",
@@ -60,13 +54,19 @@ const App : React.FC = () => {
 			y: 5 + elements.length * 10 
 		}
 		try {
-			await nodeService.sendNode(n)
+			const id = await nodeService.sendNode(n)
+			const newNode: FlowElement = {
+				id: id,
+				data: { label: nodeText },
+				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
+			}
+			setNodeText('')
+			setElements(elements.concat(newNode))		
 		} catch (e) {
 			console.log("Failed to add node in backend: ")
 			console.log(e)
 		}
-		setNodeText('')
-		setElements(elements.concat(newNode))
+		
 	}
 	
 	//Type for the edge does not need to be specified (interface Edge<T = any>)
@@ -85,16 +85,12 @@ const App : React.FC = () => {
 	}
 
 	const onElementsRemove = (elementsToRemove: Elements) => {
-		console.log("Was I called?") //This isn't called when below function removes element
+		window.alert("Are you sure you want to delete all this?")
+		//elementsToRemove.forEach(x => console.log(Object.values(x).includes('description')))
+		console.log(elementsToRemove[0])
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const onEdgeContextMenu = (event: any, edge: Edge<any>) => {
-		event.preventDefault() //Prevents the drop-down menu from appearing
-		setElements(els => removeElements([edge], els))
-		console.log("You clicked", edge)
-	}
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
@@ -112,7 +108,6 @@ const App : React.FC = () => {
 					elements={elements}
 					onConnect={onConnect}
 					onElementsRemove={onElementsRemove}
-					onEdgeContextMenu={onEdgeContextMenu}
 					onLoad={onLoad}
 					onEdgeUpdate={(o, s) => console.log("What are these?", o, s)}
 				/>
