@@ -4,6 +4,15 @@ import {INode} from '../../domain/INode';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
 
+router.route('/node/:id')
+    .delete(async(req: Request, res: Response) => {
+        console.log("Deleting node...")
+        const id = req.params.id
+        await db.query("DELETE FROM edge WHERE source_id = $1 OR target_id = $2;", [id, id])
+        const q = await db.query("DELETE FROM node WHERE id = $1", [id])
+        res.status(200).json(q)
+    })
+
 router.route('/node')
     .get(async(req: Request, res: Response) => {
         const q = await db.query("SELECT * FROM node", [])
@@ -33,8 +42,6 @@ router.route('/node')
     })
     .delete(async(req: Request, res: Response) => {
         res.status(404).json({message: "Not implemented"})
-
     });
-
 
 export default router;

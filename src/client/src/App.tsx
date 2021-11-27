@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as testService from './services/test'
 import { Graph } from './components/Graph';
-import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
+import { Elements, FlowElement, addEdge, removeElements, Edge, Connection, isNode } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
@@ -102,6 +102,12 @@ const App : React.FC = () => {
 	}
 
 	const onElementsRemove = (elementsToRemove: Elements) => {
+		elementsToRemove.forEach((e) => {
+			if(isNode(e)){
+				nodeService.deleteNode(e)
+			}
+		}
+		)
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
