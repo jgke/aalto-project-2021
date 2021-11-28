@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
+import { Elements, addEdge, removeElements, Edge, Connection, Node, isEdge } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
@@ -15,7 +15,7 @@ const App : React.FC = () => {
 	}
 
 	/**
-	 * Fetches the elements from a supposed database
+	 * Fetches the elements from a database
 	 */
 	const getElementsHook = (): void => {
 		nodeService.getAll().then(nodes => {
@@ -23,7 +23,7 @@ const App : React.FC = () => {
 				const nodeElements: Elements = nodes.map(n => (
 					{
 						id: String(n.id),
-						data: { label: <div>{n.description}</div>},
+						data: { label: n.description },
 						position: {x: n.x, y: n.y}
 					}
 				))
@@ -55,10 +55,10 @@ const App : React.FC = () => {
 		}
 		try {
 			const id = await nodeService.sendNode(n)
-			const newNode: FlowElement = {
+			const newNode: Node = {
 				id: id,
 				data: { label: nodeText },
-				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
+				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
 			}
 			setNodeText('')
 			setElements(elements.concat(newNode))		
@@ -73,6 +73,8 @@ const App : React.FC = () => {
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onConnect = (params: Edge<any> | Connection) => {
 		if (params.source && params.target) {
+			setElements( (els) => addEdge(params, els) )
+			
 			edgeService.sendEdge({ 
 				source_id: Number(params.source), 
 				target_id: Number(params.target)
@@ -80,20 +82,15 @@ const App : React.FC = () => {
 		} else {
 			console.log("source or target of edge is null, unable to send to db");
 		}
-
-		setElements( els => addEdge(params, els) )
 	}
 
 
 	const onElementsRemove = async(elementsToRemove: Elements) => {
 		window.alert("Delete the selected items?")
 		//eslint-disable-next-line @typescript-eslint/no-explicit-any
-		elementsToRemove.forEach( (elem: any) => {    // Could be Edge or Node
-			if(elem.source && elem.target) {
-				edgeService.deleteEdge(elem).catch( (e: Error) => console.log("ERROR WITH DELETION!",e) )
-				
-			} else {
-				console.log("Element was not an edge")
+		elementsToRemove.forEach( (e: any) => {    // Could be Edge or Node
+			if(isEdge(e)) {
+				edgeService.deleteEdge(e).catch( (e: Error) => console.log("Error when deleting edge", e) )
 			}
 		})
 		setElements((els) => removeElements(elementsToRemove, els))
