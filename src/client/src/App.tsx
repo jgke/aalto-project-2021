@@ -45,7 +45,7 @@ const App : React.FC = () => {
 	/**
 	 * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database. 
 	 */
-	const createNode = async(): Promise<void> => {
+	const createNode = async (): Promise<void> => {
 		const n: t.INode = {
 			status: "ToDo",
 			description: nodeText,
@@ -54,21 +54,28 @@ const App : React.FC = () => {
 			y: 5 + elements.length * 10 
 		}
 		try {
-			const id = await nodeService.sendNode(n)
-			const newNode: Node = {
-				id: id,
+			const returnId = await nodeService.sendNode(n)
+
+			setElements(elements.concat({
+				id: returnId,
 				data: { label: nodeText },
 				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
-			}
-			setNodeText('')
-			setElements(elements.concat(newNode))		
-		} catch (e) {
-			console.log("Failed to add node in backend: ")
-			console.log(e)
-		}
-		
+			}))
+
+			} catch { (e: Error) => {
+				console.log("Failed to add node in backend: ")
+				console.log(e)
+			}}
+
+			/*setElements(elements.concat({
+				id: String(elements.length + 1),
+				data: { label: nodeText },
+				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
+				connectable: true
+			}))*/
+		setNodeText('')
 	}
-	
+
 	//Type for the edge does not need to be specified (interface Edge<T = any>)
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onConnect = (params: Edge<any> | Connection) => {
