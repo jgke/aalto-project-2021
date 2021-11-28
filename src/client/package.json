@@ -38,6 +38,7 @@
   "proxy": "http://localhost:8050",
   "devDependencies": {
     "@types/node": "^12.20.37",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "use-resize-observer": "^8.0.0"
   }
 }
