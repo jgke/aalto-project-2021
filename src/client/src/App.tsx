@@ -18,6 +18,7 @@ const App : React.FC = () => {
 	 * Fetches the elements from a database
 	 */
 	const getElementsHook = (): void => {
+		// console.log("hook")
 		nodeService.getAll().then(nodes => {
 			edgeService.getAll().then(edges => {
 				const nodeElements: Elements = nodes.map(n => (
@@ -40,12 +41,12 @@ const App : React.FC = () => {
 			});
 		});
 	};
-	useEffect(getElementsHook, [])
+	useEffect(getElementsHook, [nodeText])
 
 	/**
 	 * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database. 
 	 */
-	const createNode = async (): Promise<void> => {
+	const createNode = (): void => {
 		const n: t.INode = {
 			status: "ToDo",
 			description: nodeText,
@@ -54,7 +55,6 @@ const App : React.FC = () => {
 			y: 5 + elements.length * 10 
 		}
 		
-		// JOKIN SEURAAVASSA AIHEUTTAA GRAFIIKKABUGIN
 		nodeService.sendNode(n)
 			.then( returnId => {
 				if(returnId){
@@ -78,15 +78,7 @@ const App : React.FC = () => {
 				console.log("Failed to add node in backend: ")
 				console.log(e)
 			})
-
-			// HUOM --- Jos id:n luo clientissa esim. näin, bugia ei tule. Id pitää
-			// kuitenkin luoda databasessa, muuten tulee ongelmia.
-			/*setElements(elements.concat({
-				id: String(elements.length + 1),
-				data: { label: nodeText },
-				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
-				connectable: true
-			}))*/
+			
 		setNodeText('')
 	}
 
