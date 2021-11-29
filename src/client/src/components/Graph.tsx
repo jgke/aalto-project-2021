@@ -1,7 +1,7 @@
 import ReactFlow, { MiniMap, Controls, Background, ReactFlowProps } from 'react-flow-renderer';
 
 const graphStyle = {
-    height: 500, 
+    height: '100%', 
     width: 'auto', 
     border: '5px solid gray', 
     margin: 'auto', 

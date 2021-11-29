@@ -13,7 +13,7 @@ const getAll  = async (): Promise<INode[]> => {
 //then return an object
 const sendNode = async(node: INode): Promise<string> => {
   const response = await axios.post(baseUrl, node)
-  console.log("Node added", response.data)
+  //console.log("Node added", response.data)
   //Return the id for that element created by the database
   return response.data.rows[0].id
 }

@@ -53,20 +53,34 @@ const App : React.FC = () => {
 			x: 5 + elements.length * 10,
 			y: 5 + elements.length * 10 
 		}
-		try {
-			const returnId = await nodeService.sendNode(n)
-
-			setElements(elements.concat({
-				id: returnId,
-				data: { label: nodeText },
-				position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
-			}))
-
-			} catch { (e: Error) => {
+		
+		// JOKIN SEURAAVASSA AIHEUTTAA GRAFIIKKABUGIN
+		nodeService.sendNode(n)
+			.then( returnId => {
+				if(returnId){
+					console.log("Returned id:", returnId)
+					console.log("Adding node:", {
+						id: returnId,
+						data: { label: nodeText },
+						position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
+					})
+					setElements(elements.concat({
+						id: returnId,
+						data: { label: nodeText },
+						position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
+					}))
+				} else {
+					console.log("No returnId returned")
+				}
+					
+			})
+			.catch ( (e: Error) => {
 				console.log("Failed to add node in backend: ")
 				console.log(e)
-			}}
+			})
 
+			// HUOM --- Jos id:n luo clientissa esim. näin, bugia ei tule. Id pitää
+			// kuitenkin luoda databasessa, muuten tulee ongelmia.
 			/*setElements(elements.concat({
 				id: String(elements.length + 1),
 				data: { label: nodeText },
@@ -93,7 +107,6 @@ const App : React.FC = () => {
 
 
 	const onElementsRemove = async(elementsToRemove: Elements) => {
-		window.alert("Delete the selected items?")
 		//eslint-disable-next-line @typescript-eslint/no-explicit-any
 		elementsToRemove.forEach( (e: any) => {    // Could be Edge or Node
 			if(isEdge(e)) {
@@ -115,8 +128,8 @@ const App : React.FC = () => {
 					<button onClick={createNode}>Add</button>
 				</div>
 			</div>
-			<div>
-				<Graph
+			<div className="graph">
+				<Graph 
 					elements={elements}
 					onConnect={onConnect}
 					onElementsRemove={onElementsRemove}
