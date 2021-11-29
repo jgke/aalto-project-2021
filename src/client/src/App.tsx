@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge } from 'react-flow-renderer';
+import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge, FlowElement } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
@@ -97,16 +97,31 @@ const App : React.FC = () => {
 		}
 	}
 
-	const onElementsRemove = (elementsToRemove: Elements) => {
-		elementsToRemove.forEach((e) => {
+	const compareElementsNodesFirst = (a: FlowElement, b: FlowElement): number => {
+		if(isNode(a)){
+			if(isNode(b))
+				return 0
+			else
+				return 1
+		} else {	// a is an Edge
+			if(isNode(b))
+				return -1
+			else
+				return 0
+		}
+	}
+
+	const onElementsRemove = async (elementsToRemove: Elements) => {
+		const sortedElementsToRemove = elementsToRemove.sort( compareElementsNodesFirst )
+		for ( const e of sortedElementsToRemove ) {
 			if(isNode(e)){
-				nodeService.deleteNode(e)
+				await nodeService.deleteNode(e)
 			}
 			else if(isEdge(e)) {
-				edgeService.deleteEdge(e).catch( (e: Error) => console.log("Error when deleting edge", e) )
+				await edgeService.deleteEdge(e).catch( (e: Error) => console.log("Error when deleting edge", e) )
 			}
 		}
-		)
+
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
 
