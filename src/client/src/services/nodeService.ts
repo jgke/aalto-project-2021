@@ -1,5 +1,6 @@
 import axios from "axios"
 import { INode } from "../types"
+import { Node } from "react-flow-renderer";
 export const baseUrl = "/api/node"
 
 // Should be possible to give "getAll" a return type
@@ -18,7 +19,16 @@ const sendNode = async(node: INode): Promise<string> => {
   return response.data.rows[0].id
 }
 
+//deletes node from db then return an object
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const deleteNode = async(node: Node<any>): Promise<{msg: string}> => {
+  const response = await axios.delete(`${baseUrl}/${node.id}`)
+  console.log("Node deleted", response.data)
+  return response.data
+}
+
 export {
   getAll,
-  sendNode
+  sendNode,
+  deleteNode
 }

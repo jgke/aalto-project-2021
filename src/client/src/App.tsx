@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Elements, addEdge, removeElements, Edge, Connection, Node, isEdge } from 'react-flow-renderer';
+import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
@@ -97,14 +97,16 @@ const App : React.FC = () => {
 		}
 	}
 
-
-	const onElementsRemove = async(elementsToRemove: Elements) => {
-		//eslint-disable-next-line @typescript-eslint/no-explicit-any
-		elementsToRemove.forEach( (e: any) => {    // Could be Edge or Node
-			if(isEdge(e)) {
+	const onElementsRemove = (elementsToRemove: Elements) => {
+		elementsToRemove.forEach((e) => {
+			if(isNode(e)){
+				nodeService.deleteNode(e)
+			}
+			else if(isEdge(e)) {
 				edgeService.deleteEdge(e).catch( (e: Error) => console.log("Error when deleting edge", e) )
 			}
-		})
+		}
+		)
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
 

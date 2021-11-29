@@ -8,6 +8,9 @@ function path(url: string): IPathRoute {
         "/node": {
             methods: ["POST", "GET", "PUT", "DELETE"]
         },
+        "/node/:id": {
+            methods: ["DELETE"]
+        },
         "/edge": {
             methods: ["POST", "GET", "PUT", "DELETE"]
         },
@@ -18,6 +21,10 @@ function path(url: string): IPathRoute {
     if(url.includes('/edge/')){
         console.log("Returning weird edge url")
         return allRoutes["/edge/:source/:target"]
+    }
+    if(url.includes('/node/')){
+        console.log("route found, url: ", url)
+        return allRoutes["/node/:id"]
     } else {
         console.log("Not it fam. It was", url)
     }
