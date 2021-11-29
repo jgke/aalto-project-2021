@@ -97,7 +97,11 @@ const App : React.FC = () => {
 		}
 	}
 
-	const compareElementsNodesFirst = (a: FlowElement, b: FlowElement): number => {
+	/**
+	 * Ordering function for elements, puts edges first and nodes last. Used in
+	 * onElementsRemove.
+	 */
+	const compareElementsEdgesFirst = (a: FlowElement, b: FlowElement): number => {
 		if(isNode(a)){
 			if(isNode(b))
 				return 0
@@ -111,8 +115,13 @@ const App : React.FC = () => {
 		}
 	}
 
+	/**
+	 * Prop for Graph component, called when nodes or edges are removed. Called also 
+	 * for adjacent edges when a node is removed.
+	 */
 	const onElementsRemove = async (elementsToRemove: Elements) => {
-		const sortedElementsToRemove = elementsToRemove.sort( compareElementsNodesFirst )
+		// Must remove edges first to prevent referencing issues in database
+		const sortedElementsToRemove = elementsToRemove.sort( compareElementsEdgesFirst )
 		for ( const e of sortedElementsToRemove ) {
 			if(isNode(e)){
 				await nodeService.deleteNode(e)
