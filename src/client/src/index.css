@@ -1,5 +1,10 @@
-html, body {
+html, body, #root, #root>div, .graph {
   height: 100%;
+}
+
+#root>div {
+  display: flex;
+  flex-direction: column;
 }
 
 body {
