@@ -1,7 +1,7 @@
 import ReactFlow, { MiniMap, Controls, Background, ReactFlowProps } from 'react-flow-renderer';
 
 const graphStyle = {
-    height: 500, 
+    height: '100%', 
     width: 'auto', 
     border: '5px solid gray', 
     margin: 'auto', 
@@ -20,6 +20,9 @@ export const Graph = (props: ReactFlowProps): JSX.Element => {
                 elements={elements}
                 onConnect={onConnect} 
                 onElementsRemove={onElementsRemove}
+                //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
+                // so it works as a hitbox detector
+                onEdgeUpdate={props.onEdgeUpdate}
                 onLoad={onLoad}>
                 <Controls />
                 <Background color="#aaa" gap={16} />

@@ -1,38 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import * as testService from './services/test'
 import { Graph } from './components/Graph';
-import { Elements, FlowElement, addEdge, removeElements, Edge, Connection } from 'react-flow-renderer';
+import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge, FlowElement } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
 
 const App : React.FC = () => {
 
-	const [ text, setText ] = useState('')
-	const [ name, setName ] = useState('')
 	const [ nodeText, setNodeText ] = useState('')
 	const [ elements, setElements ] = useState<Elements>([])
 
 	interface FlowInstance {
 		fitView: () => void;
 	}
-	
-	const hook = () => {
-		testService.getAll().then(response => {
-			setName(response.username);
-		});
-	}
 
 	/**
-	 * Fetches the elements from a supposed database
+	 * Fetches the elements from a database
 	 */
 	const getElementsHook = (): void => {
+		// console.log("hook")
 		nodeService.getAll().then(nodes => {
 			edgeService.getAll().then(edges => {
 				const nodeElements: Elements = nodes.map(n => (
 					{
 						id: String(n.id),
-						data: { label: <div>{n.description}</div>},
+						data: { label: n.description },
 						position: {x: n.x, y: n.y}
 					}
 				))
@@ -49,75 +41,103 @@ const App : React.FC = () => {
 			});
 		});
 	};
-
-	useEffect(hook, []);
-	useEffect(getElementsHook, [])
-
-	const postText = async (event: React.FormEvent) => {
-		event.preventDefault();
-		testService.create(text);
-		setText('');
-	}
+	useEffect(getElementsHook, [nodeText])
 
 	/**
 	 * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database. 
 	 */
-	const createNode = async(): Promise<void> => {
-		const newNode: FlowElement = {
-			id: String(elements.length + 1),
-			data: { label: nodeText },
-			position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 },
-		}
+	const createNode = (): void => {
 		const n: t.INode = {
-			id: elements.length + 1,
 			status: "ToDo",
 			description: nodeText,
 			priority: "Urgent",
 			x: 5 + elements.length * 10,
 			y: 5 + elements.length * 10 
 		}
-		try {
-			await nodeService.sendNode(n)
-		} catch (e) {
-			console.log("Failed to add node in backend: ")
-			console.log(e)
-		}
+		
+		nodeService.sendNode(n)
+			.then( returnId => {
+				if(returnId){
+					console.log("Returned id:", returnId)
+					console.log("Adding node:", {
+						id: returnId,
+						data: { label: nodeText },
+						position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
+					})
+					setElements(elements.concat({
+						id: returnId,
+						data: { label: nodeText },
+						position: { x: 5 + elements.length * 10, y: 5 + elements.length * 10 }
+					}))
+				} else {
+					console.log("No returnId returned")
+				}
+					
+			})
+			.catch ( (e: Error) => {
+				console.log("Failed to add node in backend: ")
+				console.log(e)
+			})
+			
 		setNodeText('')
-		setElements(elements.concat(newNode))
 	}
-	
+
 	//Type for the edge does not need to be specified (interface Edge<T = any>)
 	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onConnect = (params: Edge<any> | Connection) => {
 		if (params.source && params.target) {
+			setElements( (els) => addEdge(params, els) )
+			
 			edgeService.sendEdge({ 
-				source_id: +params.source, 
-				target_id: +params.target
+				source_id: Number(params.source), 
+				target_id: Number(params.target)
 			});
 		} else {
 			console.log("source or target of edge is null, unable to send to db");
 		}
-
-		setElements( els => addEdge(params, els) )
 	}
 
-	const onElementsRemove = (elementsToRemove: Elements) => {
+	/**
+	 * Ordering function for elements, puts edges first and nodes last. Used in
+	 * onElementsRemove.
+	 */
+	const compareElementsEdgesFirst = (a: FlowElement, b: FlowElement): number => {
+		if(isNode(a)){
+			if(isNode(b))
+				return 0
+			else
+				return 1
+		} else {	// a is an Edge
+			if(isNode(b))
+				return -1
+			else
+				return 0
+		}
+	}
+
+	/**
+	 * Prop for Graph component, called when nodes or edges are removed. Called also 
+	 * for adjacent edges when a node is removed.
+	 */
+	const onElementsRemove = async (elementsToRemove: Elements) => {
+		// Must remove edges first to prevent referencing issues in database
+		const sortedElementsToRemove = elementsToRemove.sort( compareElementsEdgesFirst )
+		for ( const e of sortedElementsToRemove ) {
+			if(isNode(e)){
+				await nodeService.deleteNode(e)
+			}
+			else if(isEdge(e)) {
+				await edgeService.deleteEdge(e).catch( (e: Error) => console.log("Error when deleting edge", e) )
+			}
+		}
+
 		setElements((els) => removeElements(elementsToRemove, els))
 	}
+
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
-		<div>
-			<h2>Hello, {name}</h2>
-			<form onSubmit={postText}>
-				<div>
-					title:
-					<input id="text" type="text" value={text} name="Text"
-						onChange={({ target }) => setText(target.value)} />
-				</div>
-				<button type="submit">post blog</button>
-			</form>
-		
+		<div>		
 			<h2>Tasks</h2>
 			<div>
 				<h3>Add task</h3>
@@ -126,12 +146,13 @@ const App : React.FC = () => {
 					<button onClick={createNode}>Add</button>
 				</div>
 			</div>
-			<div>
-				<Graph
+			<div className="graph">
+				<Graph 
 					elements={elements}
 					onConnect={onConnect}
 					onElementsRemove={onElementsRemove}
 					onLoad={onLoad}
+					onEdgeUpdate={(o, s) => console.log("What are these?", o, s)}
 				/>
 			</div>
 
