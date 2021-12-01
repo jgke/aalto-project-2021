@@ -1,19 +1,21 @@
 {
   "name": "client",
-  "jest": {
-    "verbose": true
-  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^27.0.3",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.0",
+    "@types/testing-library__jest-dom": "^5.14.2",
     "axios": "^0.24.0",
+    "jest": "^27.4.3",
+    "jest-environment-jsdom": "^27.4.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.6.11",
     "react-scripts": "^4.0.3",
+    "ts-jest": "^27.0.7",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
@@ -22,7 +24,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint --ext .ts ."
+    "lint": "eslint --ext .ts .",
+    "jest": "jest"
   },
   "browserslist": {
     "production": [
