@@ -10,9 +10,9 @@ import App from '../App';
 
 test('renders with default props', () => {
     const { getByText } = render( <App/> );
-    const output = getByText('title:');
-        
-    expect(output).toHaveAttribute('name', 'Text')
+    const output = getByText('Tasks');
+
+    expect(output).toHaveTextContent('Tasks');
  
 })
 
