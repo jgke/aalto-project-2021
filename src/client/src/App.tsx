@@ -4,6 +4,7 @@ import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge, Fl
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
+import './App.css';
 
 const App : React.FC = () => {
 
