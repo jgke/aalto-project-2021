@@ -138,7 +138,7 @@ const App : React.FC = () => {
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
-		<div>		
+		<div className='App'>		
 			<h2>Tasks</h2>
 			<div>
 				<h3>Add task</h3>
