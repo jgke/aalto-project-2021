@@ -15,7 +15,7 @@ const renderGraph = () => {
     return render(<Graph { ...props } />);
 }
 
-describe('<Graph \>', () => {
+describe('<Graph>', () => {
     test('graph is visible for users', () => {
         
         const component = renderGraph();
