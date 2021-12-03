@@ -1,4 +1,3 @@
-
 import express, {Request, Response, Router, Express} from 'express';
 import router from './route';
 import { RequestHandler } from 'express-serve-static-core';
@@ -29,5 +28,9 @@ app.use('/api', routes);
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
-console.log(`App listening on ${port}`);
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port);
+    console.log(`App listening on ${port}`);
+}
+
+module.exports = app;
