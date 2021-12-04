@@ -142,7 +142,7 @@ const App : React.FC = () => {
 			<div>
 				<h3>Add task</h3>
 				<div>
-					Text: <input data-testid='nodetext' id='nodetext' type='text' value={nodeText} onChange={ ({ target }) => setNodeText(target.value)}/>
+					Text: <input id='nodetext' type='text' value={nodeText} onChange={ ({ target }) => setNodeText(target.value)}/>
 					<button onClick={createNode}>Add</button>
 				</div>
 			</div>
