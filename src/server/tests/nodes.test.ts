@@ -1,6 +1,8 @@
 import {beforeEach, expect, test, afterAll} from '@jest/globals'
 import { db } from '../dbConfigs'
 import { INode } from '../domain/INode'
+//import pgSetup from '@databases/pg-test/jest/globalSetup';
+//import pgTeardown from '@databases/pg-test/jest/globalTeardown';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const supertest = require('supertest')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -8,10 +10,11 @@ const app = require('../index')
 
 const api = supertest(app)
 
-beforeEach(async () => {
+beforeEach(async() => {
     // ADD DATABASE RESET
     //Doing something with the database allows the console.log to happen in the migration
-    db.query("TRUNCATE node, edge CASCADE;", [])
+    await db.query("TRUNCATE node, edge CASCADE;", [])
+    
 })
 
 test('there are two notes', async () => {
@@ -69,6 +72,8 @@ test("an invalid node should not be added to the database", async () => {
 
 afterAll(async() => {
     //console.log("We ended")
-    //;(await db.getPool()).end
-    //;(await db.getClient()).release
+    //(await db.getPool()).end()
+    const client = await db.getClient()
+    client.removeAllListeners()
+    //await db.query("SELECT * FROM node", [])
 })
