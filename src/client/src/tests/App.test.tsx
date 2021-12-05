@@ -2,11 +2,36 @@
  * @jest-environment jsdom
  */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
 import App from '../App';
+import compareEdgesElementsFirst from '../App'
+import { Node, Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge, FlowElement } from 'react-flow-renderer';
+import * as t from '../types'
  
+
+// test nodes
+const a: Node = {
+    id: 'test1',
+    position: {
+        x: 5,
+        y: 5
+    }
+}
+const b: Node = {
+    id: 'test2',
+    position: {
+        x: 5,
+        y: 5
+    }
+}
+// test edge
+ const c: Edge = {
+     id: 'a',
+     target: 'xxx',
+     source: 'yyy'
+ }
 
 test('renders with default props', () => {
     const { getByText } = render(<App/>);
@@ -25,13 +50,18 @@ test('clicking the button calls event handler once', () => {
     const { getByText } = render(
         <button onClick={mockHandler}>Add</button>
     )
+    
     const button = getByText('Add');
     fireEvent.click(button)
 
     expect(mockHandler.mock.calls).toHaveLength(1)
 });
 
-
+/*test('compareElementsEdgesFirst works', () => {
+    const f: Elements = {a, b, c}
+    const case1 = f.sort( compareEdgesElementsFirst )
+})
+*/
 
 
 
