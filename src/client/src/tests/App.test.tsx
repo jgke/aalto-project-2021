@@ -31,6 +31,23 @@ test('clicking the button calls event handler once', () => {
     expect(mockHandler.mock.calls).toHaveLength(1)
 });
 
+test('The initial textbox should be empty', () => {
+    const component = render(<App/>)
+    const input = component.container.querySelector('input')
+    expect(input).toHaveValue('')
+})
+
+test('Changin the initial node text box should be possible', () => {
+    const component = render(<App/>)
+    const input = component.container.querySelector('input')
+    if(input){
+        fireEvent.change(input, {
+            target: {value: 'Add physics'}
+        })
+        expect(input).toHaveValue('Add physics')
+    }
+})
+
 
 
 
