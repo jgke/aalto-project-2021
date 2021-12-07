@@ -4,6 +4,7 @@ import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge, Fl
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
+import './App.css';
 
 const App : React.FC = () => {
 
@@ -137,7 +138,7 @@ const App : React.FC = () => {
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
-		<div>		
+		<div className='App'>		
 			<h2>Tasks</h2>
 			<div>
 				<h3>Add task</h3>
