@@ -145,3 +145,7 @@ describe("DELETE request", () => {
         await api.delete(`${baseUrl}/${e.source_id}/${e.target_id}`).expect(200)
     })
 })
+
+afterAll(() => {
+    console.log('Tests are done!')
+})

@@ -199,7 +199,8 @@ describe("DELETE request", () => {
 })
 
 afterAll(async() => {
-    //console.log("We ended")
+    // Below are tries to make the weird jest warning go away. 
+    //MIght become useful
     //(await db.getPool()).end()
     //const client = await db.getClient()
     //client.removeAllListeners()
