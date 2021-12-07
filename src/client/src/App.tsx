@@ -89,8 +89,8 @@ const App : React.FC = () => {
 			setElements( (els) => addEdge(params, els) )
 			
 			edgeService.sendEdge({ 
-				source_id: Number(params.source), 
-				target_id: Number(params.target)
+				source_id: (params.source), 
+				target_id: (params.target)
 			});
 		} else {
 			console.log("source or target of edge is null, unable to send to db");
