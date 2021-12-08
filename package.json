@@ -1,4 +1,11 @@
 {
+  "scripts": {
+    "build-server": "cd ./src/server && npm run build && cp -r ./dist/.  ./../../build/", 
+    "build-client": "cd ./src/client && npm run build && cp -r ./build/. ./../../build/dist/",
+    "copy-migrations": "cp -r ./src/server/migrations ./build/",
+    "install-deps": "cp ./src/server/package.json ./build/ && cp ./src/server/package.json ./build/ && cd build && npm install --production", 
+    "build": "rm -rf ./build && npm run build-server && npm run build-client && npm run copy-migrations"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "eslint": "^7.32.0"
