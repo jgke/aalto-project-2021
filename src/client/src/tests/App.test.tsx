@@ -6,6 +6,7 @@ import React, { ReactElement } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
 import App from '../App';
+import createNode from '../App';
 
  
 
@@ -30,14 +31,14 @@ test('Renders the button with proper content', () => {
 });
 
 test('Button click calls a function', () => {
-    const mockHandler = jest.fn();
-    const { getByText } = render(
-         <button onClick={mockHandler}>Add</button>
-     ) // Copied from App, couldn't find a way to test a button click straight from App
+    jest.mock("../App");
+    const { getByText } = render(<App/>);
     const button = getByText('Add');
-     fireEvent.click(button)
+    fireEvent.click(button)
 
-    expect(mockHandler.mock.calls).toHaveLength(1)
+    expect(createNode).toBeCalled
+
+
 })
 
 test('The initial textbox should be empty', () => {
