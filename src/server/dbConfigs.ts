@@ -12,8 +12,8 @@ class Database {
   //eslint-disable-next-line @typescript-eslint/no-explicit-any -- /* eslint-disable ... */
   async query(text: string | QueryConfig<any>, params: unknown[]) {
     const start = Date.now();
-    console.log("Text: ", text)
-    console.log("Params: ", params)
+    //console.log("Text: ", text)
+    //console.log("Params: ", params)
     const pool = await this.getPool();
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
@@ -33,6 +33,12 @@ class Database {
 		}
 		return this._pool;
 	}
+
+  async turnOff() {
+    const pool = await this.getPool()
+    const w = await pool.off
+    return w
+  }
 }
 
 const db = new Database();
