@@ -23,6 +23,14 @@ describe('<Graph>', () => {
             
     
     })
+
+    test('Graph contains a mini map', () => {
+        const component = renderGraph();
+        const miniMap = component.container.querySelector('MiniMap');
+        
+        expect(miniMap).toBeInTheDocument;
+        expect(miniMap).toBeVisible;
+    })
 })
 
     
