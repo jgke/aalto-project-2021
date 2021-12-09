@@ -18,10 +18,14 @@ router.route('/node')
         res.json(q.rows)
     })
     .post(async (req: Request, res: Response) => {
-        console.log("Receiving node...")
         const text: INode = req.body; //Might have to parse this
+        try {
         const q = await db.query("INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id", [text.description, text.status, text.priority, text.x, text.y])
         res.status(200).json(q);
+        } catch (e) {
+            console.log("Invalid node", e)
+            res.status(403).json()
+        }
         
     })
     .put((req: Request, res: Response) => {
