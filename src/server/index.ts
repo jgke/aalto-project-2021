@@ -3,14 +3,13 @@ import router from './route';
 import { RequestHandler } from 'express-serve-static-core';
 
 // call express
-const app: Express = express(); // define our app using express
+export const app: Express = express(); // define our app using express
 
 // configure app to use bodyParser for
 // Getting data from body of requests
 app.use(express.urlencoded({extended: true}) as RequestHandler);
 
 app.use(express.json() as RequestHandler) 
-
 
 const port: number = Number(process.env.PORT) || 8050; // set our port
 
@@ -32,5 +31,3 @@ if (process.env.NODE_ENV !== 'test') {
     app.listen(port);
     console.log(`App listening on ${port}`);
 }
-
-module.exports = app;
