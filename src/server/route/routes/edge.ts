@@ -1,6 +1,6 @@
 import router from "../router";
 import { Request, Response } from "express";
-import { IEdge } from "../../domain/IEdge";
+import { IEdge } from "../../../../types";
 import { db } from "../../dbConfigs";
 
 router.route("/edge/:source/:target")

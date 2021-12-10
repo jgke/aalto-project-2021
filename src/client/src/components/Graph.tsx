@@ -1,4 +1,7 @@
-import ReactFlow, { MiniMap, Controls, Background, ReactFlowProps } from 'react-flow-renderer';
+import React from 'react';
+import ReactFlow, { MiniMap, Controls, Background, ReactFlowProps, Node } from 'react-flow-renderer';
+import * as nodeService from '../services/nodeService'
+import { INode } from '../../../../types'
 
 const graphStyle = {
     height: '100%', 
@@ -7,6 +10,18 @@ const graphStyle = {
     margin: 'auto', 
     backgroundColor: '#eeefff', 
     backgroundImage: 'linear-gradient(to bottom right, #00164f, #4e009c, #290066)'
+}
+
+const onNodeDragStop = async(x: React.MouseEvent, node: Node<INode>): Promise<void> => {
+    console.log('Update node called', node.data)
+    if(node.data){
+        const n: INode = node.data
+        n.x = node.position.x
+        n.y = node.position.y
+        await nodeService.updateNode(n)
+    } else {
+        console.log('INode data not found')
+    }
 }
 
 export const Graph = (props: ReactFlowProps): JSX.Element => {
@@ -23,7 +38,8 @@ export const Graph = (props: ReactFlowProps): JSX.Element => {
                 //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
                 // so it works as a hitbox detector
                 onEdgeUpdate={props.onEdgeUpdate}
-                onLoad={onLoad}>
+                onLoad={onLoad}
+                onNodeDragStop={onNodeDragStop}>
                 <Controls />
                 <Background color="#aaa" gap={16} />
                 <MiniMap

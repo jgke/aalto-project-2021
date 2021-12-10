@@ -8,6 +8,6 @@
   "watch": [
     "./"
   ],
-  "exec": "tsc && node ./dist",
+  "exec": "tsc && node ./dist/src/server",
   "ext": "ts"
 }
