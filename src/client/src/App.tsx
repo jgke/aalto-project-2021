@@ -4,7 +4,7 @@ import { Elements, addEdge, removeElements, Edge, Node, Connection, isNode, isEd
 import * as nodeService from './services/nodeService'
 import * as edgeService from './services/edgeService'
 import { INode, IEdge } from '../../../types';
-import './App.css';
+//import './App.css';
 
 
 const App: React.FC = () => {
@@ -157,4 +157,5 @@ const App: React.FC = () => {
 	);
 }
 
-export { App }
+//Seems like this needs to be a default export
+export default App

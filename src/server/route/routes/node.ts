@@ -1,6 +1,6 @@
 import router from '../router';
-import {Request, Response} from "express";
-import { INode } from "../../../../types";
+import {Request, Response} from 'express';
+import { INode } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
 
@@ -21,8 +21,8 @@ router.route('/node')
         console.log('Receiving node... DUMMY!')
         const text: INode = req.body; //Might have to parse this
         try {
-        const q = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [text.label, text.status, text.priority, text.x, text.y])
-        res.status(200).json(q);
+            const q = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [text.label, text.status, text.priority, text.x, text.y])
+            res.status(200).json(q);
         } catch (e) {
             console.log('Invalid node', e)
             res.status(403).json()

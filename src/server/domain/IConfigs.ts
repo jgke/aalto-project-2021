@@ -1,4 +1,4 @@
-import { PoolConfig } from "pg";
+import { PoolConfig } from 'pg';
 
 export interface IConfigs {
     poolConfig: PoolConfig,

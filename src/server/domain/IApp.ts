@@ -1,4 +1,4 @@
-import {ITest} from "./ITest";
+import {ITest} from './ITest';
 
 export interface AppStates {
     username?: string;

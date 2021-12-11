@@ -1,4 +1,4 @@
-import {IConfigs} from "./domain/IConfigs";
+import {IConfigs} from './domain/IConfigs';
 
 const configs: IConfigs = {
     poolConfig: {

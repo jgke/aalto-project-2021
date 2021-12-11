@@ -16,25 +16,25 @@ const addDummyNodes = async(): Promise<void> => {
     ids = []
 
     const n1: INode = {
-        label: "First-node",
-        priority: "Very Urgent",
+        label: 'First-node',
+        priority: 'Very Urgent',
         status: 'Doing',
         x: 0,
         y: 0
     }
 
     const n2: INode = {
-        label: "Second-node",
-        priority: "Urgent",
+        label: 'Second-node',
+        priority: 'Urgent',
         status: 'ToDo',
         x: 1,
         y: 1
     }
 
     ids = []
-    let r = await db.query("INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id", [n1.label, n1.priority, n1.status, n1.x, n1.y])
+    let r = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [n1.label, n1.priority, n1.status, n1.x, n1.y])
     ids.push(r.rows[0].id)
-    r = await db.query("INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id", [n2.label, n2.priority, n2.status, n2.x, n2.y])
+    r = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [n2.label, n2.priority, n2.status, n2.x, n2.y])
     ids.push(r.rows[0].id)
 
 }
@@ -43,21 +43,21 @@ const addDummyNodes = async(): Promise<void> => {
 
 beforeEach(async () => {
 
-    await db.query("TRUNCATE node, edge CASCADE;", [])    
+    await db.query('TRUNCATE node, edge CASCADE;', [])    
 })
 
-describe("GET request", () => {
-    test("should give an empty array if there are no edges", async () => {
+describe('GET request', () => {
+    test('should give an empty array if there are no edges', async () => {
         const res = await api
             .get(baseUrl)
             .expect(200)
         expect(res.body).toHaveLength(0)
     })
 
-    test("should give an edge if there is one", async () => {
+    test('should give an edge if there is one', async () => {
         await addDummyNodes()
 
-        await db.query("INSERT INTO edge (source_id, target_id) VALUES ($1, $2)", ids)
+        await db.query('INSERT INTO edge (source_id, target_id) VALUES ($1, $2)', ids)
         const res = await api
             .get(baseUrl)
             .expect(200)
@@ -70,8 +70,8 @@ describe("GET request", () => {
 
 })
 
-describe("POST request", () => {
-    test("should successfully send an edge", async () => {
+describe('POST request', () => {
+    test('should successfully send an edge', async () => {
         await addDummyNodes()
         const e: IEdge = {
             source_id: ids[0],
@@ -84,7 +84,7 @@ describe("POST request", () => {
             .expect(200)
     })
 
-    test("should save the edge appropriately", async () => {
+    test('should save the edge appropriately', async () => {
         await addDummyNodes()
 
         const e: IEdge = {
@@ -104,7 +104,7 @@ describe("POST request", () => {
         expect(res.body[0].target_id).toBe(ids[1])
     })
 
-    test("should not allow duplicate edges", async () => {
+    test('should not allow duplicate edges', async () => {
         await addDummyNodes()
 
         const e: IEdge = {
@@ -126,9 +126,9 @@ describe("POST request", () => {
     })
 })
 
-describe("DELETE request", () => {
+describe('DELETE request', () => {
     
-    test("should delete a single edge", async () => {
+    test('should delete a single edge', async () => {
         await addDummyNodes()
 
         const e: IEdge = {
@@ -153,7 +153,7 @@ describe("DELETE request", () => {
         expect(res.body).toHaveLength(0)
     })
 
-    test("should not crash the app if the edge to be deleted does not exist", async () => {
+    test('should not crash the app if the edge to be deleted does not exist', async () => {
         const e: IEdge = {
             source_id: '-1',
             target_id: '-1'

@@ -1,4 +1,4 @@
-type Status = "Done" | "Doing" | "ToDo"
+type Status = 'Done' | 'Doing' | 'ToDo'
 
 // Id of a node is optional since the id is created in the database
 // so when sent to backend we don't give it any id

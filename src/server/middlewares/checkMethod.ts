@@ -10,9 +10,9 @@ export default (req: Request, res: Response, next: (param?: unknown) => void): v
     } else {
         const error: IError = {
             status: 405,
-            message: "Method not allowed, YET!"
+            message: 'Method not allowed, YET!'
         }
-        res.setHeader("allow", route.methods);
+        res.setHeader('allow', route.methods);
         res.status(405).json(error);
     }
 }
