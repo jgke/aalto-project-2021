@@ -4,15 +4,15 @@ type Status = "Done" | "Doing" | "ToDo"
 // so when sent to backend we don't give it any id
 
 export interface INode {
-  description: string,
-  status: Status,
-  priority: string,
-  id?: number, //Could there be a more specific ID than just number?
-  x: number,
-  y: number
+    description: string,
+    status: Status,
+    priority: string,
+    id?: string, //Could there be a more specific ID than just number?
+    x: number,
+    y: number
 }
 
 export interface IEdge {
-  source_id: number
-  target_id: number
+    source_id: string
+    target_id: string
 }

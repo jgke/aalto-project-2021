@@ -8,6 +8,6 @@
   "watch": [
     "./"
   ],
-  "exec": "tsc -p tsconfig.server.json && node ./dist",
+  "exec": "tsc && node ./dist",
   "ext": "ts"
 }
