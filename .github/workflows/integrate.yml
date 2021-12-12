@@ -1,85 +1,87 @@
 name: Continuous Integration
 
 on:
-  pull_request:
-    branches: [ main ]
+    pull_request:
+        branches: [main]
 
 jobs:
-  linter:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ravsamhq/notify-slack-action@v1
-        if: always()
-        with:
-          status: ${{ job.status }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          notification_title: '{workflow} has {status_message}'
-          message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
-          footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
-          notify_when: 'failure'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: Install dependencies in the root
-        run: npm ci
-      - name: Runs linter
-        run: npm run lint
-  front_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ravsamhq/notify-slack-action@v1
-        if: always()
-        with:
-          status: ${{ job.status }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          notification_title: '{workflow} has {status_message}'
-          message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
-          footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
-          notify_when: 'failure'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: Install dependencies in the root
-        run: npm ci
-      - name: Install dependencies in the client folder
-        run: npm ci
-        working-directory: ./src/client
-      - name: Run front end tests
-        run: npm test
-        working-directory: ./src/client
-  back_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ravsamhq/notify-slack-action@v1
-        if: always()
-        with:
-          status: ${{ job.status }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          notification_title: '{workflow} has {status_message}'
-          message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
-          footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
-          notify_when: 'failure'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: Install dependencies in the root
-        run: npm ci
-      - name: Docker compose
-        run: docker-compose up -d
-      - name: Install dependencies in the server folder
-        run: npm ci
-        working-directory: ./src/server
-      - name: Database init
-        run: psql postgres://postgres:example@localhost:5432/postgres -f ./src/server/migrations/1_create_initial_tables.sql
-      - name: Run back end tests
-        run: npm test
-        working-directory: ./src/server
+    linter:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: ravsamhq/notify-slack-action@v1
+              if: always()
+              with:
+                  status: ${{ job.status }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  notification_title: '{workflow} has {status_message}'
+                  message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
+                  footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
+                  notify_when: 'failure'
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - name: Install dependencies in the root
+              run: npm ci
+            - name: Runs linter
+              run: npm run lint
+            - name: Runs prettier
+              run: npm run prettier
+    front_tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: ravsamhq/notify-slack-action@v1
+              if: always()
+              with:
+                  status: ${{ job.status }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  notification_title: '{workflow} has {status_message}'
+                  message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
+                  footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
+                  notify_when: 'failure'
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - name: Install dependencies in the root
+              run: npm ci
+            - name: Install dependencies in the client folder
+              run: npm ci
+              working-directory: ./src/client
+            - name: Run front end tests
+              run: npm test
+              working-directory: ./src/client
+    back_tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: ravsamhq/notify-slack-action@v1
+              if: always()
+              with:
+                  status: ${{ job.status }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  notification_title: '{workflow} has {status_message}'
+                  message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
+                  footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
+                  notify_when: 'failure'
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - name: Install dependencies in the root
+              run: npm ci
+            - name: Docker compose
+              run: docker-compose up -d
+            - name: Install dependencies in the server folder
+              run: npm ci
+              working-directory: ./src/server
+            - name: Database init
+              run: psql postgres://postgres:example@localhost:5432/postgres -f ./src/server/migrations/1_create_initial_tables.sql
+            - name: Run back end tests
+              run: npm test
+              working-directory: ./src/server
