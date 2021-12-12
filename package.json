@@ -1,6 +1,8 @@
 {
     "scripts": {
-        "lint": "eslint . --ext .ts --ext .tsx"
+        "lint": "eslint . --ext .ts --ext .tsx",
+        "prettier": "npx prettier --check .",
+        "prettier:write": "npx prettier --write ."
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.4.0",
