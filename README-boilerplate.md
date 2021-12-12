@@ -2,24 +2,24 @@
 
 A boilerplate to build web application using Express and React with help of Typescript. It's configured to separate client-side JavaScript and CSS bundles and your files as assets.
 
-- [express-react-typescript](#Express-React-Boilerplate)
-  - [Introduction](#introduction)
-    - [Development mode](#development-mode)
-    - [Production mode](#production-mode)
-  - [Quick Start](#quick-start)
-  - [Documentation](#documentation)
-    - [Directory Structure](#directory-structure)
-    - [Babel](#babel)
-    - [Typescript](#typescript)
-    - [Less](#less)
-    - [ESLint](#eslint)
-    - [Webpack](#webpack)
-    - [Webpack dev server](#webpack-dev-server)
-    - [Nodemon](#nodemon)
-    - [Express](#express)
-    - [Concurrently](#concurrently)
-    - [VSCode + ESLint + Prettier](#vscode--eslint--prettier)
-      - [Installation guide](#installation-guide)
+-   [express-react-typescript](#Express-React-Boilerplate)
+    -   [Introduction](#introduction)
+        -   [Development mode](#development-mode)
+        -   [Production mode](#production-mode)
+    -   [Quick Start](#quick-start)
+    -   [Documentation](#documentation)
+        -   [Directory Structure](#directory-structure)
+        -   [Babel](#babel)
+        -   [Typescript](#typescript)
+        -   [Less](#less)
+        -   [ESLint](#eslint)
+        -   [Webpack](#webpack)
+        -   [Webpack dev server](#webpack-dev-server)
+        -   [Nodemon](#nodemon)
+        -   [Express](#express)
+        -   [Concurrently](#concurrently)
+        -   [VSCode + ESLint + Prettier](#vscode--eslint--prettier)
+            -   [Installation guide](#installation-guide)
 
 ## Introduction
 
@@ -63,7 +63,7 @@ yarn start (or npm start)
 ```
 
 If you are looking for typeless and pure css you can find it [here](https://github.com/crsandeep/simple-react-full-stack)
- 
+
 ## Documentation
 
 ### Directory Structure
@@ -99,7 +99,7 @@ Source code for Back-end and Front-end will be placed at src directory. Server d
 }
 ```
 
-[Airbnb's Javascript Style Guide](https://github.com/airbnb/javascript) which has been used by the majority of JavaScript and Typescript developers worldwide. Since the aim is support for both client (browser) and server side (Node.js) source code, the **env** has been set to browser and node. 
+[Airbnb's Javascript Style Guide](https://github.com/airbnb/javascript) which has been used by the majority of JavaScript and Typescript developers worldwide. Since the aim is support for both client (browser) and server side (Node.js) source code, the **env** has been set to browser and node.
 Optionally, you can override the current settings by installing `eslint` globally and running `eslint --init` to change the configurations to suit your needs. [**no-console**](https://eslint.org/docs/rules/no-console), [**comma-dangle**](https://eslint.org/docs/rules/comma-dangle) and [**react/jsx-filename-extension**](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md) rules have been turned off.
 
 ### Webpack
@@ -118,89 +118,86 @@ const CopyPlugin = require('copy-webpack-plugin');
 const outputDirectory = 'dist';
 
 module.exports = {
-  entry: ['babel-polyfill', './src/client/index.tsx'],
-  output: {
-    path: path.join(__dirname, outputDirectory),
-    filename: './js/[name].bundle.js'
-  },
-  devtool: "source-map",
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
-      },
-      {
-        test: /\.tsx?$/,
-        use:[
-          {
-            loader: "awesome-typescript-loader"
-          },
-        ],
-        exclude: /node_modules/
-      },
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader"
-      },
-      {
-        test: /\.less$/,
-        use: [
-          { loader: 'style-loader' },
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: './Less',
-              hmr: process.env.NODE_ENV === 'development',
+    entry: ['babel-polyfill', './src/client/index.tsx'],
+    output: {
+        path: path.join(__dirname, outputDirectory),
+        filename: './js/[name].bundle.js',
+    },
+    devtool: 'source-map',
+    module: {
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                },
             },
-          },
-          { loader: 'css-loader' },
-          {
-            loader: 'less-loader',
-            options: {
-              strictMath: true,
-              noIeCompat: true,
-            }
-          },
-        ]
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000'
-      },
-    ]
-  },
-  resolve: {
-    extensions: ['*', '.ts', '.tsx', '.js', '.jsx', '.json', '.less']
-  },
-  devServer: {
-    port: 3000,
-    open: true,
-    proxy: {
-      '/api': 'http://localhost:8050'
-    }
-  },
-  plugins: [
-    new CleanWebpackPlugin([outputDirectory]),
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-      favicon: './public/favicon.ico',
-      title: "Book Manager",
-    }),
-    new MiniCssExtractPlugin({
-      filename: './css/[name].css',
-      chunkFilename: './css/[id].css',
-    }),
-    new CopyPlugin([
-      { from: './src/client/Assets', to: 'assets' },
-    ])
-  ],
+            {
+                test: /\.tsx?$/,
+                use: [
+                    {
+                        loader: 'awesome-typescript-loader',
+                    },
+                ],
+                exclude: /node_modules/,
+            },
+            {
+                enforce: 'pre',
+                test: /\.js$/,
+                loader: 'source-map-loader',
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    { loader: 'style-loader' },
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: './Less',
+                            hmr: process.env.NODE_ENV === 'development',
+                        },
+                    },
+                    { loader: 'css-loader' },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            strictMath: true,
+                            noIeCompat: true,
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                loader: 'url-loader?limit=100000',
+            },
+        ],
+    },
+    resolve: {
+        extensions: ['*', '.ts', '.tsx', '.js', '.jsx', '.json', '.less'],
+    },
+    devServer: {
+        port: 3000,
+        open: true,
+        proxy: {
+            '/api': 'http://localhost:8050',
+        },
+    },
+    plugins: [
+        new CleanWebpackPlugin([outputDirectory]),
+        new HtmlWebpackPlugin({
+            template: './public/index.html',
+            favicon: './public/favicon.ico',
+            title: 'Book Manager',
+        }),
+        new MiniCssExtractPlugin({
+            filename: './css/[name].css',
+            chunkFilename: './css/[id].css',
+        }),
+        new CopyPlugin([{ from: './src/client/Assets', to: 'assets' }]),
+    ],
 };
-
 ```
 
 1.  **entry:** entry: ./src/client/index.tsx is where the application starts executing and Webpack starts bundling.
