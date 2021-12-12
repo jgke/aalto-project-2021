@@ -1,4 +1,4 @@
-import { IConfigs } from './domain/IConfigs';
+import {IConfigs} from "./domain/IConfigs";
 
 const configs: IConfigs = {
     poolConfig: {
@@ -6,10 +6,10 @@ const configs: IConfigs = {
         port: 5432,
         user: 'postgres',
         database: 'postgres',
-        password: 'example',
-    },
-};
+        password: 'example'
+    }
+}
 
 export async function getConfig(): Promise<IConfigs> {
-    return configs;
+    return configs
 }
