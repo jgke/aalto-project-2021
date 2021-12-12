@@ -2,20 +2,19 @@ import { beforeEach, expect, test, afterAll, describe } from '@jest/globals'
 import { db } from '../dbConfigs'
 import { IEdge } from '../domain/IEdge'
 import { INode } from '../domain/INode'
-const baseUrl = '/api/edge'
+import  supertest from 'supertest'
+import { app } from '../index'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const supertest = require('supertest')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const app = require('../index')
+const baseUrl = '/api/edge'
 
 const api = supertest(app)
 
+//This holds the possible dummy node's ID's
 let ids: number[] = []
 
-beforeEach(async () => {
-
-    await db.query("TRUNCATE node, edge CASCADE;", [])
+//Helper functions for the tests
+const addDummyNodes = async(): Promise<void> => {
+    ids = []
 
     const n1: INode = {
         description: "First-node",
@@ -38,6 +37,14 @@ beforeEach(async () => {
     ids.push(r.rows[0].id)
     r = await db.query("INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id", [n2.description, n2.priority, n2.status, n2.x, n2.y])
     ids.push(r.rows[0].id)
+
+}
+
+//Helper functions end here
+
+beforeEach(async () => {
+
+    await db.query("TRUNCATE node, edge CASCADE;", [])    
 })
 
 describe("GET request", () => {
@@ -49,6 +56,8 @@ describe("GET request", () => {
     })
 
     test("should give an edge if there is one", async () => {
+        await addDummyNodes()
+
         await db.query("INSERT INTO edge (source_id, target_id) VALUES ($1, $2)", ids)
         const res = await api
             .get(baseUrl)
@@ -64,6 +73,7 @@ describe("GET request", () => {
 
 describe("POST request", () => {
     test("should successfully send an edge", async () => {
+        await addDummyNodes()
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1]
@@ -76,6 +86,8 @@ describe("POST request", () => {
     })
 
     test("should save the edge appropriately", async () => {
+        await addDummyNodes()
+
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1]
@@ -94,6 +106,8 @@ describe("POST request", () => {
     })
 
     test("should not allow duplicate edges", async () => {
+        await addDummyNodes()
+
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1]
@@ -114,7 +128,10 @@ describe("POST request", () => {
 })
 
 describe("DELETE request", () => {
+    
     test("should delete a single edge", async () => {
+        await addDummyNodes()
+
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1]
@@ -144,4 +161,8 @@ describe("DELETE request", () => {
         }
         await api.delete(`${baseUrl}/${e.source_id}/${e.target_id}`).expect(200)
     })
+})
+
+afterAll(() => {
+    console.log('Tests are done!')
 })

@@ -4,6 +4,7 @@ import { Elements, addEdge, removeElements, Edge, Connection, isNode, isEdge, Fl
 import * as nodeService from './services/nodeService'
 import * as edgeService from "./services/edgeService"
 import * as t from './types'
+import './App.css';
 
 const App : React.FC = () => {
 
@@ -89,8 +90,8 @@ const App : React.FC = () => {
 			setElements( (els) => addEdge(params, els) )
 			
 			edgeService.sendEdge({ 
-				source_id: Number(params.source), 
-				target_id: Number(params.target)
+				source_id: (params.source), 
+				target_id: (params.target)
 			});
 		} else {
 			console.log("source or target of edge is null, unable to send to db");
@@ -137,7 +138,7 @@ const App : React.FC = () => {
 	const onLoad = (reactFlowInstance: FlowInstance) => reactFlowInstance.fitView();
 
 	return (
-		<div>		
+		<div className='App'>		
 			<h2>Tasks</h2>
 			<div>
 				<h3>Add task</h3>

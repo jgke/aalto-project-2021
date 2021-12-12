@@ -1,14 +1,41 @@
 import {beforeEach, expect, test, afterAll, describe} from '@jest/globals'
 import { db } from '../dbConfigs'
 import { INode } from '../domain/INode'
-//import pgSetup from '@databases/pg-test/jest/globalSetup';
-//import pgTeardown from '@databases/pg-test/jest/globalTeardown';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const supertest = require('supertest')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const app = require('../index')
+import supertest from 'supertest'
+import { app } from '../index'
 
 const api = supertest(app)
+
+//Helper functions
+
+const addDummyNodes = async () => {
+
+    const n1: INode = {
+        description: "test node",
+        priority: "Urgent",
+        status: 'Doing',
+        x: 0,
+        y: 0
+    }
+
+    const n2: INode = {
+        description: "a second test node",
+        priority: "No rush",
+        status: 'Done',
+        x: 1,
+        y: 2
+    }
+
+    await db
+    .query('INSERT INTO node (description, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);', [n1.description, n1.priority, n1.status, n1.x, n1.y])
+    
+    await db
+    .query('INSERT INTO node (description, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);', [n2.description, n2.priority, n2.status, n2.x, n2.y])
+
+}
+
+//End of helper functions
+
 
 beforeEach(async() => {
     // DATABASE RESET
@@ -26,7 +53,7 @@ describe("Besic GET request", () => {
 
 describe("POST and GET request", () => {
 
-    test('adding node to database should be succesful', async () => {
+    test('adding node should be succesful', async () => {
         const n:INode = {
             description: "test node",
             priority: "Urgent",
@@ -85,7 +112,6 @@ describe("POST and GET request", () => {
                         .expect(200)
 
         const node = result.body[0]
-        //WARNING! type of id will be changed to String in another branch!
         expect(node.id).toBeDefined
         expect(node.description).toBe('test node')
         expect(node.priority).toBe('Urgent')
@@ -108,32 +134,7 @@ describe("POST and GET request", () => {
 
 describe("DELETE request", () => {
     test("with an id should delete the node from the DB", async() => {
-
-        const n1: INode = {
-            description: "test node",
-            priority: "Urgent",
-            status: 'Doing',
-            x: 0,
-            y: 0
-        }
-
-        const n2: INode = {
-            description: "a second test node",
-            priority: "No rush",
-            status: 'Done',
-            x: 1,
-            y: 2
-        }
-
-        await api
-            .post('/api/node')
-            .send(n1)
-            .expect(200)
-
-        await api
-            .post('/api/node')
-            .send(n2)
-            .expect(200)
+        await addDummyNodes()
 
         let result = await api
                         .get('/api/node')
@@ -153,31 +154,7 @@ describe("DELETE request", () => {
     })
 
     test("deletes the right node", async() => {
-        const n1: INode = {
-            description: "test node",
-            priority: "Urgent",
-            status: 'Doing',
-            x: 0,
-            y: 0
-        }
-
-        const n2: INode = {
-            description: "a second test node",
-            priority: "No rush",
-            status: 'Done',
-            x: 1,
-            y: 2
-        }
-
-        await api
-                .post('/api/node')
-                .send(n1)
-                .expect(200)
-
-        await api
-                .post('/api/node')
-                .send(n2)
-                .expect(200)
+        await addDummyNodes()
 
         let res = await api
                 .get('/api/node')
@@ -199,7 +176,8 @@ describe("DELETE request", () => {
 })
 
 afterAll(async() => {
-    //console.log("We ended")
+    // Below are tries to make the weird jest warning go away. 
+    //MIght become useful
     //(await db.getPool()).end()
     //const client = await db.getClient()
     //client.removeAllListeners()
