@@ -1,15 +1,15 @@
-import { beforeEach, expect, test, afterAll, describe } from '@jest/globals'
-import { db } from '../dbConfigs'
-import { IEdge, INode } from '../../../types'
-import  supertest from 'supertest'
-import { app } from '../index'
+import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
+import { db } from '../dbConfigs';
+import { IEdge, INode } from '../../../types';
+import supertest from 'supertest';
+import { app } from '../index';
 
 const baseUrl = '/api/edge';
 
 const api = supertest(app);
 
 //This holds the possible dummy node's ID's
-let ids: string[] = []
+let ids: string[] = [];
 
 //Helper functions for the tests
 const addDummyNodes = async (): Promise<void> => {
@@ -31,13 +31,18 @@ const addDummyNodes = async (): Promise<void> => {
         y: 1,
     };
 
-    ids = []
-    let r = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [n1.label, n1.priority, n1.status, n1.x, n1.y])
-    ids.push(r.rows[0].id)
-    r = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [n2.label, n2.priority, n2.status, n2.x, n2.y])
-    ids.push(r.rows[0].id)
-
-}
+    ids = [];
+    let r = await db.query(
+        'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [n1.label, n1.priority, n1.status, n1.x, n1.y]
+    );
+    ids.push(r.rows[0].id);
+    r = await db.query(
+        'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [n2.label, n2.priority, n2.status, n2.x, n2.y]
+    );
+    ids.push(r.rows[0].id);
+};
 
 //Helper functions end here
 
@@ -47,31 +52,28 @@ beforeEach(async () => {
 
 describe('GET request', () => {
     test('should give an empty array if there are no edges', async () => {
-        const res = await api
-            .get(baseUrl)
-            .expect(200)
-        expect(res.body).toHaveLength(0)
-    })
+        const res = await api.get(baseUrl).expect(200);
+        expect(res.body).toHaveLength(0);
+    });
 
     test('should give an edge if there is one', async () => {
-        await addDummyNodes()
+        await addDummyNodes();
 
-        await db.query('INSERT INTO edge (source_id, target_id) VALUES ($1, $2)', ids)
-        const res = await api
-            .get(baseUrl)
-            .expect(200)
-        expect(res.body).toHaveLength(1)
-        const e: IEdge = res.body[0]
-        expect(e.source_id).toBe(ids[0])
-        expect(e.target_id).toBe(ids[1])
-
-    })
-
-})
+        await db.query(
+            'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
+            ids
+        );
+        const res = await api.get(baseUrl).expect(200);
+        expect(res.body).toHaveLength(1);
+        const e: IEdge = res.body[0];
+        expect(e.source_id).toBe(ids[0]);
+        expect(e.target_id).toBe(ids[1]);
+    });
+});
 
 describe('POST request', () => {
     test('should successfully send an edge', async () => {
-        await addDummyNodes()
+        await addDummyNodes();
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1],
@@ -81,7 +83,7 @@ describe('POST request', () => {
     });
 
     test('should save the edge appropriately', async () => {
-        await addDummyNodes()
+        await addDummyNodes();
 
         const e: IEdge = {
             source_id: ids[0],
@@ -136,15 +138,16 @@ describe('DELETE request', () => {
         expect(res.body).toHaveLength(0);
     });
 
-
     test('should not crash the app if the edge to be deleted does not exist', async () => {
         const e: IEdge = {
             source_id: '-1',
-            target_id: '-1'
-        }
-        await api.delete(`${baseUrl}/${e.source_id}/${e.target_id}`).expect(200)
-    })
-})
+            target_id: '-1',
+        };
+        await api
+            .delete(`${baseUrl}/${e.source_id}/${e.target_id}`)
+            .expect(200);
+    });
+});
 
 afterAll(() => {
     console.log('Tests are done!');

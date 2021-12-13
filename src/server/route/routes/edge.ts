@@ -3,22 +3,26 @@ import { Request, Response } from 'express';
 import { IEdge } from '../../../../types';
 import { db } from '../../dbConfigs';
 
-router.route('/edge/:source/:target')
-    .delete(async(req: Request, res: Response) => {
+router
+    .route('/edge/:source/:target')
+    .delete(async (req: Request, res: Response) => {
         try {
-            const source = req.params.source
-            const target = req.params.target
-            await db
-                .query('DELETE FROM edge WHERE source_id = $1 AND target_id = $2', [source, target])
-            res.status(200).json()
+            const source = req.params.source;
+            const target = req.params.target;
+            await db.query(
+                'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
+                [source, target]
+            );
+            res.status(200).json();
         } catch (e) {
-            console.log('DELETION FAILED!')
-            console.log(e)
-            res.status(404).json()
+            console.log('DELETION FAILED!');
+            console.log(e);
+            res.status(404).json();
         }
-    })
+    });
 
-router.route('/edge')
+router
+    .route('/edge')
     .get(async (req: Request, res: Response) => {
         const q = await db.query('SELECT * FROM edge', []);
 

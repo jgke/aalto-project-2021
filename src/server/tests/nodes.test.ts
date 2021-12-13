@@ -1,8 +1,8 @@
-import { beforeEach, expect, test, afterAll, describe } from '@jest/globals'
-import { db } from '../dbConfigs'
-import { INode } from '../../../types'
-import supertest from 'supertest'
-import { app } from '../index'
+import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
+import { db } from '../dbConfigs';
+import { INode } from '../../../types';
+import supertest from 'supertest';
+import { app } from '../index';
 
 const api = supertest(app);
 
@@ -25,11 +25,15 @@ const addDummyNodes = async () => {
         y: 2,
     };
 
-    await db
-        .query('INSERT INTO node (label, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);', [n1.label, n1.priority, n1.status, n1.x, n1.y])
+    await db.query(
+        'INSERT INTO node (label, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);',
+        [n1.label, n1.priority, n1.status, n1.x, n1.y]
+    );
 
-    await db
-        .query('INSERT INTO node (label, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);', [n2.label, n2.priority, n2.status, n2.x, n2.y])
+    await db.query(
+        'INSERT INTO node (label, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);',
+        [n2.label, n2.priority, n2.status, n2.x, n2.y]
+    );
 };
 
 //End of helper functions
@@ -69,17 +73,15 @@ describe('POST and GET request', () => {
 
         await api.post('/api/node').send(n).expect(200);
 
-        const result = await api
-            .get('/api/node')
-            .expect(200)
-        expect(result.body).toHaveLength(1)
-        const node = result.body[0]
-        expect(node).toHaveProperty('label')
-        expect(node).toHaveProperty('priority')
-        expect(node).toHaveProperty('status')
-        expect(node).toHaveProperty('x')
-        expect(node).toHaveProperty('y')
-    })
+        const result = await api.get('/api/node').expect(200);
+        expect(result.body).toHaveLength(1);
+        const node = result.body[0];
+        expect(node).toHaveProperty('label');
+        expect(node).toHaveProperty('priority');
+        expect(node).toHaveProperty('status');
+        expect(node).toHaveProperty('x');
+        expect(node).toHaveProperty('y');
+    });
 
     test('A node should have the proper values that were sent', async () => {
         const n: INode = {
