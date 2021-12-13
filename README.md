@@ -1,8 +1,11 @@
 # Project
+
 ## How to run
+
 ### Development mode
 
 Front-end:
+
 ```bash
 # Go inside the directory
 cd src/client
@@ -15,6 +18,7 @@ npm run start
 ```
 
 Back-end:
+
 ```bash
 # Go inside the directory
 cd src/server
@@ -27,6 +31,7 @@ npm run dev
 ```
 
 Postgres:
+
 ```bash
 # Go inside the directory
 docker-compose up -d
