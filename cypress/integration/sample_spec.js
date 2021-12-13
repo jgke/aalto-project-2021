@@ -31,23 +31,17 @@ describe('test add node', () => {
     cy.get("body").then(($body) => {
       $body.find(`.react-flow__node-default:contains(${node_name_1})`).each((index, $div, $list) => {
         cy.wrap($div).click('topLeft', { force: true })
-        cy.wait(100)
+        cy.wrap($div).should('have.class', 'selected')
         cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
-        cy.get('body').trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
+          .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
       })
       $body.find(`.react-flow__node-default:contains(${node_name_2})`).each((index, $div, $list) => {
         cy.wrap($div).click('topLeft', { force: true })
-        cy.wait(100)
+        cy.wrap($div).should('have.class', 'selected')
         cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
-        cy.get('body').trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
+          .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
       })
     })
-
-    cy.wait(400)
 
     cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist')
     cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist')
@@ -75,19 +69,15 @@ describe('test add node', () => {
     cy.get("body").then(($body) => {
       $body.find(`.react-flow__node-default:contains(${node_name_1})`).each((index, $div, $list) => {
         cy.wrap($div).click('topLeft', { force: true })
-        cy.wait(100)
+        cy.wrap($div).should('have.class', 'selected')
         cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
-        cy.get('body').trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
+          .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
       })
       $body.find(`.react-flow__node-default:contains(${node_name_2})`).each((index, $div, $list) => {
         cy.wrap($div).click('topLeft', { force: true })
-        cy.wait(100)
+        cy.wrap($div).should('have.class', 'selected')
         cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
-        cy.get('body').trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
-        cy.wait(50)
+          .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
       })
     })
 
