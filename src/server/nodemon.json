@@ -1,16 +1,9 @@
 {
-  "ignore": [
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "node_modules",
-    "src/client"
-  ],
-  "watch": [
-    "./"
-  ],
-  "exec": "tsc -p tsconfig.server.json && node ./dist",
-  "ext": "ts",
-  "env": {
+"ignore": ["**/*.test.ts", "**/*.spec.ts", "node_modules", "src/client"],
+"watch": ["./"],
+"exec": "tsc && node ./dist",
+"ext": "ts",
+"env": {
     "PG_HOSTNAME": "localhost",
     "PG_PORT": 5432,
     "PG_USER": "postgres",

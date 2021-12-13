@@ -1,4 +1,4 @@
-import {IConfigs} from "./domain/IConfigs";
+import { IConfigs } from './domain/IConfigs';
 
 const configs: IConfigs = {
     poolConfig: {
@@ -11,5 +11,5 @@ const configs: IConfigs = {
 }
 
 export async function getConfig(): Promise<IConfigs> {
-    return configs
+    return configs;
 }
