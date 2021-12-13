@@ -23,9 +23,9 @@ html, body, #root, #root>div, .graph {
   isolation: isolate;
 }
 
-#root>div {
-  display: flex;
-  flex-direction: column;
+#root > div {
+    display: flex;
+    flex-direction: column;
 }
 
 body {
@@ -39,6 +39,6 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
 }
