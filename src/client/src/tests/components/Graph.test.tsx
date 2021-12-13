@@ -19,6 +19,32 @@ const renderGraph = (elements: Elements) => {
 }
 
 describe('<Graph>', () => {
+
+    beforeAll(() => {
+        window.ResizeObserver =
+          window.ResizeObserver ||
+          jest.fn().mockImplementation(() => ({
+            disconnect: jest.fn(),
+            observe: jest.fn(),
+            unobserve: jest.fn(),
+          }));
+      
+        Object.defineProperties(window.HTMLElement.prototype, {
+          offsetHeight: {
+            get() {
+              return parseFloat(this.style.height) || 1;
+            },
+          },
+          offsetWidth: {
+            get() {
+              return parseFloat(this.style.width) || 1;
+            },
+          },
+        });
+      
+        (window.SVGElement as any).prototype.getBBox = () => ({x:0, y:0, width: 0, height: 0});
+      });
+
     const testElements = ([
         {
             id: '1',
@@ -54,21 +80,6 @@ describe('<Graph>', () => {
 
     beforeEach(() => {
         testGraph = renderGraph(testElements)
-
-        // This fixes displaying edges in tests
-        Object.defineProperties(window.HTMLElement.prototype, {
-            offsetHeight: {
-                get() {
-                    return parseFloat(this.style.height) || 1;
-                },
-            },
-            offsetWidth: {
-                get() {
-                    return parseFloat(this.style.width) || 1;
-                },
-            },
-        });
-
     })
         
 
