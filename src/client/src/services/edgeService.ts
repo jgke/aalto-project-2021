@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Edge } from 'react-flow-renderer';
-import { IEdge } from '../types';
+import { IEdge } from '../../../../types';
 export const baseUrl = '/api/edge';
 
 const getAll = async (): Promise<IEdge[]> => {

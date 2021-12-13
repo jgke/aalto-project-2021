@@ -1,6 +1,6 @@
 {
     "ignore": ["**/*.test.ts", "**/*.spec.ts", "node_modules", "src/client"],
     "watch": ["./"],
-    "exec": "tsc && node ./dist",
+    "exec": "tsc && node ./dist/src/server",
     "ext": "ts"
 }

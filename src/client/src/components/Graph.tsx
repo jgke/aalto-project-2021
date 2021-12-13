@@ -1,8 +1,12 @@
+import React from 'react';
+import * as nodeService from '../services/nodeService';
+import { INode } from '../../../../types';
 import ReactFlow, {
     MiniMap,
     Controls,
     Background,
     ReactFlowProps,
+    Node,
 } from 'react-flow-renderer';
 
 const graphStyle = {
@@ -13,6 +17,21 @@ const graphStyle = {
     backgroundColor: '#eeefff',
     backgroundImage:
         'linear-gradient(to bottom right, #00164f, #4e009c, #290066)',
+};
+
+const onNodeDragStop = async (
+    x: React.MouseEvent,
+    node: Node<INode>
+): Promise<void> => {
+    console.log('Update node called', node.data);
+    if (node.data) {
+        const n: INode = node.data;
+        n.x = node.position.x;
+        n.y = node.position.y;
+        await nodeService.updateNode(n);
+    } else {
+        console.log('INode data not found');
+    }
 };
 
 export const Graph = (props: ReactFlowProps): JSX.Element => {
@@ -30,6 +49,7 @@ export const Graph = (props: ReactFlowProps): JSX.Element => {
                 // so it works as a hitbox detector
                 onEdgeUpdate={props.onEdgeUpdate}
                 onLoad={onLoad}
+                onNodeDragStop={onNodeDragStop}
             >
                 <Controls />
                 <Background color="#aaa" gap={16} />

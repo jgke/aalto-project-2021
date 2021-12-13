@@ -1,6 +1,6 @@
 import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
 import { db } from '../dbConfigs';
-import { INode } from '../domain/INode';
+import { INode } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 
@@ -10,7 +10,7 @@ const api = supertest(app);
 
 const addDummyNodes = async () => {
     const n1: INode = {
-        description: 'test node',
+        label: 'test node',
         priority: 'Urgent',
         status: 'Doing',
         x: 0,
@@ -18,7 +18,7 @@ const addDummyNodes = async () => {
     };
 
     const n2: INode = {
-        description: 'a second test node',
+        label: 'a second test node',
         priority: 'No rush',
         status: 'Done',
         x: 1,
@@ -26,13 +26,13 @@ const addDummyNodes = async () => {
     };
 
     await db.query(
-        'INSERT INTO node (description, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);',
-        [n1.description, n1.priority, n1.status, n1.x, n1.y]
+        'INSERT INTO node (label, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);',
+        [n1.label, n1.priority, n1.status, n1.x, n1.y]
     );
 
     await db.query(
-        'INSERT INTO node (description, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);',
-        [n2.description, n2.priority, n2.status, n2.x, n2.y]
+        'INSERT INTO node (label, priority, status, x, y) VALUES ($1, $2, $3, $4, $5);',
+        [n2.label, n2.priority, n2.status, n2.x, n2.y]
     );
 };
 
@@ -52,7 +52,7 @@ describe('Besic GET request', () => {
 describe('POST and GET request', () => {
     test('adding node should be succesful', async () => {
         const n: INode = {
-            description: 'test node',
+            label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
             x: 0,
@@ -64,7 +64,7 @@ describe('POST and GET request', () => {
 
     test('GET request should give us a node added to the database', async () => {
         const n: INode = {
-            description: 'test node',
+            label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
             x: 0,
@@ -76,7 +76,7 @@ describe('POST and GET request', () => {
         const result = await api.get('/api/node').expect(200);
         expect(result.body).toHaveLength(1);
         const node = result.body[0];
-        expect(node).toHaveProperty('description');
+        expect(node).toHaveProperty('label');
         expect(node).toHaveProperty('priority');
         expect(node).toHaveProperty('status');
         expect(node).toHaveProperty('x');
@@ -85,7 +85,7 @@ describe('POST and GET request', () => {
 
     test('A node should have the proper values that were sent', async () => {
         const n: INode = {
-            description: 'test node',
+            label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
             x: 0,
@@ -97,7 +97,7 @@ describe('POST and GET request', () => {
 
         const node = result.body[0];
         expect(node.id).toBeDefined;
-        expect(node.description).toBe('test node');
+        expect(node.label).toBe('test node');
         expect(node.priority).toBe('Urgent');
         expect(node.status).toBe('Doing');
         expect(n.x).toBe(0);
