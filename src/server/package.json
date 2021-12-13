@@ -9,7 +9,7 @@
         "dev": "cross-env NODE_ENV=development nodemon",
         "lint": "eslint --ext .ts .",
         "test": "cross-env NODE_ENV=test jest --clearCache && jest --verbose --runInBand --forceExit --detectOpenHandles ",
-        "build": "rm -rf dist && npx tsc -p tsconfig.server.json"
+        "build": "rm -rf dist && npx tsc -p tsconfig.json"
     },
     "dependencies": {
         "@babel/preset-typescript": "^7.16.0",
