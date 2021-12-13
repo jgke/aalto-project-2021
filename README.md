@@ -38,7 +38,9 @@ docker-compose up -d
 ```
 
 Cypress:
+
 ```bash
 
 # Start Cypress
 npx cypress open
+```
