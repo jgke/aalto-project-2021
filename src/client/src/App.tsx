@@ -129,9 +129,11 @@ const App: React.FC = () => {
         );
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
-                await nodeService
-                    .deleteNode(e)
-                    .catch((e: Error) => console.log('Error deleting Node', e));
+                try {
+                    await nodeService.deleteNode(e);
+                } catch (e) {
+                    console.log('Error in node deletion', e);
+                }
             } else if (isEdge(e)) {
                 await edgeService
                     .deleteEdge(e)

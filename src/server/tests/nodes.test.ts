@@ -142,6 +142,29 @@ describe('DELETE request', () => {
     });
 });
 
+describe('PUT request', () => {
+    test('should update the location of a node', async () => {
+        await addDummyNodes();
+
+        const res = await api.get('/api/node');
+        const dummyNode: INode = {
+            ...res.body[0],
+            x: 50,
+            y: 60,
+        };
+
+        await api.put('/api/node').send(dummyNode).expect(200);
+        const res2 = await api.get('/api/node');
+        const found: INode | undefined = res2.body.find(
+            (x: INode) => x.id == res.body[0].id
+        );
+        if (found) {
+            expect(found.x).toBe(50);
+            expect(found.y).toBe(60);
+        }
+    });
+});
+
 afterAll(async () => {
     // Below are tries to make the weird jest warning go away.
     //MIght become useful
