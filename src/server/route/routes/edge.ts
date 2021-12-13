@@ -32,11 +32,11 @@ router.route('/edge')
                 'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
                 [text.source_id, text.target_id]
             );
-            console.log('What was the edge q?')
+            console.log('What was the edge q?');
             res.status(200).json(q);
-        }  catch  (e) {
-            console.log(e)
-            res.status(403).json()
+        } catch (e) {
+            console.log(e);
+            res.status(403).json();
         }
     })
     .put((req: Request, res: Response) => {

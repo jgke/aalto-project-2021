@@ -4,32 +4,32 @@ import { IEdge, INode } from '../../../types'
 import  supertest from 'supertest'
 import { app } from '../index'
 
-const baseUrl = '/api/edge'
+const baseUrl = '/api/edge';
 
-const api = supertest(app)
+const api = supertest(app);
 
 //This holds the possible dummy node's ID's
 let ids: string[] = []
 
 //Helper functions for the tests
-const addDummyNodes = async(): Promise<void> => {
-    ids = []
+const addDummyNodes = async (): Promise<void> => {
+    ids = [];
 
     const n1: INode = {
         label: 'First-node',
         priority: 'Very Urgent',
         status: 'Doing',
         x: 0,
-        y: 0
-    }
+        y: 0,
+    };
 
     const n2: INode = {
         label: 'Second-node',
         priority: 'Urgent',
         status: 'ToDo',
         x: 1,
-        y: 1
-    }
+        y: 1,
+    };
 
     ids = []
     let r = await db.query('INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id', [n1.label, n1.priority, n1.status, n1.x, n1.y])
@@ -42,9 +42,8 @@ const addDummyNodes = async(): Promise<void> => {
 //Helper functions end here
 
 beforeEach(async () => {
-
-    await db.query('TRUNCATE node, edge CASCADE;', [])    
-})
+    await db.query('TRUNCATE node, edge CASCADE;', []);
+});
 
 describe('GET request', () => {
     test('should give an empty array if there are no edges', async () => {
@@ -75,83 +74,68 @@ describe('POST request', () => {
         await addDummyNodes()
         const e: IEdge = {
             source_id: ids[0],
-            target_id: ids[1]
-        }
+            target_id: ids[1],
+        };
 
-        await api
-            .post(baseUrl)
-            .send(e)
-            .expect(200)
-    })
+        await api.post(baseUrl).send(e).expect(200);
+    });
 
     test('should save the edge appropriately', async () => {
         await addDummyNodes()
 
         const e: IEdge = {
             source_id: ids[0],
-            target_id: ids[1]
-        }
+            target_id: ids[1],
+        };
 
-        await api
-            .post(baseUrl)
-            .send(e)
-            .expect(200)
+        await api.post(baseUrl).send(e).expect(200);
 
-
-        const res = await api.get(baseUrl).expect(200)
-        expect(res.body).toHaveLength(1)
-        expect(res.body[0].source_id).toBe(ids[0])
-        expect(res.body[0].target_id).toBe(ids[1])
-    })
+        const res = await api.get(baseUrl).expect(200);
+        expect(res.body).toHaveLength(1);
+        expect(res.body[0].source_id).toBe(ids[0]);
+        expect(res.body[0].target_id).toBe(ids[1]);
+    });
 
     test('should not allow duplicate edges', async () => {
-        await addDummyNodes()
+        await addDummyNodes();
 
         const e: IEdge = {
             source_id: ids[0],
-            target_id: ids[1]
-        }
+            target_id: ids[1],
+        };
 
-        await api
-            .post(baseUrl)
-            .send(e)
-            .expect(200)
+        await api.post(baseUrl).send(e).expect(200);
 
-        await api
-            .post(baseUrl)
-            .send(e)
-            .expect(403)
+        await api.post(baseUrl).send(e).expect(403);
         //Edges with switched source and target are still allowed, altough they shouldn't!
-
-    })
-})
+    });
+});
 
 describe('DELETE request', () => {
-    
     test('should delete a single edge', async () => {
-        await addDummyNodes()
+        await addDummyNodes();
 
         const e: IEdge = {
             source_id: ids[0],
-            target_id: ids[1]
-        }
+            target_id: ids[1],
+        };
+
+        await api.post(baseUrl).send(e).expect(200);
+
+        let res = await api.get(baseUrl).expect(200);
+        expect(res.body).toHaveLength(1);
 
         await api
-            .post(baseUrl)
-            .send(e)
-            .expect(200)
+            .delete(
+                `${baseUrl}/${res.body[0].source_id}/${res.body[0].target_id}`
+            )
+            .expect(200);
 
-        let res = await api.get(baseUrl).expect(200)
-        expect(res.body).toHaveLength(1)
+        res = await api.get(baseUrl).expect(200);
 
-        await api
-            .delete(`${baseUrl}/${res.body[0].source_id}/${res.body[0].target_id}`)
-            .expect(200)
+        expect(res.body).toHaveLength(0);
+    });
 
-        res = await api.get(baseUrl).expect(200)
-
-        expect(res.body).toHaveLength(0)
-    })
 
     test('should not crash the app if the edge to be deleted does not exist', async () => {
         const e: IEdge = {
@@ -163,5 +147,5 @@ describe('DELETE request', () => {
 })
 
 afterAll(() => {
-    console.log('Tests are done!')
-})
+    console.log('Tests are done!');
+});

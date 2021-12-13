@@ -1,5 +1,5 @@
-import {Document} from 'mongoose';
+import { Document } from 'mongoose';
 
-export interface ITest extends Document{
+export interface ITest extends Document {
     text: string;
 }

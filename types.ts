@@ -13,6 +13,6 @@ export interface INode {
 }
 
 export interface IEdge {
-    source_id: string
-    target_id: string
+    source_id: string;
+    target_id: string;
 }
