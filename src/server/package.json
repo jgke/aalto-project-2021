@@ -41,5 +41,8 @@
         "typescript": "^4.1.3"
     },
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "optionalDependencies": {
+        "fsevents": "^2.3.2"
+    }
 }
