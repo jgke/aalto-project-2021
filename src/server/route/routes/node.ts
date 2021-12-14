@@ -1,4 +1,4 @@
-import router from '../router';
+import { router } from '../router';
 import { Request, Response } from 'express';
 import { INode } from '../../domain/INode';
 //import {IError} from '../../domain/IError';
@@ -49,4 +49,4 @@ router
         res.status(404).json({ message: 'Not implemented' });
     });
 
-export default router;
+export { router as node };

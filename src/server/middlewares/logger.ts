@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-export default (
+export const logger = (
     req: Request,
     res: Response,
     next: (param?: unknown) => void
