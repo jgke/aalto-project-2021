@@ -1,4 +1,4 @@
-import node from './routes/node';
-import edge from './routes/edge';
+import { node } from './routes/node';
+import { edge } from './routes/edge';
 
-export default { node, edge };
+export { node, edge };

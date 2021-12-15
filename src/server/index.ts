@@ -1,5 +1,5 @@
 import express, { Request, Response, Router, Express } from 'express';
-import router from './route';
+import * as router from './route';
 import { RequestHandler } from 'express-serve-static-core';
 
 // call express

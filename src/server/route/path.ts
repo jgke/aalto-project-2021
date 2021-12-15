@@ -32,4 +32,4 @@ function path(url: string): IPathRoute {
     return allRoutes[url];
 }
 
-export default path;
+export { path };
