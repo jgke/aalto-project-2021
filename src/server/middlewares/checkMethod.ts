@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { IError } from '../domain/IError';
-import path from '../route/path';
+import { path } from '../route/path';
 
 // Check to see if the requested route has the requested method as well
-export default (
+export const checkMethod = (
     req: Request,
     res: Response,
     next: (param?: unknown) => void
