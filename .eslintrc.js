@@ -1,33 +1,37 @@
 module.exports = {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true,
-    "jest": true,
-  },
-  "plugins": [
-    "@typescript-eslint",
-    "import",
-  ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-  ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly",
-  },
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-  },
-  "rules": {
-    "no-console": "off",
-    "comma-dangle": "off",
-    "react/jsx-filename-extension": "off",
-    "import/prefer-default-export": "off",
-    "import/no-default-export": "warn",
-  },
+    'root': true,
+    'parser': '@typescript-eslint/parser',
+    'env': {
+        'browser': true,
+        'es6': true,
+        'node': true,
+        'jest': true
+    },
+    'plugins': [
+        '@typescript-eslint',
+        'import'
+    ],
+    'extends': [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended'
+    ],
+    'globals': {
+        'Atomics': 'readonly',
+        'SharedArrayBuffer': 'readonly'
+    },
+    'parserOptions': {
+        'ecmaVersion': 2018,
+        'sourceType': 'module',
+    },
+    'rules': {
+        'no-console': 'off',
+        'comma-dangle': 'off',
+        'react/jsx-filename-extension': 'off',
+        'import/prefer-default-export': 'off',
+        'import/no-default-export': 'warn',
+        'no-mixed-spaces-and-tabs': 0,
+        'indent': ['error', 4],
+        'quotes': ['error', 'single']
+
+    }
 };
