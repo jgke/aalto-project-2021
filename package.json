@@ -13,9 +13,14 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.4.0",
         "@typescript-eslint/parser": "^5.5.0",
+        "cypress": "^9.1.0",
         "eslint": "^7.32.0",
+        "eslint-plugin-import": "^2.25.3",
+        "supertest": "^6.1.6",
         "prettier": "2.5.1",
         "typescript": "^4.5.2",
         "use-resize-observer": "^8.0.0"
+    },
+    "dependencies": {
     }
 }

@@ -17,7 +17,7 @@ import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
 //import './App.css';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
@@ -179,6 +179,3 @@ const App: React.FC = () => {
         </div>
     );
 };
-
-//Seems like this needs to be a default export
-export default App;

@@ -9,6 +9,7 @@ module.exports = {
     },
     'plugins': [
         '@typescript-eslint',
+        'import'
     ],
     'extends': [
         'eslint:recommended',
@@ -27,6 +28,7 @@ module.exports = {
         'comma-dangle': 'off',
         'react/jsx-filename-extension': 'off',
         'import/prefer-default-export': 'off',
+        'import/no-default-export': 'warn',
         'no-mixed-spaces-and-tabs': 0,
         'indent': ['error', 4],
         'quotes': ['error', 'single']
