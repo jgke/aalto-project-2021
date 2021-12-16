@@ -6,7 +6,7 @@ describe('Passing Dummy Test', () => {
 
 describe('Test A', () => {
   it('Visit page', () => {
-    cy.visit('http://localhost:3000')
+    cy.visit('')
   })
 })
 
