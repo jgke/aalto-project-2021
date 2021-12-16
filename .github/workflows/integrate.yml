@@ -85,7 +85,7 @@ jobs:
             - name: Run back end tests
               run: npm test
               working-directory: ./src/server
-    back_tests:
+    cypress:
         runs-on: ubuntu-latest
         steps:
             - uses: ravsamhq/notify-slack-action@v1
@@ -103,5 +103,5 @@ jobs:
             - name: Cypress run
               uses: cypress-io/github-action@v2
               with:
-                build: npm run build
-                start: npm start
+                  build: npm run build
+                  start: npm start
