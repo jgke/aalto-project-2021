@@ -100,9 +100,14 @@ jobs:
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - name: Docker compose
+              run: docker-compose up -d
             - name: Cypress run
               uses: cypress-io/github-action@v2
               with:
                   build: npm run build
-                  start: docker-compose up -d && npm start
+                  start: npm start
                   config: baseUrl=http://localhost:8050
