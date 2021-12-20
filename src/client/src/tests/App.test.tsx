@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import React, { ReactElement } from 'react';
+import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
 import App from '../App';
@@ -29,7 +29,7 @@ beforeAll(() => {
         },
       },
     });
-  
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window.SVGElement as any).prototype.getBBox = () => ({x:0, y:0, width: 0, height: 0});
   });
   

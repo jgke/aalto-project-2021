@@ -24,7 +24,7 @@ const renderGraph = (elements: Elements) => {
 }
 
 describe('<Graph>', () => {
-
+    
     beforeAll(() => {
         window.ResizeObserver =
           window.ResizeObserver ||
@@ -46,7 +46,7 @@ describe('<Graph>', () => {
             },
           },
         });
-      
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window.SVGElement as any).prototype.getBBox = () => ({x:0, y:0, width: 0, height: 0});
       });
 
