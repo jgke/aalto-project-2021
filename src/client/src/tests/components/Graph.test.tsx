@@ -78,6 +78,11 @@ describe('<Graph>', () => {
             id: 'e2-3',
             source: '2',
             target: '3'
+        },
+        {
+            id: 'e1-3',
+            source: '1',
+            target: '3'
         }
     ])
 
@@ -106,11 +111,10 @@ describe('<Graph>', () => {
 
     test('displays the right amount of edges', () => {
         const c = testGraph.container.querySelectorAll('.react-flow__edge')
-        expect(c).toHaveLength(2)
+        expect(c).toHaveLength(3)
     })
 
     test('elementsAtTheMoment', () => {
-        console.log('elementsAtTheMoment', elementsAtTheMoment)
-        expect(elementsAtTheMoment).toHaveLength(5)
+        expect(elementsAtTheMoment).toHaveLength(6)
     })
 })
