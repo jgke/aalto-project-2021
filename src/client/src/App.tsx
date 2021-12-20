@@ -49,7 +49,9 @@ export const App: React.FC = () => {
             });
         });
     };
-    useEffect(getElementsHook, []);
+    if(process.env.NODE_ENV !== 'test') {
+        useEffect(getElementsHook, [nodeText]);
+    }
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
