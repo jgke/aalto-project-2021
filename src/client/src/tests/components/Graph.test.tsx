@@ -14,11 +14,11 @@ let elementsAtTheMoment: Elements = []
 const renderGraph = (elements: Elements) => {
     return render(
         <Graph
-            elements={elements} 
-            onLoad={ (reactFlowInstance) => {
+            elements={elements}
+            onLoad={(reactFlowInstance) => {
                 reactFlowInstance.fitView()
                 elementsAtTheMoment = reactFlowInstance.getElements()
-            } }
+            }}
         />
     )
 }
@@ -27,28 +27,28 @@ describe('<Graph>', () => {
 
     beforeAll(() => {
         window.ResizeObserver =
-          window.ResizeObserver ||
-          jest.fn().mockImplementation(() => ({
-            disconnect: jest.fn(),
-            observe: jest.fn(),
-            unobserve: jest.fn(),
-          }));
-      
+            window.ResizeObserver ||
+            jest.fn().mockImplementation(() => ({
+                disconnect: jest.fn(),
+                observe: jest.fn(),
+                unobserve: jest.fn(),
+            }));
+
         Object.defineProperties(window.HTMLElement.prototype, {
-          offsetHeight: {
-            get() {
-              return parseFloat(this.style.height) || 1;
+            offsetHeight: {
+                get() {
+                    return parseFloat(this.style.height) || 1;
+                },
             },
-          },
-          offsetWidth: {
-            get() {
-              return parseFloat(this.style.width) || 1;
+            offsetWidth: {
+                get() {
+                    return parseFloat(this.style.width) || 1;
+                },
             },
-          },
         });
-      
-        (window.SVGElement as any).prototype.getBBox = () => ({x:0, y:0, width: 0, height: 0});
-      });
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window.SVGElement as any).prototype.getBBox = () => ({ x: 0, y: 0, width: 0, height: 0 });
+    });
 
     const testElements = ([
         {
@@ -91,7 +91,7 @@ describe('<Graph>', () => {
     beforeEach(() => {
         testGraph = renderGraph(testElements)
     })
-        
+
 
     test('is visible for users', () => {
         expect(testGraph).toBeVisible
