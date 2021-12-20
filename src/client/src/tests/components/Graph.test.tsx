@@ -114,7 +114,7 @@ describe('<Graph>', () => {
         expect(c).toHaveLength(3)
     })
 
-    test('elementsAtTheMoment', () => {
+    test('has the right amount of elements', () => {
         expect(elementsAtTheMoment).toHaveLength(6)
     })
 })
