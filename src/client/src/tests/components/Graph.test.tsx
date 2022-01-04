@@ -12,7 +12,7 @@ const renderGraph = () => {
     const props: ReactFlowProps & GraphProps = {
         elements: [],
         setElements: () => null,
-        onNodeEdit: () => null
+        onNodeEdit: () => null,
     };
     return render(<Graph {...props} />);
 };
