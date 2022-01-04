@@ -36,7 +36,7 @@ const onNodeDragStop = async (
     }
 };
 
-interface GraphProps {
+export interface GraphProps {
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onNodeEdit: (id: string, data: INode) => void;
 }
