@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent as ReactMouseEvent } from 'react';
 import * as nodeService from '../services/nodeService';
 import { INode } from '../../../../types';
 import ReactFlow, {
@@ -7,7 +7,9 @@ import ReactFlow, {
     Background,
     ReactFlowProps,
     Node,
+    Elements,
 } from 'react-flow-renderer';
+import { NodeEdit } from './NodeEdit';
 
 const graphStyle = {
     height: '100%',
@@ -34,11 +36,40 @@ const onNodeDragStop = async (
     }
 };
 
-export const Graph = (props: ReactFlowProps): JSX.Element => {
+interface GraphProps {
+    setElements: React.Dispatch<React.SetStateAction<Elements>>;
+    onNodeEdit: (id: string, data: INode) => void;
+}
+
+export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
     const elements = props.elements;
+    const setElements = props.setElements;
     const onConnect = props.onConnect;
     const onElementsRemove = props.onElementsRemove;
     const onLoad = props.onLoad;
+
+    const onNodeDoubleClick = (
+        event: ReactMouseEvent<Element, MouseEvent>,
+        node: Node<INode>
+    ) => {
+        if (node.data) {
+            const form = <NodeEdit node={node} onNodeEdit={props.onNodeEdit} />;
+
+            setElements((els) =>
+                els.map((el) => {
+                    if (el.id === node.id) {
+                        el.data = {
+                            ...el.data,
+                            label: form,
+                        };
+                    }
+                    return el;
+                })
+            );
+            console.log(elements);
+        }
+    };
+
     return (
         <div style={graphStyle}>
             <ReactFlow
@@ -50,6 +81,7 @@ export const Graph = (props: ReactFlowProps): JSX.Element => {
                 onEdgeUpdate={props.onEdgeUpdate}
                 onLoad={onLoad}
                 onNodeDragStop={onNodeDragStop}
+                onNodeDoubleClick={onNodeDoubleClick}
             >
                 <Controls />
                 <Background color="#aaa" gap={16} />
