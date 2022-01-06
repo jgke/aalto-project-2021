@@ -21,10 +21,6 @@ export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
-    interface FlowInstance {
-        fitView: () => void;
-    }
-
     /**
      * Fetches the elements from a database
      */
@@ -159,9 +155,6 @@ export const App: React.FC = () => {
         await nodeService.updateNode(data);
     };
 
-    const onLoad = (reactFlowInstance: FlowInstance) =>
-        reactFlowInstance.fitView();
-
     return (
         <div className="App">
             <h2>Tasks</h2>
@@ -184,7 +177,6 @@ export const App: React.FC = () => {
                     setElements={setElements}
                     onConnect={onConnect}
                     onElementsRemove={onElementsRemove}
-                    onLoad={onLoad}
                     onNodeEdit={onNodeEdit}
                     onEdgeUpdate={(o, s) =>
                         console.log('What are these?', o, s)
