@@ -17,6 +17,14 @@ import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
 //import './App.css';
 
+export const basicNode: INode = {
+    status: 'ToDo',
+    label: 'Text',
+    priority: 'Urgent',
+    x: 0,
+    y: 0,
+};
+
 export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);

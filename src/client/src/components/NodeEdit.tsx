@@ -1,10 +1,11 @@
 import React, { FormEvent, useState } from 'react';
 import { Node } from 'react-flow-renderer';
 import { INode } from '../../../../types';
+import { basicNode } from '../App';
 
 interface NodeEditProps {
     node: Node<INode>;
-    onNodeEdit: (id: string, data: any) => void;
+    onNodeEdit: (id: string, data: INode) => void;
 }
 
 export const NodeEdit = (props: NodeEditProps): JSX.Element => {
@@ -14,7 +15,7 @@ export const NodeEdit = (props: NodeEditProps): JSX.Element => {
     );
 
     const handleSubmit = (event: FormEvent) => {
-        const newData = { ...data, ...{ label: nodeName } };
+        const newData = { ...basicNode, ...data, ...{ label: nodeName } };
 
         props.onNodeEdit(props.node.id || '', newData);
         event.preventDefault();

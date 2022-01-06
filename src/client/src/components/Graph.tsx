@@ -103,7 +103,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
 
     // handle what happens on mousepress press
     const handleMousePress = (event: MouseEvent) => {
-        const onEditDone = async (data: any, node: Node) => {
+        const onEditDone = async (data: INode, node: Node) => {
             const n: INode = {
                 status: 'ToDo',
                 label: data.label,
