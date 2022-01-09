@@ -11,15 +11,21 @@ import {
     isEdge,
     FlowElement,
     ArrowHeadType,
+    updateEdge,
 } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
-//import './App.css';
+import { ElementDetail } from './components/ElementDetail';
+import { isNodeData } from './services/nodeService';
+import './App.css';
 
 export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
+    const [selectedData, setSelectedData] = useState<INode | IEdge | null>(
+        null
+    );
 
     interface FlowInstance {
         fitView: () => void;
@@ -43,6 +49,7 @@ export const App: React.FC = () => {
                     target: String(e.target_id),
                     type: 'straight',
                     arrowHeadType: ArrowHeadType.ArrowClosed,
+                    data: e,
                 }));
 
                 setElements(nodeElements.concat(edgeElements));
@@ -75,9 +82,20 @@ export const App: React.FC = () => {
         setNodeText('');
     };
 
-    const onConnect = (params: Edge<IEdge> | Connection) => {
+    const onConnect = async (params: Edge<IEdge> | Connection) => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
+
+            const id = await edgeService.sendEdge({
+                source_id: params.source,
+                target_id: params.target,
+            });
+
+            const edge: IEdge = {
+                source_id: params.source,
+                target_id: params.target,
+                id: id,
+            };
 
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
@@ -85,18 +103,40 @@ export const App: React.FC = () => {
                 source: params.source,
                 target: params.target,
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: edge,
             };
 
             setElements((els) => addEdge(b, els));
-
-            edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-            });
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
             );
+        }
+    };
+
+    const onEdgeUpdate = async (
+        edge: Edge<IEdge>,
+        connection: Connection
+    ): Promise<void> => {
+        if (connection.source && connection.target) {
+            const newEdgeData: IEdge = {
+                id: edge.data?.id,
+                source_id: connection.source,
+                target_id: connection.target,
+            };
+            await edgeService.updateEdge(newEdgeData);
+            setElements((els) =>
+                updateEdge(
+                    { ...edge, ...{ data: newEdgeData } },
+                    connection,
+                    els
+                )
+            );
+
+            // Update detail sidebar if id matches
+            if (selectedData && selectedData.id === edge.data?.id) {
+                setSelectedData(newEdgeData || null);
+            }
         }
     };
 
@@ -128,6 +168,11 @@ export const App: React.FC = () => {
             compareElementsEdgesFirst
         );
         for (const e of sortedElementsToRemove) {
+            // Close detail sidebar if id matches
+            if (selectedData?.id === e.data.id) {
+                setSelectedData(null);
+            }
+
             if (isNode(e)) {
                 try {
                     await nodeService.deleteNode(e);
@@ -136,7 +181,7 @@ export const App: React.FC = () => {
                 }
             } else if (isEdge(e)) {
                 await edgeService
-                    .deleteEdge(e)
+                    .deleteEdge(e.data)
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
                     );
@@ -144,6 +189,15 @@ export const App: React.FC = () => {
         }
 
         setElements((els) => removeElements(elementsToRemove, els));
+    };
+
+    const onElementClick = (event: React.MouseEvent, element: FlowElement) => {
+        console.log(event, element);
+        if (isNodeData(element.data)) {
+            setSelectedData(element.data as INode);
+        } else {
+            setSelectedData(element.data as IEdge);
+        }
     };
 
     const onLoad = (reactFlowInstance: FlowInstance) =>
@@ -171,11 +225,16 @@ export const App: React.FC = () => {
                     onConnect={onConnect}
                     onElementsRemove={onElementsRemove}
                     onLoad={onLoad}
-                    onEdgeUpdate={(o, s) =>
-                        console.log('What are these?', o, s)
-                    }
+                    onElementClick={onElementClick}
+                    onEdgeUpdate={onEdgeUpdate}
                 />
             </div>
+            <ElementDetail
+                data={selectedData}
+                elements={elements}
+                setSelectedData={setSelectedData}
+                onEdgeUpdate={onEdgeUpdate}
+            />
         </div>
     );
 };

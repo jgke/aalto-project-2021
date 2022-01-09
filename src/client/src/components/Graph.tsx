@@ -50,6 +50,7 @@ export const Graph = (props: ReactFlowProps): JSX.Element => {
                 onEdgeUpdate={props.onEdgeUpdate}
                 onLoad={onLoad}
                 onNodeDragStop={onNodeDragStop}
+                onElementClick={props.onElementClick}
             >
                 <Controls />
                 <Background color="#aaa" gap={16} />

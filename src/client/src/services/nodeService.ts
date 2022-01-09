@@ -1,7 +1,12 @@
 import axios from 'axios';
-import { INode } from '../../../../types';
+import { IEdge, INode } from '../../../../types';
 import { Node } from 'react-flow-renderer';
 export const baseUrl = '/api/node';
+
+const isNodeData = (element: INode | IEdge | null): boolean => {
+    const node = element as INode;
+    return !!(node && node.label && node.priority && node.status);
+};
 
 // Should be possible to give "getAll" a return type
 const getAll = async (): Promise<INode[]> => {
@@ -28,4 +33,4 @@ const updateNode = async (node: INode): Promise<void> => {
     return response.data;
 };
 
-export { getAll, sendNode, deleteNode, updateNode };
+export { getAll, sendNode, deleteNode, updateNode, isNodeData };

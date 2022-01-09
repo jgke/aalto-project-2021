@@ -122,30 +122,27 @@ describe('DELETE request', () => {
             target_id: ids[1],
         };
 
-        await api.post(baseUrl).send(e).expect(200);
+        const result = await api.post(baseUrl).send(e).expect(200);
+
+        e.id = result.body[0];
 
         let res = await api.get(baseUrl).expect(200);
         expect(res.body).toHaveLength(1);
 
-        await api
-            .delete(
-                `${baseUrl}/${res.body[0].source_id}/${res.body[0].target_id}`
-            )
-            .expect(200);
+        await api.delete(`${baseUrl}/${res.body[0].id}`).expect(200);
 
         res = await api.get(baseUrl).expect(200);
 
         expect(res.body).toHaveLength(0);
     });
 
-    test('should not crash the app if the edge to be deleted does not exist', async () => {
+    test('should not crash the app if the id does not exist', async () => {
         const e: IEdge = {
+            id: '-1',
             source_id: '-1',
             target_id: '-1',
         };
-        await api
-            .delete(`${baseUrl}/${e.source_id}/${e.target_id}`)
-            .expect(200);
+        await api.delete(`${baseUrl}/${e.id}`).expect(200);
     });
 });
 

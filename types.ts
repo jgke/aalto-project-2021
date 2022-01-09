@@ -7,12 +7,13 @@ export interface INode {
     label: string;
     status: Status;
     priority: string;
-    id?: string; //Could there be a more specific ID than just number?
+    id?: string;
     x: number;
     y: number;
 }
 
 export interface IEdge {
+    id?: string;
     source_id: string;
     target_id: string;
 }

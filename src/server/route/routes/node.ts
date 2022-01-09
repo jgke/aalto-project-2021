@@ -39,9 +39,6 @@ router
             [n.x, n.y, n.id]
         );
         res.status(200).json(q);
-    })
-    .delete(async (req: Request, res: Response) => {
-        res.status(404).json({ message: 'Not implemented' });
     });
 
 export { router as node };
