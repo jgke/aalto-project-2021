@@ -16,3 +16,21 @@ export interface IEdge {
     source_id: string;
     target_id: string;
 }
+
+export interface Registration {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export interface Login {
+    email: string;
+    password: string;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
+}
