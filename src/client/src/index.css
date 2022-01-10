@@ -35,12 +35,11 @@ body,
 #root > div,
 .graph {
     height: 100%;
-    isolation: isolate;
+    width: 100%
 }
 
 #root > div {
     display: flex;
-    flex-direction: column;
 }
 
 body {

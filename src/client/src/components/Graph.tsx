@@ -20,7 +20,6 @@ import { NodeEdit } from './NodeEdit';
 const graphStyle = {
     height: '100%',
     width: 'auto',
-    border: '5px solid gray',
     margin: 'auto',
     backgroundColor: '#eeefff',
     backgroundImage:

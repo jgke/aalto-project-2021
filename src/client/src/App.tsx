@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
+import { Toolbar } from './components/Toolbar';
 import {
     Elements,
     addEdge,
@@ -15,7 +16,7 @@ import {
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
-//import './App.css';
+import './App.css';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -26,7 +27,6 @@ export const basicNode: INode = {
 };
 
 export const App: React.FC = () => {
-    const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
     /**
@@ -66,7 +66,7 @@ export const App: React.FC = () => {
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
-    const createNode = async (): Promise<void> => {
+    const createNode = async (nodeText: string): Promise<void> => {
         const n: INode = {
             status: 'ToDo',
             label: nodeText,
@@ -84,7 +84,6 @@ export const App: React.FC = () => {
             };
             setElements(elements.concat(b));
         }
-        setNodeText('');
     };
 
     const onConnect = (params: Edge<IEdge> | Connection) => {
@@ -173,20 +172,6 @@ export const App: React.FC = () => {
 
     return (
         <div className="App">
-            <h2>Tasks</h2>
-            <div>
-                <h3>Add task</h3>
-                <div>
-                    Text:{' '}
-                    <input
-                        id="nodetext"
-                        type="text"
-                        value={nodeText}
-                        onChange={({ target }) => setNodeText(target.value)}
-                    />
-                    <button onClick={createNode}>Add</button>
-                </div>
-            </div>
             <div className="graph">
                 <Graph
                     elements={elements}
@@ -198,6 +183,9 @@ export const App: React.FC = () => {
                         console.log('What are these?', o, s)
                     }
                 />
+            </div>
+            <div className="toolbar">
+                <Toolbar createNode={createNode}/>
             </div>
         </div>
     );
