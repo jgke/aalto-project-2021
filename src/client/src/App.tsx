@@ -151,6 +151,38 @@ export const App: React.FC = () => {
 
     return (
         <div className="App">
+            <form>
+                <div className="container">
+                    <h1>Register</h1>
+                    
+                    <label htmlFor="email"><b>Email</b></label>
+                    <input 
+                        type="text" 
+                        placeholder="Enter Email" 
+                        name="email"
+                        id="email"
+                        required
+                    />
+                    <label htmlFor="psw"><b>Password</b></label>
+                    <input
+                        type="password"
+                        placeholder="Enter Password"
+                        name="psw"
+                        id="psw"
+                        required
+                    />
+                    <label htmlFor="psw-repeat"><b>Repeat Password</b></label>
+                    <input
+                        type="password"
+                        placeholder="Repeat Password"
+                        name="psw-repeat"
+                        id="psw-repeat"
+                        required
+                    />
+                    
+                    <button type="submit" className="registerbutton">Register</button>
+                </div>
+            </form>
             <h2>Tasks</h2>
             <div>
                 <h3>Add task</h3>
