@@ -30,10 +30,11 @@ describe('test add node', () => {
     // remove pre-existing nodes with the test name
     cy.get("body").then(($body) => {
       $body.find(`.react-flow__node-default:contains(${node_name_1})`).each((index, $div, $list) => {
-        cy.wrap($div).click('topLeft', { force: true })
-        cy.wrap($div).should('have.class', 'selected')
-        cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-          .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
+        cy.removeNodeDiv(index, $div, $list);
+        //cy.wrap($div).click('topLeft', { force: true })
+        //cy.wrap($div).should('have.class', 'selected')
+        //cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
+        //  .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
       })
       $body.find(`.react-flow__node-default:contains(${node_name_2})`).each((index, $div, $list) => {
         cy.wrap($div).click('topLeft', { force: true })
