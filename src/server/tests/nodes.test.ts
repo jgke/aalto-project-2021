@@ -165,6 +165,36 @@ describe('PUT request', () => {
     });
 });
 
+describe('Database', () => {
+    test('should be safe from SQL injections', async() => {
+
+        let node: INode = {
+            label: 'Lets\' hack!',
+            // eslint-disable-next-line quotes
+            priority: "Urgent); DROP TABLE nodes; --",
+            status: 'Doing',
+            x: 0,
+            y: 0
+        }
+
+        await api.post('/api/node').send(node).expect(200)
+        let q = await db.query('SELECT * FROM node WHERE priority=$1', [node.priority])
+        expect(q.rowCount).toBeGreaterThan(0)
+
+        node = {
+            ...node,
+            // eslint-disable-next-line quotes
+            label: "Try hacking); DROP TABLE nodes; --",
+            priority: 'Urgent'
+        }
+
+        await api.post('/api/node').send(node).expect(200)
+        q = await db.query('SELECT * FROM node WHERE  label=$1', [node.label])
+        expect(q.rowCount).toBeGreaterThan(0)
+
+    })
+})
+
 afterAll(async () => {
     // Below are tries to make the weird jest warning go away.
     //MIght become useful
