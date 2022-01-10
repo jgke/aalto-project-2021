@@ -17,7 +17,7 @@ import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
 //import './App.css';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
@@ -129,9 +129,11 @@ const App: React.FC = () => {
         );
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
-                await nodeService
-                    .deleteNode(e)
-                    .catch((e: Error) => console.log('Error deleting Node', e));
+                try {
+                    await nodeService.deleteNode(e);
+                } catch (e) {
+                    console.log('Error in node deletion', e);
+                }
             } else if (isEdge(e)) {
                 await edgeService
                     .deleteEdge(e)
@@ -177,6 +179,3 @@ const App: React.FC = () => {
         </div>
     );
 };
-
-//Seems like this needs to be a default export
-export default App;
