@@ -182,11 +182,10 @@ export const App: React.FC = () => {
                     onEdgeUpdate={(o, s) =>
                         console.log('What are these?', o, s)
                     }
+                    className="graph"
                 />
             </div>
-            <div className="toolbar">
-                <Toolbar createNode={createNode}/>
-            </div>
+            <Toolbar createNode={createNode}/>
         </div>
     );
 };

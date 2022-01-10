@@ -1,4 +1,4 @@
-import React, { PropsWithoutRef, useState } from 'react';
+import React, { useState } from 'react';
 import { ToolbarProps } from '../../../../types';
 
 
@@ -13,19 +13,18 @@ export const Toolbar = (props: ToolbarProps) => {
         setNodeText('')
         return createNode(nodeText)
     }
+    
+    /* The following input field will be removed or re-positioned at some point */
     return(
-        <div>
-            <h3>Add task</h3>
-            <div>
-                Text:{' '}
-                <input
-                    id="nodetext"
-                    type="text"
-                    value={nodeText}
-                    onChange={({ target }) => setNodeText(target.value)}
-                />
-                <button id="button-toolbar" onClick={() => sendCreateNode(nodeText)}>Create</button>
-            </div>
+        <div className="toolbar">
+            <input
+                id="nodetext"
+                type="text"
+                placeholder='Text'
+                value={nodeText}
+                onChange={({ target }) => setNodeText(target.value)}
+            />
+            <button id="button-toolbar" onClick={() => sendCreateNode(nodeText)}>Create</button>
         </div>
     )
 }
