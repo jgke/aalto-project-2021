@@ -1,12 +1,14 @@
 .App {
     background-color: #34303a;
+    justify-content: right;
 }
 .toolbar {
     display: flex;
     flex-direction: column;
     align-self: center;
     align-items: center;
-    position: relative;
+    position: absolute;
+    z-index: 4
 }
 
 #button-toolbar {
