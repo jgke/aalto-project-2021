@@ -185,7 +185,7 @@ export const App: React.FC = () => {
                     className="graph"
                 />
             </div>
-            <Toolbar createNode={createNode}/>
+            <Toolbar createNode={createNode} />
         </div>
     );
 };
