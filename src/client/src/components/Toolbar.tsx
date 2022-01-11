@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ToolbarProps } from '../../../../types';
 
-export const Toolbar = (props: ToolbarProps) => {
+export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
     const createNode = props.createNode;
 
