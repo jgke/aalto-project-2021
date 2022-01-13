@@ -14,5 +14,12 @@ CREATE TABLE edge (
   target_id INTEGER REFERENCES node(id)
 );
 
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username TEXT NOT NULL,
+  password TEXT NOT NULL,
+  email TEXT
+);
+
 ALTER TABLE edge
 ADD CONSTRAINT PK_edge PRIMARY KEY (source_id, target_id);
