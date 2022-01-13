@@ -16,3 +16,8 @@ export interface IEdge {
     source_id: string;
     target_id: string;
 }
+
+export interface IProject {
+    id: string;
+    name: string;
+}

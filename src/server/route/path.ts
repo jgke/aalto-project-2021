@@ -17,6 +17,12 @@ function path(url: string): IPathRoute {
         '/edge/:source/:target': {
             methods: ['DELETE'],
         },
+        '/project': {
+            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+        },
+        '/project/:id': {
+            methods: ['DELETE'],
+        },
     };
     if (url.includes('/edge/')) {
         console.log('Returning weird edge url');
