@@ -14,6 +14,14 @@ const loginForm: React.FC = () => {
             email: email,
             password: password
         }
+
+        if (!email.includes('@')) {
+            setErr('Incorrect email address')
+            setTimeout(() => {
+                setErr('')
+            }, 5000)
+            return;
+        }
     }
 
     return (
