@@ -18,12 +18,19 @@ export interface IEdge {
 }
 
 export interface Registration {
-    username: string,
-    password: string,
-    email: string
+    username: string;
+    password: string;
+    email: string;
 }
 
 export interface Login {
-    email: string,
-    password: string
+    email: string;
+    password: string;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
 }

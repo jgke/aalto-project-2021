@@ -18,8 +18,11 @@ function path(url: string): IPathRoute {
             methods: ['DELETE'],
         },
         '/user/register': {
-            methods:['POST']
-        }
+            methods: ['POST'],
+        },
+        '/user/login': {
+            methods: ['POST'],
+        },
     };
     if (url.includes('/edge/')) {
         return allRoutes['/edge/:source/:target'];

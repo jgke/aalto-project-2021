@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
 
 // Check to see if the requested route has the requested method as well
-export const errorHandler = (
+export const errorHandler = async (
     req: Request,
     res: Response,
     next: (param?: unknown) => void
-): void => {
+): Promise<void> => {
     try {
-        console.log('I am middleware')
-        next()
+        await next();
     } catch (e) {
-        console.log('Error from middleware!!')
-        console.log(e)
+        console.log('Error from middleware!!');
+        console.log(e);
     }
 };

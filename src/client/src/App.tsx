@@ -153,7 +153,7 @@ export const App: React.FC = () => {
     return (
         <div className="App">
             <div className="registartion">
-                <RegistrationForm/>
+                <RegistrationForm />
             </div>
             <h2>Tasks</h2>
             <div>

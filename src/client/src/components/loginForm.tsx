@@ -1,28 +1,21 @@
-import React, { useState } from 'react'
-import { Login } from '../../../../types'
+import React, { useState } from 'react';
 
 const loginForm: React.FC = () => {
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [errMessage, setErr] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errMessage, setErr] = useState('');
 
     const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault()
-
-        const user: Login = {
-            email: email,
-            password: password
-        }
+        event.preventDefault();
 
         if (!email.includes('@')) {
-            setErr('Incorrect email address')
+            setErr('Incorrect email address');
             setTimeout(() => {
-                setErr('')
-            }, 5000)
+                setErr('');
+            }, 5000);
             return;
         }
-    }
+    };
 
     return (
         <div>
@@ -30,7 +23,9 @@ const loginForm: React.FC = () => {
                 <h1>Login</h1>
                 <p>{errMessage.length > 0 ? errMessage : null}</p>
                 <div>
-                    <label htmlFor="email"><b>Email</b></label>
+                    <label htmlFor="email">
+                        <b>Email</b>
+                    </label>
                     <input
                         type="text"
                         placeholder="Enter Email"
@@ -42,7 +37,9 @@ const loginForm: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="psw"><b>Password</b></label>
+                    <label htmlFor="psw">
+                        <b>Password</b>
+                    </label>
                     <input
                         type="password"
                         placeholder="Enter Password"
@@ -53,10 +50,12 @@ const loginForm: React.FC = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="loginbutton">Login</button>
-
+                <button type="submit" className="loginbutton">
+                    Login
+                </button>
             </form>
         </div>
     );
+};
 
-}
+export { loginForm };
