@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Login } from '../../../../types'
 import { loginUser } from '../services/userService'
 
-const loginForm: React.FC = () => {
+export const LoginForm: React.FC = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
