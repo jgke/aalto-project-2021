@@ -28,7 +28,12 @@ beforeAll(() => {
         },
     });
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window.SVGElement as any).prototype.getBBox = () => ({ x: 0, y: 0, width: 0, height: 0 });
+    (window.SVGElement as any).prototype.getBBox = () => ({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    });
 });
 
 test('Renders with default props', () => {

@@ -49,7 +49,7 @@ export const App: React.FC = () => {
             });
         });
     };
-    if(process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== 'test') {
         useEffect(getElementsHook, [nodeText]);
     }
 

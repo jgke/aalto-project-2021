@@ -9,22 +9,21 @@ import { RenderResult } from '@testing-library/react';
 import { Graph } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
 
-let elementsAtTheMoment: Elements = []
+let elementsAtTheMoment: Elements = [];
 
 const renderGraph = (elements: Elements) => {
     return render(
         <Graph
             elements={elements}
             onLoad={(reactFlowInstance) => {
-                reactFlowInstance.fitView()
-                elementsAtTheMoment = reactFlowInstance.getElements()
+                reactFlowInstance.fitView();
+                elementsAtTheMoment = reactFlowInstance.getElements();
             }}
         />
-    )
-}
+    );
+};
 
 describe('<Graph>', () => {
-
     beforeAll(() => {
         window.ResizeObserver =
             window.ResizeObserver ||
@@ -47,10 +46,15 @@ describe('<Graph>', () => {
             },
         });
         //eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window.SVGElement as any).prototype.getBBox = () => ({ x: 0, y: 0, width: 0, height: 0 });
+        (window.SVGElement as any).prototype.getBBox = () => ({
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+        });
     });
 
-    const testElements = ([
+    const testElements = [
         {
             id: '1',
             type: 'input',
@@ -72,49 +76,48 @@ describe('<Graph>', () => {
         {
             id: 'e1-2',
             source: '1',
-            target: '2'
+            target: '2',
         },
         {
             id: 'e2-3',
             source: '2',
-            target: '3'
+            target: '3',
         },
         {
             id: 'e1-3',
             source: '1',
-            target: '3'
-        }
-    ])
+            target: '3',
+        },
+    ];
 
-    let testGraph: RenderResult
+    let testGraph: RenderResult;
 
     beforeEach(() => {
-        testGraph = renderGraph(testElements)
-    })
-
+        testGraph = renderGraph(testElements);
+    });
 
     test('is visible for users', () => {
-        expect(testGraph).toBeVisible
-    })
+        expect(testGraph).toBeVisible;
+    });
 
     test('displays nodes', () => {
-        const c = testGraph.container.querySelector('.react-flow')
-        expect(c).toHaveTextContent('Input node')
-        expect(c).toHaveTextContent('Output node')
-        expect(c).toHaveTextContent('Default node')
-    })
+        const c = testGraph.container.querySelector('.react-flow');
+        expect(c).toHaveTextContent('Input node');
+        expect(c).toHaveTextContent('Output node');
+        expect(c).toHaveTextContent('Default node');
+    });
 
     test('displays the right amount of nodes', () => {
-        const c = testGraph.container.querySelectorAll('.react-flow__node')
-        expect(c).toHaveLength(3)
-    })
+        const c = testGraph.container.querySelectorAll('.react-flow__node');
+        expect(c).toHaveLength(3);
+    });
 
     test('displays the right amount of edges', () => {
-        const c = testGraph.container.querySelectorAll('.react-flow__edge')
-        expect(c).toHaveLength(3)
-    })
+        const c = testGraph.container.querySelectorAll('.react-flow__edge');
+        expect(c).toHaveLength(3);
+    });
 
     test('has the right amount of elements', () => {
-        expect(elementsAtTheMoment).toHaveLength(6)
-    })
-})
+        expect(elementsAtTheMoment).toHaveLength(6);
+    });
+});
