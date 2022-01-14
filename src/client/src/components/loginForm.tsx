@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Login } from '../../../../types'
+import { loginUser } from '../services/userService'
 
 const loginForm: React.FC = () => {
 
@@ -10,11 +11,6 @@ const loginForm: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
 
-        const user: Login = {
-            email: email,
-            password: password
-        }
-
         if (!email.includes('@')) {
             setErr('Incorrect email address')
             setTimeout(() => {
@@ -22,6 +18,17 @@ const loginForm: React.FC = () => {
             }, 5000)
             return;
         }
+
+        const user: Login = {
+            email: email,
+            password: password
+        }
+
+
+        const res = await loginUser(user)
+        console.log('Res?', res)
+        setEmail('')
+        setPassword('')
     }
 
     return (
