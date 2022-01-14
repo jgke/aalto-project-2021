@@ -1,7 +1,7 @@
 import { router } from '../router';
 import { Request, Response } from 'express';
 import { db } from '../../dbConfigs';
-import { Registration } from '../../../../types'
+import { Registration, Login } from '../../../../types'
 import bcrypt from 'bcrypt'
 
 router
@@ -34,5 +34,37 @@ router
             res.status(404).json();
         }
     });
+router
+     .route('/user/login')
+     .post(async (req: Request, res: Response) => {
+        try {
+            const user: Login = req.body
+
+            if (!user || !user.email || !user.password) {
+                res.status(403).json({ message: 'Missing parameters' })
+                return;
+            }
+        
+            const q = await db.query('SELECT password FROM users WHERE username=$1', [user.email])
+            if (q.rowCount == 0) {
+                res.status(403).json({ message: `The user ${user.email} does not exist` })
+            } else {
+                if (bcrypt.compareSync(user.password, q.toString())) {
+                    // password check, authentication stuff here?
+                    res.status(200).json({message: `Logged in as ${user.email}`});
+                } else {
+                    res.status(403).json({ message: `Incorrect password`})
+                }
+            }
+        
+        
+
+         
+            
+        } catch (e) {
+            console.log(e)
+            res.status(404).json();
+        }
+     })
 
 export { router as user }
