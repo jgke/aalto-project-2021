@@ -1,6 +1,6 @@
-import router from '../router';
+import { router } from '../router';
 import { Request, Response } from 'express';
-import { IEdge } from '../../domain/IEdge';
+import { IEdge } from '../../../../types';
 import { db } from '../../dbConfigs';
 
 router
@@ -50,4 +50,4 @@ router
         res.status(501).json({ message: 'Not implemented' });
     });
 
-export default router;
+export { router as edge };

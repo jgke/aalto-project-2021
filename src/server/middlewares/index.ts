@@ -1,7 +1,4 @@
-import logger from './logger';
-import checkMethod from './checkMethod';
+import { logger } from './logger';
+import { checkMethod } from './checkMethod';
 // The order of middlewares matter
-export default {
-    checkMethod,
-    logger,
-};
+export { checkMethod, logger };

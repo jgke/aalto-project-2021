@@ -85,3 +85,29 @@ jobs:
             - name: Run back end tests
               run: npm test
               working-directory: ./src/server
+    cypress:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: ravsamhq/notify-slack-action@v1
+              if: always()
+              with:
+                  status: ${{ job.status }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  notification_title: '{workflow} has {status_message}'
+                  message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
+                  footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
+                  notify_when: 'failure'
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - uses: actions/checkout@v2
+            - uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - name: Docker compose
+              run: docker-compose up -d
+            - name: Cypress run
+              uses: cypress-io/github-action@v2
+              with:
+                  build: npm run build
+                  start: npm start
+                  config: baseUrl=http://localhost:8050
