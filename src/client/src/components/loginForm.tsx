@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { Login } from '../../../../types';
+import { loginUser } from '../services/userService';
 
-const loginForm: React.FC = () => {
+export const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errMessage, setErr] = useState('');
@@ -15,6 +17,16 @@ const loginForm: React.FC = () => {
             }, 5000);
             return;
         }
+
+        const user: Login = {
+            email: email,
+            password: password,
+        };
+
+        const res = await loginUser(user);
+        console.log('Res?', res);
+        setEmail('');
+        setPassword('');
     };
 
     return (
@@ -57,5 +69,3 @@ const loginForm: React.FC = () => {
         </div>
     );
 };
-
-export { loginForm };

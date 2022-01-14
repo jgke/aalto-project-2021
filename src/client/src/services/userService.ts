@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Registration } from '../../../../types';
+import { Login, Registration } from '../../../../types';
 
 const baseUrl = '/api/user';
 
@@ -8,4 +8,9 @@ const createUser = async (user: Registration): Promise<Registration> => {
     return response.data;
 };
 
-export { createUser };
+const loginUser = async (user: Login): Promise<Login> => {
+    const response = await axios.post(`${baseUrl}/login`, user);
+    return response.data;
+};
+
+export { createUser, loginUser };
