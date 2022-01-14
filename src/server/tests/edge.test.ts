@@ -1,7 +1,6 @@
 import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
 import { db } from '../dbConfigs';
-import { IEdge } from '../domain/IEdge';
-import { INode } from '../domain/INode';
+import { IEdge, INode } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 
@@ -10,14 +9,14 @@ const baseUrl = '/api/edge';
 const api = supertest(app);
 
 //This holds the possible dummy node's ID's
-let ids: number[] = [];
+let ids: string[] = [];
 
 //Helper functions for the tests
 const addDummyNodes = async (): Promise<void> => {
     ids = [];
 
     const n1: INode = {
-        description: 'First-node',
+        label: 'First-node',
         priority: 'Very Urgent',
         status: 'Doing',
         x: 0,
@@ -25,7 +24,7 @@ const addDummyNodes = async (): Promise<void> => {
     };
 
     const n2: INode = {
-        description: 'Second-node',
+        label: 'Second-node',
         priority: 'Urgent',
         status: 'ToDo',
         x: 1,
@@ -34,13 +33,13 @@ const addDummyNodes = async (): Promise<void> => {
 
     ids = [];
     let r = await db.query(
-        'INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [n1.description, n1.priority, n1.status, n1.x, n1.y]
+        'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [n1.label, n1.priority, n1.status, n1.x, n1.y]
     );
     ids.push(r.rows[0].id);
     r = await db.query(
-        'INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [n2.description, n2.priority, n2.status, n2.x, n2.y]
+        'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [n2.label, n2.priority, n2.status, n2.x, n2.y]
     );
     ids.push(r.rows[0].id);
 };
@@ -141,8 +140,8 @@ describe('DELETE request', () => {
 
     test('should not crash the app if the edge to be deleted does not exist', async () => {
         const e: IEdge = {
-            source_id: -1,
-            target_id: -1,
+            source_id: '-1',
+            target_id: '-1',
         };
         await api
             .delete(`${baseUrl}/${e.source_id}/${e.target_id}`)

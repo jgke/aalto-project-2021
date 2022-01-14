@@ -36,3 +36,11 @@ Postgres:
 # Go inside the directory
 docker-compose up -d
 ```
+
+Cypress:
+
+```bash
+
+# Start Cypress
+npx cypress open
+```

@@ -1,12 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent } from '@testing-library/react';
-import App from '../App';
-import createNode from '../App';
+import { App } from '../App';
 
 beforeAll(() => {
     window.ResizeObserver =
@@ -57,7 +55,7 @@ test('Button click calls a function', () => {
     const button = getByText('Add');
     fireEvent.click(button);
 
-    expect(createNode).toBeCalled;
+    expect(App).toBeCalled;
 });
 
 test('The initial textbox should be empty', () => {

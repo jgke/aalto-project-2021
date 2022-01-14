@@ -5,17 +5,19 @@ import {
     addEdge,
     removeElements,
     Edge,
+    Node,
     Connection,
     isNode,
     isEdge,
     FlowElement,
+    ArrowHeadType,
 } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
-import * as t from './types';
-import './App.css';
+import { INode, IEdge } from '../../../types';
+//import './App.css';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
@@ -27,19 +29,20 @@ const App: React.FC = () => {
      * Fetches the elements from a database
      */
     const getElementsHook = (): void => {
-        // console.log("hook")
         nodeService.getAll().then((nodes) => {
             edgeService.getAll().then((edges) => {
                 const nodeElements: Elements = nodes.map((n) => ({
                     id: String(n.id),
-                    data: { label: n.description },
+                    data: n,
                     position: { x: n.x, y: n.y },
                 }));
-
+                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
                 const edgeElements: Elements = edges.map((e) => ({
                     id: String(e.source_id) + '-' + String(e.target_id),
                     source: String(e.source_id),
                     target: String(e.target_id),
+                    type: 'straight',
+                    arrowHeadType: ArrowHeadType.ArrowClosed,
                 }));
 
                 setElements(nodeElements.concat(edgeElements));
@@ -53,55 +56,40 @@ const App: React.FC = () => {
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
-    const createNode = (): void => {
-        const n: t.INode = {
+    const createNode = async (): Promise<void> => {
+        const n: INode = {
             status: 'ToDo',
-            description: nodeText,
+            label: nodeText,
             priority: 'Urgent',
             x: 5 + elements.length * 10,
             y: 5 + elements.length * 10,
         };
-
-        nodeService
-            .sendNode(n)
-            .then((returnId) => {
-                if (returnId) {
-                    console.log('Returned id:', returnId);
-                    console.log('Adding node:', {
-                        id: returnId,
-                        data: { label: nodeText },
-                        position: {
-                            x: 5 + elements.length * 10,
-                            y: 5 + elements.length * 10,
-                        },
-                    });
-                    setElements(
-                        elements.concat({
-                            id: returnId,
-                            data: { label: nodeText },
-                            position: {
-                                x: 5 + elements.length * 10,
-                                y: 5 + elements.length * 10,
-                            },
-                        })
-                    );
-                } else {
-                    console.log('No returnId returned');
-                }
-            })
-            .catch((e: Error) => {
-                console.log('Failed to add node in backend: ');
-                console.log(e);
-            });
-
+        const returnId: string | undefined = await nodeService.sendNode(n);
+        if (returnId) {
+            n.id = String(returnId);
+            const b: Node<INode> = {
+                id: String(returnId),
+                data: n,
+                position: { x: n.x, y: n.y },
+            };
+            setElements(elements.concat(b));
+        }
         setNodeText('');
     };
 
-    //Type for the edge does not need to be specified (interface Edge<T = any>)
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const onConnect = (params: Edge<any> | Connection) => {
+    const onConnect = (params: Edge<IEdge> | Connection) => {
         if (params.source && params.target) {
-            setElements((els) => addEdge(params, els));
+            //This does not mean params is an edge but rather a Connection
+
+            const b: Edge<IEdge> = {
+                id: String(params.source) + '-' + String(params.target),
+                type: 'straight',
+                source: params.source,
+                target: params.target,
+                arrowHeadType: ArrowHeadType.ArrowClosed,
+            };
+
+            setElements((els) => addEdge(b, els));
 
             edgeService.sendEdge({
                 source_id: params.source,
@@ -143,7 +131,11 @@ const App: React.FC = () => {
         );
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
-                await nodeService.deleteNode(e);
+                try {
+                    await nodeService.deleteNode(e);
+                } catch (e) {
+                    console.log('Error in node deletion', e);
+                }
             } else if (isEdge(e)) {
                 await edgeService
                     .deleteEdge(e)
@@ -189,5 +181,3 @@ const App: React.FC = () => {
         </div>
     );
 };
-
-export default App;

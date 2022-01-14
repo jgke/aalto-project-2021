@@ -1,6 +1,6 @@
-import router from '../router';
+import { router } from '../router';
 import { Request, Response } from 'express';
-import { INode } from '../../domain/INode';
+import { INode } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
 
@@ -18,11 +18,12 @@ router
         res.json(q.rows);
     })
     .post(async (req: Request, res: Response) => {
+        console.log('Receiving node...');
         const text: INode = req.body; //Might have to parse this
         try {
             const q = await db.query(
-                'INSERT INTO node (description, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                [text.description, text.status, text.priority, text.x, text.y]
+                'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+                [text.label, text.status, text.priority, text.x, text.y]
             );
             res.status(200).json(q);
         } catch (e) {
@@ -30,23 +31,17 @@ router
             res.status(403).json();
         }
     })
-    .put((req: Request, res: Response) => {
-        res.status(404).json({ message: 'Not implemented' });
-        // const {id, text}: {id: string, text: string} = req.body;
-        // Test.updateOne({_id: id}, {text}, {}, (err, test) => {
-        //     if (err){
-        //         const error: IError ={
-        //             status: 500,
-        //             message: "It can't be updated at this moment!"
-        //         }
-        //         console.error(err);
-        //         res.status(error.status).json(error);
-        //     }
-        //     else res.status(200).json({_id: id, text, ...test});
-        // })
+    .put(async (req: Request, res: Response) => {
+        const n: INode = req.body;
+        console.log('Updating node...', n);
+        const q = await db.query(
+            'UPDATE node SET x = $1, y = $2 WHERE id = $3',
+            [n.x, n.y, n.id]
+        );
+        res.status(200).json(q);
     })
     .delete(async (req: Request, res: Response) => {
         res.status(404).json({ message: 'Not implemented' });
     });
 
-export default router;
+export { router as node };
