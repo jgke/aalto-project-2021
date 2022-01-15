@@ -18,6 +18,6 @@ export interface IEdge {
 }
 
 export interface IProject {
-    id: string;
+    id?: string;
     name: string;
 }
