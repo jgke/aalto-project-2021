@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Registration } from '../../../../types';
 import { createUser } from '../services/userService';
+import '../Form.css'
 
 export const RegistrationForm: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -35,13 +36,12 @@ export const RegistrationForm: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className="form-box-reg">
             <form onSubmit={handleSubmit}>
                 <h1>Register</h1>
                 <p>{errMessage.length > 0 ? errMessage : null}</p>
                 <div>
                     <label htmlFor="email">
-                        <b>Email</b>
                     </label>
                     <input
                         type="text"
@@ -55,7 +55,6 @@ export const RegistrationForm: React.FC = () => {
                 </div>
                 <div>
                     <label htmlFor="username">
-                        <b>Username</b>
                     </label>
                     <input
                         type="text"
@@ -68,7 +67,6 @@ export const RegistrationForm: React.FC = () => {
                 </div>
                 <div>
                     <label htmlFor="psw">
-                        <b>Password</b>
                     </label>
                     <input
                         type="password"
@@ -82,7 +80,6 @@ export const RegistrationForm: React.FC = () => {
                 </div>
                 <div>
                     <label htmlFor="psw-repeat">
-                        <b>Repeat Password</b>
                     </label>
                     <input
                         type="password"

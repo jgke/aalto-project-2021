@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Login } from '../../../../types';
 import { loginUser } from '../services/userService';
+import '../Form.css'
 
 export const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -30,13 +31,12 @@ export const LoginForm: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className="form-box-login">
             <form onSubmit={handleSubmit}>
                 <h1>Login</h1>
                 <p>{errMessage.length > 0 ? errMessage : null}</p>
-                <div>
+                <div className="LoginForm">
                     <label htmlFor="email">
-                        <b>Email</b>
                     </label>
                     <input
                         type="text"
@@ -50,7 +50,6 @@ export const LoginForm: React.FC = () => {
                 </div>
                 <div>
                     <label htmlFor="psw">
-                        <b>Password</b>
                     </label>
                     <input
                         type="password"
