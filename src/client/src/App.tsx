@@ -146,6 +146,19 @@ export const App: React.FC = () => {
         setElements((els) => removeElements(elementsToRemove, els));
     };
 
+    const onNodeEdit = async (id: string, data: INode) => {
+        setElements((els) =>
+            els.map((el) => {
+                if (el.id === id) {
+                    el.data = data;
+                }
+                return el;
+            })
+        );
+
+        await nodeService.updateNode(data);
+    };
+
     const onLoad = (reactFlowInstance: FlowInstance) =>
         reactFlowInstance.fitView();
 
@@ -168,9 +181,11 @@ export const App: React.FC = () => {
             <div className="graph">
                 <Graph
                     elements={elements}
+                    setElements={setElements}
                     onConnect={onConnect}
                     onElementsRemove={onElementsRemove}
                     onLoad={onLoad}
+                    onNodeEdit={onNodeEdit}
                     onEdgeUpdate={(o, s) =>
                         console.log('What are these?', o, s)
                     }
