@@ -22,13 +22,16 @@
 //
 //
 // -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
-const cypress = require("cypress");
+// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })W
 
 Cypress.Commands.add('removeNodeDiv', (index, $div, $list) => {
-    cy.wrap($div).click('topLeft', { force: true })
-    cy.wrap($div).should('have.class', 'selected')
+    cy.wrap($div).click('topLeft', { force: true });
+    cy.wrap($div).should('have.class', 'selected');
     cy.get('body').trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-      .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 })
+      .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 });
+});
+
+Cypress.Commands.add('insertNode', (nodeName) => {
+    cy.get('input#nodetext').type(nodeName);
+    cy.get('input#nodetext').parent().contains('Add').click();
 });
