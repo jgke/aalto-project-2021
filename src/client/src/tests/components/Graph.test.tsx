@@ -19,6 +19,8 @@ const renderGraph = (elements: Elements) => {
                 reactFlowInstance.fitView();
                 elementsAtTheMoment = reactFlowInstance.getElements();
             }}
+            setElements={jest.fn()}
+            onNodeEdit={jest.fn()}
         />
     );
 };
