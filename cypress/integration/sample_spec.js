@@ -100,52 +100,9 @@ describe('test add edge', () => {
     cy.get("body").then(($body) => {
       cy.wrap($body).get('.react-flow__edge-straight').should('have.length', 0);
 
-      /*
-      cy.wrap($body).get(`.react-flow__node-default:contains(${node_name_1})`).then(($node1) => {
-        cy.wrap($body).get(`.react-flow__node-default:contains(${node_name_2})`).then(($node2) => {
-          cy.wrap($node1).should('have.length', 1);
-          cy.wrap($node2).should('have.length', 1);
-
-          $node1.
-          cy.wrap($node1).get('.react-flow__handle-bottom').then(($startHandle) => {
-            cy.wrap($node2).get('.react-flow__handle-top').then(($endHandle) => {
-              console.log(cy.wrap($node1));
-              cy.wrap($startHandle).should('have.length', 1);
-              cy.wrap($startHandle).trigger('mousedown');
-              cy.wrap($endHandle).trigger('mouseup');
-            });
-          });
-        });
-      });
-      */
-      
-      /*
-      cy.wrap($body).get(`.react-flow__node-default:contains(${node_name_1})`).invoke('attr', 'data_id').then((data_id_1) => {
-        cy.wrap($body).get(`.react-flow__node-default:contains(${node_name_2})`).invoke('attr', 'data_id').then((data_id_2) => {
-          cy.get('').should('have.length', 1);
-
-          cy.wrap($node1).should('have.length', 1);
-          cy.wrap($node2).should('have.length', 1);
-
-          $node1.
-          cy.wrap($node1).get('.react-flow__handle-bottom').then(($startHandle) => {
-            cy.wrap($node2).get('.react-flow__handle-top').then(($endHandle) => {
-              console.log(cy.wrap($node1));
-              cy.wrap($startHandle).should('have.length', 1);
-              cy.wrap($startHandle).trigger('mousedown');
-              cy.wrap($endHandle).trigger('mouseup');
-            });
-          });
-        });
-      });
-      */
-
       cy.wrap($body).get(`.react-flow__node-default:contains(${node_name_2})`).find('.react-flow__handle-bottom').should('have.length', 1).trigger('mousedown');
 
       cy.wrap($body).get(`.react-flow__node-default:contains(${node_name_1})`).find('.react-flow__handle-top').should('have.length', 1).trigger('mouseup');
-
-
-
 
     });
 
