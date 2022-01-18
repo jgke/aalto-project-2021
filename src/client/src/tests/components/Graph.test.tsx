@@ -9,15 +9,12 @@ import { RenderResult } from '@testing-library/react';
 import { Graph } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
 
-let elementsAtTheMoment: Elements = [];
-
 const renderGraph = (elements: Elements) => {
     return render(
         <Graph
             elements={elements}
             onLoad={(reactFlowInstance) => {
                 reactFlowInstance.fitView();
-                elementsAtTheMoment = reactFlowInstance.getElements();
             }}
             setElements={jest.fn()}
             onNodeEdit={jest.fn()}
@@ -117,9 +114,5 @@ describe('<Graph>', () => {
     test('displays the right amount of edges', () => {
         const c = testGraph.container.querySelectorAll('.react-flow__edge');
         expect(c).toHaveLength(3);
-    });
-
-    test('has the right amount of elements', () => {
-        expect(elementsAtTheMoment).toHaveLength(6);
     });
 });

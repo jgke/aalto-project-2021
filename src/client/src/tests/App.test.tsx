@@ -55,6 +55,9 @@ test('Renders the button with proper content', () => {
 });
 
 test('Button click calls a function', () => {
+    /* This test will be moved to Toolbar once the branches
+    *  have merged
+    */
     jest.mock('../App');
     const { getByText } = render(<App />);
     const button = getByText('Add');
