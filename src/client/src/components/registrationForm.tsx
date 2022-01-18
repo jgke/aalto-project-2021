@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Registration } from '../../../../types';
 import { createUser } from '../services/userService';
-import '../Form.css'
+import './styles/Form.css'
 
 export const RegistrationForm: React.FC = () => {
     const [email, setEmail] = useState('');
