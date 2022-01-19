@@ -18,6 +18,8 @@ export interface IEdge {
 }
 
 export interface IProject {
-    id?: string;
+    id: number;
+    owner_id: string;
     name: string;
+    description: string;
 }

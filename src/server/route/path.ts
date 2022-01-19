@@ -27,11 +27,12 @@ function path(url: string): IPathRoute {
     if (url.includes('/edge/')) {
         console.log('Returning weird edge url');
         return allRoutes['/edge/:source/:target'];
-    }
-    if (url.includes('/node/')) {
+    } else if (url.includes('/node/')) {
         console.log('route found, url: ', url);
         return allRoutes['/node/:id'];
-    } else {
+    } else if (url.includes('/project/')) {
+        return allRoutes['/project/:id'];
+    }  else {
         console.log('Not it fam. It was', url);
     }
 

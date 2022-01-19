@@ -19,5 +19,7 @@ ADD CONSTRAINT PK_edge PRIMARY KEY (source_id, target_id);
 
 CREATE TABLE project (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL
+  owner_id TEXT NOT NULL,  
+  name TEXT NOT NULL,
+  description TEXT
 );

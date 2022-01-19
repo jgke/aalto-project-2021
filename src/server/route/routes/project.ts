@@ -26,6 +26,7 @@ router.route('/project/:id').delete(async (req: Request, res: Response) => {
 router
     .route('/project')
     .get(async (req: Request, res: Response) => {
+        const owner_id = req.params.owner_id;
         const q = await db.query('SELECT * FROM project', []);
         res.json(q.rows);
         /* console.log('projects: ', projects);
@@ -36,8 +37,8 @@ router
         const project: IProject = req.body; //Might have to parse this
         try {
             const q = await db.query(
-                'INSERT INTO project (name) VALUES ($1) RETURNING id',
-                [project.name]
+                'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
+                [project.name, project.owner_id, project.description]
             );
             res.status(200).json(q);
             /* console.log('adding project: ', project);
@@ -51,8 +52,8 @@ router
         const p: IProject = req.body;
         console.log('Updating project...', p);
         const q = await db.query(
-            'UPDATE node SET name = $1 WHERE id = $2',
-            [p.name, p.id]
+            'UPDATE project SET name = $1, description = $2 WHERE id = $3',
+            [p.name, p.description, p.id]
         );
         res.status(200).json(q);
         /* const idx = projects.findIndex( pr => pr.id === p.id );

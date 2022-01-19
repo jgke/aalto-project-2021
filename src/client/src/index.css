@@ -38,6 +38,10 @@ body,
     isolation: isolate;
 }
 
+.graph {
+    min-height: 100%;
+}
+
 #root > div {
     display: flex;
     flex-direction: column;

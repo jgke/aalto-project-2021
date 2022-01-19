@@ -12,14 +12,18 @@ import {
     FlowElement,
     ArrowHeadType,
 } from 'react-flow-renderer';
+import * as projectService from './services/projectService';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
-import { INode, IEdge } from '../../../types';
-//import './App.css';
+import { INode, IEdge, IProject } from '../../../types';
+import { Projects } from './components/Projects';
+import './App.css';
 
 export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
+    const [projects, setProjects] = useState<IProject[]>([]);
+    const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
     interface FlowInstance {
         fitView: () => void;
@@ -50,6 +54,16 @@ export const App: React.FC = () => {
         });
     };
     useEffect(getElementsHook, []);
+
+    /**
+     * Fetches the elements from a database
+     */
+    const getProjectsHook = (): void => {
+        projectService.getAll('temp').then((projects) => {
+            setProjects(projects)
+        });
+    };
+    useEffect(getProjectsHook, []);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -151,6 +165,7 @@ export const App: React.FC = () => {
 
     return (
         <div className="App">
+            <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject}/>
             <h2>Tasks</h2>
             <div>
                 <h3>Add task</h3>
@@ -165,7 +180,7 @@ export const App: React.FC = () => {
                     <button onClick={createNode}>Add</button>
                 </div>
             </div>
-            <div className="graph">
+            <div className="graph" >
                 <Graph
                     elements={elements}
                     onConnect={onConnect}
