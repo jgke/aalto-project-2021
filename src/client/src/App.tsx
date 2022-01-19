@@ -32,15 +32,17 @@ export const App: React.FC = () => {
     /**
      * Fetches the elements from a database
      */
-    useEffect( () => {
+    useEffect(() => {
         const getElementsHook = async () => {
-            let nodes: INode[]
-            let edges: IEdge[]
+            let nodes: INode[];
+            let edges: IEdge[];
             try {
-                nodes = await nodeService.getAll()
-                edges = await edgeService.getAll()
-            } catch(e) {
-                return
+                [nodes, edges] = await Promise.all([
+                    nodeService.getAll(),
+                    edgeService.getAll(),
+                ]);
+            } catch (e) {
+                return;
             }
 
             const nodeElements: Elements = nodes.map((n) => ({
@@ -57,9 +59,10 @@ export const App: React.FC = () => {
                 arrowHeadType: ArrowHeadType.ArrowClosed,
             }));
             setElements(nodeElements.concat(edgeElements));
-        }
-        getElementsHook()
+        };
+        getElementsHook();
     }, []);
+
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */

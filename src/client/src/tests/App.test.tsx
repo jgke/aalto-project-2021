@@ -40,11 +40,11 @@ describe('App', () => {
     let testApp: RenderResult;
 
     beforeEach(() => {
-        testApp = render(<App/>);
+        testApp = render(<App />);
     });
 
     test('has all necessary text content', () => {
-        const component = testApp.container
+        const component = testApp.container;
 
         expect(component).toHaveTextContent('Tasks');
         expect(component).toHaveTextContent('Add task');
