@@ -27,18 +27,33 @@ router
             );
             res.status(200).json(q);
         } catch (e) {
-            console.log('Invalid node', e);
+            console.error('Invalid node', e);
             res.status(403).json();
         }
     })
     .put(async (req: Request, res: Response) => {
         const n: INode = req.body;
         console.log('Updating node...', n);
-        const q = await db.query(
-            'UPDATE node SET x = $1, y = $2 WHERE id = $3',
-            [n.x, n.y, n.id]
-        );
-        res.status(200).json(q);
+        if (
+            n.label &&
+            n.status &&
+            n.priority &&
+            n.x !== undefined &&
+            n.y !== undefined &&
+            n.id !== undefined
+        ) {
+            const q = await db.query(
+                'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5 WHERE id = $6',
+                [n.label, n.status, n.priority, n.x, n.y, n.id]
+            );
+            res.status(200).json(q);
+        } else {
+            console.error('Invalid data', n);
+            res.status(403).json();
+        }
+    })
+    .delete(async (req: Request, res: Response) => {
+        res.status(404).json({ message: 'Not implemented' });
     });
 
 export { router as node };

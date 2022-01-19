@@ -20,16 +20,20 @@ import { ElementDetail } from './components/ElementDetail';
 import { isNodeData } from './services/nodeService';
 import './App.css';
 
+export const basicNode: INode = {
+    status: 'ToDo',
+    label: 'Text',
+    priority: 'Urgent',
+    x: 0,
+    y: 0,
+};
+
 export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
     const [selectedData, setSelectedData] = useState<INode | IEdge | null>(
         null
     );
-
-    interface FlowInstance {
-        fitView: () => void;
-    }
 
     /**
      * Fetches the elements from a database
@@ -114,32 +118,6 @@ export const App: React.FC = () => {
         }
     };
 
-    const onEdgeUpdate = async (
-        edge: Edge<IEdge>,
-        connection: Connection
-    ): Promise<void> => {
-        if (connection.source && connection.target) {
-            const newEdgeData: IEdge = {
-                id: edge.data?.id,
-                source_id: connection.source,
-                target_id: connection.target,
-            };
-            await edgeService.updateEdge(newEdgeData);
-            setElements((els) =>
-                updateEdge(
-                    { ...edge, ...{ data: newEdgeData } },
-                    connection,
-                    els
-                )
-            );
-
-            // Update detail sidebar if id matches
-            if (selectedData && selectedData.id === edge.data?.id) {
-                setSelectedData(newEdgeData || null);
-            }
-        }
-    };
-
     /**
      * Ordering function for elements, puts edges first and nodes last. Used in
      * onElementsRemove.
@@ -191,17 +169,26 @@ export const App: React.FC = () => {
         setElements((els) => removeElements(elementsToRemove, els));
     };
 
+    const onNodeEdit = async (id: string, data: INode) => {
+        setElements((els) =>
+            els.map((el) => {
+                if (el.id === id) {
+                    el.data = data;
+                }
+                return el;
+            })
+        );
+
+        await nodeService.updateNode(data);
+    };
+
     const onElementClick = (event: React.MouseEvent, element: FlowElement) => {
-        console.log(event, element);
         if (isNodeData(element.data)) {
             setSelectedData(element.data as INode);
         } else {
             setSelectedData(element.data as IEdge);
         }
     };
-
-    const onLoad = (reactFlowInstance: FlowInstance) =>
-        reactFlowInstance.fitView();
 
     return (
         <div className="App">
@@ -222,18 +209,17 @@ export const App: React.FC = () => {
             <div className="graph">
                 <Graph
                     elements={elements}
+                    setElements={setElements}
                     onConnect={onConnect}
                     onElementsRemove={onElementsRemove}
-                    onLoad={onLoad}
+                    onNodeEdit={onNodeEdit}
                     onElementClick={onElementClick}
-                    onEdgeUpdate={onEdgeUpdate}
                 />
             </div>
             <ElementDetail
                 data={selectedData}
                 elements={elements}
                 setSelectedData={setSelectedData}
-                onEdgeUpdate={onEdgeUpdate}
             />
         </div>
     );

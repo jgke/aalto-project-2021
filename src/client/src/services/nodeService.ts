@@ -29,6 +29,7 @@ const deleteNode = async (node: Node<INode>): Promise<{ msg: string }> => {
     return response.data;
 };
 const updateNode = async (node: INode): Promise<void> => {
+    console.log('update');
     const response = await axios.put(baseUrl, node);
     return response.data;
 };
