@@ -39,17 +39,9 @@ describe('App', () => {
 
     let testApp: RenderResult;
 
-    beforeEach(async() => {
-        try {
-            testApp = render(<App/>);
-        } catch (e) {
-            console.log(e)
-        }
+    beforeEach(() => {
+        testApp = render(<App/>);
     });
-
-    afterEach(() => {
-        testApp.unmount()
-    })
 
     test('has all necessary text content', () => {
         const component = testApp.container
@@ -65,27 +57,27 @@ describe('App', () => {
         expect(button).toHaveTextContent('Add');
     });
 
-/*    test('Button click calls a function', () => {
-        /* This test will be moved to Toolbar once the branches
-        *  have merged
-        */
-/*        jest.mock('../App');
-        const { getByText } = render(<App />);
-        const button = getByText('Add');
-        fireEvent.click(button);
-
-        expect(App).toBeCalled;
+    /* This test will be moved to Toolbar once the branches
+    *  have merged, it's nearly impossible to do now but very easy
+    *  with separate 'Toolbar' component
+    * 
+    *  test('Button click calls a function', () => {
+    *      jest.mock('../App');
+    *      const { getByText } = render(<App />);
+    *      const button = getByText('Add');
+    *      fireEvent.click(button);
+    *  
+    *      expect(App).toBeCalled;
     });
+    */
 
     test('The initial textbox should be empty', () => {
-        const component = render(<App />);
-        const input = component.container.querySelector('input');
+        const input = testApp.container.querySelector('input');
         expect(input).toHaveValue('');
     });
 
     test('Changin the initial node text box should be possible', () => {
-        const component = render(<App />);
-        const input = component.container.querySelector('input');
+        const input = testApp.container.querySelector('input');
         if (input) {
             fireEvent.change(input, {
                 target: { value: 'Add physics' },
@@ -95,9 +87,8 @@ describe('App', () => {
     });
 
     test('App should include graph', () => {
-        const component = render(<App />);
-        const graph = component.container.querySelector('Graph');
+        const graph = testApp.container.querySelector('Graph');
         expect(graph).toBeVisible;
         expect(graph).toBeInTheDocument;
-    });*/
+    });
 });
