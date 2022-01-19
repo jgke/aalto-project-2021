@@ -9,19 +9,6 @@ import { RenderResult } from '@testing-library/react';
 import { Graph } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
 
-const renderGraph = (elements: Elements) => {
-    return render(
-        <Graph
-            elements={elements}
-            onLoad={(reactFlowInstance) => {
-                reactFlowInstance.fitView();
-            }}
-            setElements={jest.fn()}
-            onNodeEdit={jest.fn()}
-        />
-    );
-};
-
 describe('<Graph>', () => {
     beforeAll(() => {
         window.ResizeObserver =
@@ -91,6 +78,19 @@ describe('<Graph>', () => {
 
     let testGraph: RenderResult;
 
+    const renderGraph = (elements: Elements) => {
+        return render(
+            <Graph
+                elements={elements}
+                onLoad={(reactFlowInstance) => {
+                    reactFlowInstance.fitView();
+                }}
+                setElements={jest.fn()}
+                onNodeEdit={jest.fn()}
+            />
+        );
+    };
+    
     beforeEach(() => {
         testGraph = renderGraph(testElements);
     });
