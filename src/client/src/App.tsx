@@ -19,15 +19,19 @@ import { INode, IEdge, IProject } from '../../../types';
 import { Projects } from './components/Projects';
 import './App.css';
 
+export const basicNode: INode = {
+    status: 'ToDo',
+    label: 'Text',
+    priority: 'Urgent',
+    x: 0,
+    y: 0,
+};
+
 export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
     const [projects, setProjects] = useState<IProject[]>([]);
     const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
-
-    interface FlowInstance {
-        fitView: () => void;
-    }
 
     /**
      * Fetches the elements from a database
@@ -160,8 +164,18 @@ export const App: React.FC = () => {
         setElements((els) => removeElements(elementsToRemove, els));
     };
 
-    const onLoad = (reactFlowInstance: FlowInstance) =>
-        reactFlowInstance.fitView();
+    const onNodeEdit = async (id: string, data: INode) => {
+        setElements((els) =>
+            els.map((el) => {
+                if (el.id === id) {
+                    el.data = data;
+                }
+                return el;
+            })
+        );
+
+        await nodeService.updateNode(data);
+    };
 
     return (
         <div className="App">
@@ -183,9 +197,10 @@ export const App: React.FC = () => {
             <div className="graph" >
                 <Graph
                     elements={elements}
+                    setElements={setElements}
                     onConnect={onConnect}
                     onElementsRemove={onElementsRemove}
-                    onLoad={onLoad}
+                    onNodeEdit={onNodeEdit}
                     onEdgeUpdate={(o, s) =>
                         console.log('What are these?', o, s)
                     }

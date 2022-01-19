@@ -9,7 +9,8 @@
         "install-deps": "cp ./src/server/package.json ./build/ && cp ./src/server/package.json ./build/ && cd build && npm install --production",
         "build": "rm -rf ./build && npm run build-server && npm run build-client && npm run copy-migrations && npm run install-deps",
         "start": "cd build && node index.js",
-        "cypress": "cross-env CYPRESS_BASE_URL=http://localhost:3000 cypress run"
+        "cypress": "cross-env CYPRESS_BASE_URL=http://localhost:3000 cypress run",
+        "cypress:open": "cross-env CYPRESS_BASE_URL=http://localhost:3000 cypress open"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.4.0",
