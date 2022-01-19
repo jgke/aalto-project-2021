@@ -53,8 +53,11 @@ export const App: React.FC = () => {
             });
         });
     };
-    useEffect(getElementsHook, []);
-
+    try {
+        useEffect(getElementsHook, []);
+    } catch (e) {
+        console.log('Hook error', e)
+    }
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
