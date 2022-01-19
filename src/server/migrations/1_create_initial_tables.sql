@@ -10,7 +10,6 @@ CREATE TABLE node (
 );
 
 CREATE TABLE edge (
-    id SERIAL PRIMARY KEY,
     source_id INTEGER REFERENCES node(id),
     target_id INTEGER REFERENCES node(id)
 );

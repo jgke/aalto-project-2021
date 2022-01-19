@@ -98,7 +98,6 @@ export const App: React.FC = () => {
             const edge: IEdge = {
                 source_id: params.source,
                 target_id: params.target,
-                id: id,
             };
 
             const b: Edge<IEdge> = {
@@ -146,11 +145,6 @@ export const App: React.FC = () => {
             compareElementsEdgesFirst
         );
         for (const e of sortedElementsToRemove) {
-            // Close detail sidebar if id matches
-            if (selectedData?.id === e.data.id) {
-                setSelectedData(null);
-            }
-
             if (isNode(e)) {
                 try {
                     await nodeService.deleteNode(e);
@@ -159,7 +153,7 @@ export const App: React.FC = () => {
                 }
             } else if (isEdge(e)) {
                 await edgeService
-                    .deleteEdge(e.data)
+                    .deleteEdge(e)
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
                     );

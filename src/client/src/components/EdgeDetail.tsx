@@ -35,7 +35,6 @@ export const EdgeDetail = (props: EdgeDetailProps): JSX.Element => {
                     <p>ID: {target.id}</p>
                 </>
             ) : null}
-            <h3>Edge ID: {props.data.id}</h3>
         </div>
     );
 };
