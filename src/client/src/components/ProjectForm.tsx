@@ -5,6 +5,7 @@ import { IProject } from '../../../../types';
 interface ProjectFormProps {
     defaultProject?: IProject;
     saveMessage?: string;
+    handleCancel?: () => void;
     handleSubmit: (project: IProject) => Promise<void>;
 }
 
@@ -35,9 +36,18 @@ export const ProjectForm = (props: ProjectFormProps) => {
                     <Form.Control as="textarea" rows={2} placeholder="Enter Description" defaultValue={description} onChange={(e) => setDescription(e.target.value)}/>
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    {props.saveMessage || 'Save'}
-                </Button>
+                <div className="flex-space-between">
+                    <Button variant="primary" type="submit">
+                        {props.saveMessage || 'Save'}
+                    </Button>
+
+                    {props.handleCancel && 
+                        <Button variant="danger">
+                            Cancel
+                        </Button>
+                    }
+                </div>
+                
             </Form>
         </div>
     );

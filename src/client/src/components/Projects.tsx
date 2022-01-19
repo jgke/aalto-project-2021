@@ -9,7 +9,8 @@ import { ProjectForm } from './ProjectForm';
 interface ProjectsProps {
     projects: IProject[];
     setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
-    setSelectedProject: React.Dispatch<React.SetStateAction<IProject | null>>;
+    setSelectedProject: React.Dispatch<React.SetStateAction<IProject | null>>
+    selectProject: (projectId: number) => void;
 }
 
 
@@ -33,7 +34,7 @@ export const Projects = (props: ProjectsProps) => {
             <h3>Create a new project</h3>
             <ProjectForm handleSubmit={handleSubmit} saveMessage='New Project'/>
             <div style={projectListStyle}>
-                {props.projects.map(project => <ProjectCard key={project.id} project={project} setProjects={props.setProjects} setSelectedProject={props.setSelectedProject} />)}
+                {props.projects.map(project => <ProjectCard key={project.id} project={project} setProjects={props.setProjects} setSelectedProject={props.setSelectedProject} selectProject={props.selectProject} />)}
             </div>
         </div>
     );

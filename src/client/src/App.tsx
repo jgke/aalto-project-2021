@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
 import {
     Elements,
-    addEdge,
     removeElements,
-    Edge,
     Node,
-    Connection,
     isNode,
     isEdge,
     FlowElement,
@@ -15,7 +12,7 @@ import {
 import * as projectService from './services/projectService';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
-import { INode, IEdge, IProject } from '../../../types';
+import { INode, IProject } from '../../../types';
 import { Projects } from './components/Projects';
 import './App.css';
 
@@ -25,6 +22,7 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
+    project_id: 0
 };
 
 export const App: React.FC = () => {
@@ -32,32 +30,6 @@ export const App: React.FC = () => {
     const [elements, setElements] = useState<Elements>([]);
     const [projects, setProjects] = useState<IProject[]>([]);
     const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
-
-    /**
-     * Fetches the elements from a database
-     */
-    const getElementsHook = (): void => {
-        nodeService.getAll().then((nodes) => {
-            edgeService.getAll().then((edges) => {
-                const nodeElements: Elements = nodes.map((n) => ({
-                    id: String(n.id),
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                }));
-                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                const edgeElements: Elements = edges.map((e) => ({
-                    id: String(e.source_id) + '-' + String(e.target_id),
-                    source: String(e.source_id),
-                    target: String(e.target_id),
-                    type: 'straight',
-                    arrowHeadType: ArrowHeadType.ArrowClosed,
-                }));
-
-                setElements(nodeElements.concat(edgeElements));
-            });
-        });
-    };
-    useEffect(getElementsHook, []);
 
     /**
      * Fetches the elements from a database
@@ -73,12 +45,16 @@ export const App: React.FC = () => {
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
     const createNode = async (): Promise<void> => {
+        if (!selectedProject) {
+            return;
+        }
         const n: INode = {
             status: 'ToDo',
             label: nodeText,
             priority: 'Urgent',
             x: 5 + elements.length * 10,
             y: 5 + elements.length * 10,
+            project_id: selectedProject.id
         };
         const returnId: string | undefined = await nodeService.sendNode(n);
         if (returnId) {
@@ -91,31 +67,6 @@ export const App: React.FC = () => {
             setElements(elements.concat(b));
         }
         setNodeText('');
-    };
-
-    const onConnect = (params: Edge<IEdge> | Connection) => {
-        if (params.source && params.target) {
-            //This does not mean params is an edge but rather a Connection
-
-            const b: Edge<IEdge> = {
-                id: String(params.source) + '-' + String(params.target),
-                type: 'straight',
-                source: params.source,
-                target: params.target,
-                arrowHeadType: ArrowHeadType.ArrowClosed,
-            };
-
-            setElements((els) => addEdge(b, els));
-
-            edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-            });
-        } else {
-            console.log(
-                'source or target of edge is null, unable to send to db'
-            );
-        }
     };
 
     /**
@@ -177,10 +128,42 @@ export const App: React.FC = () => {
         await nodeService.updateNode(data);
     };
 
+    const selectProject = (projectId: number) => {
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+            setSelectedProject(project)
+            setElements([]);
+
+            nodeService.getAll(projectId).then((nodes) => {
+                edgeService.getAll(projectId).then((edges) => {
+                    const nodeElements: Elements = nodes.map((n) => ({
+                        id: String(n.id),
+                        data: n,
+                        position: { x: n.x, y: n.y },
+                    }));
+                    // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+                    const edgeElements: Elements = edges.map((e) => ({
+                        id: String(e.source_id) + '-' + String(e.target_id),
+                        source: String(e.source_id),
+                        target: String(e.target_id),
+                        type: 'straight',
+                        arrowHeadType: ArrowHeadType.ArrowClosed,
+                    }));
+    
+                    setElements(nodeElements.concat(edgeElements));
+                });
+            });
+        }
+    }
+
+    if (!selectedProject) {
+        return <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject} selectProject={selectProject}/>
+    }
+
     return (
         <div className="App">
-            <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject}/>
-            <h2>Tasks</h2>
+            <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject} selectProject={selectProject}/>
+            <h2>{selectedProject.name}</h2>
             <div>
                 <h3>Add task</h3>
                 <div>
@@ -196,9 +179,9 @@ export const App: React.FC = () => {
             </div>
             <div className="graph" >
                 <Graph
+                    selectedProject={selectedProject}
                     elements={elements}
                     setElements={setElements}
-                    onConnect={onConnect}
                     onElementsRemove={onElementsRemove}
                     onNodeEdit={onNodeEdit}
                     onEdgeUpdate={(o, s) =>

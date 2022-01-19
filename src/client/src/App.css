@@ -27,12 +27,24 @@
 }
 
 .project-card {
-    transition: filter 0.25s ease-in;
+    transition: background-color 0.25s ease-in;
+}
+
+.project-card.view:hover {
+    background-color: rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
 
-.project-card:hover {
-    filter: brightness(0.8);
+.flex-space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @keyframes App-logo-spin {

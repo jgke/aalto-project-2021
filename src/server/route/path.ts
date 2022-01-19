@@ -6,16 +6,16 @@ function path(url: string): IPathRoute {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],
         },
         '/node': {
-            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+            methods: ['POST', 'PUT'],
         },
         '/node/:id': {
-            methods: ['DELETE'],
+            methods: ['GET', 'DELETE'],
         },
         '/edge': {
-            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+            methods: ['POST', 'PUT'],
         },
         '/edge/:source/:target': {
-            methods: ['DELETE'],
+            methods: ['GET', 'DELETE'],
         },
         '/project': {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],

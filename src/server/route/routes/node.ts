@@ -4,26 +4,29 @@ import { INode } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
 
-router.route('/node/:id').delete(async (req: Request, res: Response) => {
-    console.log('Deleting node...');
-    const id = req.params.id;
-    const q = await db.query('DELETE FROM node WHERE id = $1', [id]);
-    res.status(200).json(q);
-});
+router
+    .route('/node/:id')
+    .get(async (req: Request, res: Response) => {
+        const project_id = req.params.id;
+        const q = await db.query('SELECT * FROM node WHERE project_id = $1', [project_id]);
+        res.json(q.rows);
+    })
+    .delete(async (req: Request, res: Response) => {
+        console.log('Deleting node...');
+        const id = req.params.id;
+        const q = await db.query('DELETE FROM node WHERE id = $1', [id]);
+        res.status(200).json(q);
+    });
 
 router
     .route('/node')
-    .get(async (req: Request, res: Response) => {
-        const q = await db.query('SELECT * FROM node', []);
-        res.json(q.rows);
-    })
     .post(async (req: Request, res: Response) => {
         console.log('Receiving node...');
         const text: INode = req.body; //Might have to parse this
         try {
             const q = await db.query(
-                'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                [text.label, text.status, text.priority, text.x, text.y]
+                'INSERT INTO node (project_id, label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+                [text.project_id, text.label, text.status, text.priority, text.x, text.y]
             );
             res.status(200).json(q);
         } catch (e) {
@@ -52,8 +55,5 @@ router
             res.status(403).json();
         }
     })
-    .delete(async (req: Request, res: Response) => {
-        res.status(404).json({ message: 'Not implemented' });
-    });
 
 export { router as node };

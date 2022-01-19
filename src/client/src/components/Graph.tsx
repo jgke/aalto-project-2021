@@ -4,8 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import * as nodeService from '../services/nodeService';
-import { INode } from '../../../../types';
+import { IEdge, INode, IProject } from '../../../../types';
 import ReactFlow, {
     MiniMap,
     Controls,
@@ -14,8 +13,14 @@ import ReactFlow, {
     Node,
     Elements,
     ReactFlowProvider,
+    Edge,
+    Connection,
+    addEdge,
+    ArrowHeadType,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
+import * as nodeService from '../services/nodeService';
+import * as edgeService from '../services/edgeService';
 
 const graphStyle = {
     height: '100%',
@@ -30,6 +35,7 @@ const graphStyle = {
 export interface GraphProps {
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onNodeEdit: (id: string, data: INode) => void;
+    selectedProject: IProject | null;
 }
 
 interface FlowInstance {
@@ -38,13 +44,16 @@ interface FlowInstance {
 }
 
 export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
+    if (!props.selectedProject) {
+        return <></>;
+    }
+    const selectedProject = props.selectedProject;
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
     const elements = props.elements;
     const setElements = props.setElements;
-    const onConnect = props.onConnect;
     const onElementsRemove = props.onElementsRemove;
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
@@ -110,6 +119,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 priority: 'Urgent',
                 x: node.position.x,
                 y: node.position.y,
+                project_id: props.selectedProject?.id || 0
             };
 
             const returnId: string | undefined = await nodeService.sendNode(n);
@@ -180,6 +190,32 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
             document.removeEventListener('click', handleMousePress);
         };
     }, [handleMousePress]);
+
+    const onConnect = (params: Edge<IEdge> | Connection) => {
+        if (params.source && params.target) {
+            //This does not mean params is an edge but rather a Connection
+
+            const b: Edge<IEdge> = {
+                id: String(params.source) + '-' + String(params.target),
+                type: 'straight',
+                source: params.source,
+                target: params.target,
+                arrowHeadType: ArrowHeadType.ArrowClosed,
+            };
+
+            setElements((els) => addEdge(b, els));
+
+            edgeService.sendEdge({
+                source_id: params.source,
+                target_id: params.target,
+                project_id: selectedProject.id
+            });
+        } else {
+            console.log(
+                'source or target of edge is null, unable to send to db'
+            );
+        }
+    };
 
     return (
         <ReactFlowProvider>

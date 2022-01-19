@@ -10,7 +10,8 @@ import CSS from 'csstype';
 interface ProjectCardProps {
     project: IProject;
     setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
-    setSelectedProject: React.Dispatch<React.SetStateAction<IProject | null>>;
+    setSelectedProject: React.Dispatch<React.SetStateAction<IProject | null>>
+    selectProject: (projectId: number) => void;
 }
 
 const dropdownButtonStyle: CSS.Properties = {
@@ -33,19 +34,24 @@ export const ProjectCard = (props: ProjectCardProps) => {
         if (props.project.id) {
             await projectService.deleteProject(props.project.id);
             props.setProjects((projects) => projects.filter(p => p.id !== props.project.id));
+            props.setSelectedProject(project => project?.id === props.project.id ? null : project)
         }
     }
 
-    const body = !editMode ? (
-        <>
+    let body;
+    if (!editMode) {
+        body = <>
             <h5 className="card-title">{props.project.name}</h5>
             <p className="card-text">{props.project.description}</p>
-        </>
-    ) : <ProjectForm defaultProject={props.project} handleSubmit={handleSubmit} />
+        </>;
+    } else {
+        body = <ProjectForm defaultProject={props.project} handleSubmit={handleSubmit} handleCancel={() => console.log('äg43g3')}/>;
+    } 
 
     return (
-        <div className="card project-card" style={{width: '20%', margin: 16}} onClick={() => props.setSelectedProject(props.project)}>
-            <Dropdown>
+        <div className={'card project-card' + (editMode ? ' edit' : ' view')} style={{width: '20%', margin: 16}}
+            onClick={() => props.project && !editMode && props.selectProject(props.project.id)}>
+            <Dropdown onClick={(e) => e.stopPropagation()}>
                 <Dropdown.Toggle className="icon-button no-dropdown-arrow" style={dropdownButtonStyle}>
                     <BsThreeDotsVertical />
                 </Dropdown.Toggle>
