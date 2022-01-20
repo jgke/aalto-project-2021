@@ -175,46 +175,44 @@ describe('Logging in', () => {
 
 describe('Database', () => {
     test('should be safe from SQL injections when adding a user', async () => {
-
         let injection: Registration = {
             // eslint-disable-next-line quotes
             email: " d'); DROP TABLE users; --",
             password: 'Attack',
-            username: 'Hacker'
-        }
+            username: 'Hacker',
+        };
 
-        await api
-            .post(`${baseUrl}/register`)
-            .send(injection)
-            .expect(200)
+        await api.post(`${baseUrl}/register`).send(injection).expect(200);
 
-        let q = await db.query('SELECT * FROM users WHERE email=$1', [injection.email])
-        expect(q.rowCount).toBeGreaterThan(0)
+        let q = await db.query('SELECT * FROM users WHERE email=$1', [
+            injection.email,
+        ]);
+        expect(q.rowCount).toBeGreaterThan(0);
 
         injection = {
             // eslint-disable-next-line quotes
             username: " d'); DROP TABLE users; --",
             password: 'Attack',
-            email: 'hacker@hack.com'
-        }
+            email: 'hacker@hack.com',
+        };
 
-        await api
-            .post(`${baseUrl}/register`)
-            .send(injection)
-            .expect(200)
+        await api.post(`${baseUrl}/register`).send(injection).expect(200);
 
-        q = await db.query('SELECT * FROM users WHERE username=$1;', [injection.username])
-        expect(q.rowCount).toBeGreaterThan(0)
+        q = await db.query('SELECT * FROM users WHERE username=$1;', [
+            injection.username,
+        ]);
+        expect(q.rowCount).toBeGreaterThan(0);
 
         injection = {
             // eslint-disable-next-line quotes
             password: " d'); DROP TABLE users; --",
             email: 'hacker@notahack.com',
-            username: 'Hacker'
-        }
+            username: 'Hacker',
+        };
 
-        q = await db.query('SELECT * FROM users WHERE email=$1;', [injection.email])
-        expect(q.rowCount).toBeGreaterThan(0)
-
-    })
-})
+        q = await db.query('SELECT * FROM users WHERE email=$1;', [
+            injection.email,
+        ]);
+        expect(q.rowCount).toBeGreaterThan(0);
+    });
+});
