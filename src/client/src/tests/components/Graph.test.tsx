@@ -5,12 +5,14 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { Graph } from '../../components/Graph';
+import { Graph, GraphProps } from '../../components/Graph';
 import { ReactFlowProps } from 'react-flow-renderer';
 
 const renderGraph = () => {
-    const props: ReactFlowProps = {
+    const props: ReactFlowProps & GraphProps = {
         elements: [],
+        setElements: () => null,
+        onNodeEdit: () => null,
     };
     return render(<Graph {...props} />);
 };

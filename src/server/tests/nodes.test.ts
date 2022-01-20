@@ -163,6 +163,25 @@ describe('PUT request', () => {
             expect(found.y).toBe(60);
         }
     });
+
+    test('should update the label of a node', async () => {
+        await addDummyNodes();
+
+        const res = await api.get('/api/node');
+        const dummyNode: INode = {
+            ...res.body[0],
+            label: 'NEW NAME',
+        };
+
+        await api.put('/api/node').send(dummyNode).expect(200);
+        const res2 = await api.get('/api/node');
+        const found: INode | undefined = res2.body.find(
+            (x: INode) => x.id == res.body[0].id
+        );
+        if (found) {
+            expect(found.label).toBe('NEW NAME');
+        }
+    });
 });
 
 describe('Database', () => {
