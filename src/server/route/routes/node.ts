@@ -30,7 +30,7 @@ router
             );
             res.status(200).json(q);
         } catch (e) {
-            console.error('Invalid node', e);
+            /* console.error('Invalid node', e); */
             res.status(403).json();
         }
     })
