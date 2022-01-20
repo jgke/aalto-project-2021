@@ -32,28 +32,36 @@ export const App: React.FC = () => {
     /**
      * Fetches the elements from a database
      */
-    const getElementsHook = (): void => {
-        nodeService.getAll().then((nodes) => {
-            edgeService.getAll().then((edges) => {
-                const nodeElements: Elements = nodes.map((n) => ({
-                    id: String(n.id),
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                }));
-                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                const edgeElements: Elements = edges.map((e) => ({
-                    id: String(e.source_id) + '-' + String(e.target_id),
-                    source: String(e.source_id),
-                    target: String(e.target_id),
-                    type: 'straight',
-                    arrowHeadType: ArrowHeadType.ArrowClosed,
-                }));
+    useEffect(() => {
+        const getElementsHook = async () => {
+            let nodes: INode[];
+            let edges: IEdge[];
+            try {
+                [nodes, edges] = await Promise.all([
+                    nodeService.getAll(),
+                    edgeService.getAll(),
+                ]);
+            } catch (e) {
+                return;
+            }
 
-                setElements(nodeElements.concat(edgeElements));
-            });
-        });
-    };
-    useEffect(getElementsHook, []);
+            const nodeElements: Elements = nodes.map((n) => ({
+                id: String(n.id),
+                data: n,
+                position: { x: n.x, y: n.y },
+            }));
+            // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+            const edgeElements: Elements = edges.map((e) => ({
+                id: String(e.source_id) + '-' + String(e.target_id),
+                source: String(e.source_id),
+                target: String(e.target_id),
+                type: 'straight',
+                arrowHeadType: ArrowHeadType.ArrowClosed,
+            }));
+            setElements(nodeElements.concat(edgeElements));
+        };
+        getElementsHook();
+    }, []);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
