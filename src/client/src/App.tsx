@@ -15,8 +15,9 @@ import {
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
-import { RegistrationForm } from './components/registrationForm';
-import { LoginForm } from './components/loginForm';
+import { Route, NavLink, Routes } from 'react-router-dom';
+import { Registration } from './pages/Registration';
+
 //import './App.css';
 
 export const App: React.FC = () => {
@@ -153,10 +154,13 @@ export const App: React.FC = () => {
 
     return (
         <div className="App">
-            <div className="registartion">
-                <RegistrationForm />
-                <LoginForm />
+            <div>
+                <NavLink to="/"> Home </NavLink>
+                <NavLink to="/user/register">Registration</NavLink>
             </div>
+            <Routes>
+                <Route path="/user/register" element={Registration}/>
+            </Routes>
             <h2>Tasks</h2>
             <div>
                 <h3>Add task</h3>
