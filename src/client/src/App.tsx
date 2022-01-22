@@ -16,7 +16,8 @@ import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
 import { RegistrationForm } from './components/registrationForm';
-import { LoginForm } from './components/loginForm';
+import { LoginForm } from './components/LoginForm';
+import { createUser, loginUser } from './services/userService';
 //import './App.css';
 
 export const basicNode: INode = {
@@ -175,9 +176,9 @@ export const App: React.FC = () => {
 
     return (
         <div className="App">
-            <div className="registartion">
-                <RegistrationForm />
-                <LoginForm />
+            <div className="registration">
+                <RegistrationForm createUser={createUser} />
+                <LoginForm loginUser={loginUser} />
             </div>
             <h2>Tasks</h2>
             <div>

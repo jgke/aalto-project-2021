@@ -7,7 +7,6 @@ export const errorHandler = async (
     next: (param?: unknown) => void
 ): Promise<void> => {
     try {
-        console.log('Hello from middleware!');
         next();
     } catch (e) {
         console.log(e);

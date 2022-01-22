@@ -1,22 +1,52 @@
 import React, { useState } from 'react';
-import { Registration } from '../../../../types';
-import { createUser } from '../services/userService';
+import { RegisterFormProps, Registration } from '../../../../types';
 
-export const RegistrationForm: React.FC = () => {
+export const RegistrationForm: ({
+    createUser,
+}: RegisterFormProps) => JSX.Element = ({ createUser }: RegisterFormProps) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
-    const [errMessage, setErr] = useState('');
+    const [errMessage, setErr] = useState(['']);
     const [username, setUsername] = useState('');
+
+    const errTimeout = () => {
+        setTimeout(() => {
+            setErr(['']);
+        }, 5000);
+    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
+        if (
+            email.length == 0 ||
+            password.length == 0 ||
+            confirm.length == 0 ||
+            username.length == 0
+        ) {
+            setErr(
+                errMessage
+                    .concat('Fill all the necessary information')
+                    .filter((x) => x !== '')
+            );
+            errTimeout();
+            return;
+        }
+
+        if (!email.includes('@')) {
+            setErr(errMessage.concat('@ missing from the email'));
+            errTimeout();
+            return;
+        }
+
         if (password !== confirm) {
-            setErr('Passwords dont match!');
-            setTimeout(() => {
-                setErr('');
-            }, 5000);
+            setErr(
+                errMessage
+                    .concat('Passwords do nott match!')
+                    .filter((x) => x !== '')
+            );
+            errTimeout();
             return;
         }
 
@@ -25,20 +55,27 @@ export const RegistrationForm: React.FC = () => {
             username,
             password,
         };
-
-        const res = await createUser(user);
-        console.log('Res?', res);
-        setEmail('');
-        setPassword('');
-        setConfirm('');
-        setUsername('');
+        try {
+            const res = await createUser(user);
+            console.log('Res?', res);
+            setEmail('');
+            setPassword('');
+            setConfirm('');
+            setUsername('');
+        } catch (e) {
+            setErr(errMessage.concat('Error occured when creatting a user'));
+            errTimeout();
+            console.log('ERROR!', e);
+        }
     };
 
     return (
         <div>
             <form onSubmit={handleSubmit}>
                 <h1>Register</h1>
-                <p>{errMessage.length > 0 ? errMessage : null}</p>
+                {errMessage.map((e, i) => (
+                    <p key={i}>{e}</p>
+                ))}
                 <div>
                     <label htmlFor="email">
                         <b>Email</b>
@@ -50,7 +87,6 @@ export const RegistrationForm: React.FC = () => {
                         id="email"
                         value={email}
                         onChange={({ target }) => setEmail(target.value)}
-                        required
                     />
                 </div>
                 <div>
@@ -77,7 +113,6 @@ export const RegistrationForm: React.FC = () => {
                         id="psw"
                         value={password}
                         onChange={({ target }) => setPassword(target.value)}
-                        required
                     />
                 </div>
                 <div>
@@ -91,7 +126,6 @@ export const RegistrationForm: React.FC = () => {
                         id="psw-repeat"
                         value={confirm}
                         onChange={({ target }) => setConfirm(target.value)}
-                        required
                     />
                 </div>
 

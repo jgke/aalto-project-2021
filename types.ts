@@ -23,9 +23,17 @@ export interface Registration {
     email: string;
 }
 
+export interface RegisterFormProps {
+    createUser: (user: Registration) => Promise<Registration>;
+}
+
 export interface Login {
     email: string;
     password: string;
+}
+
+export interface LoginFormProps {
+    loginUser: (user: Login) => Promise<Login>;
 }
 
 export interface User {
