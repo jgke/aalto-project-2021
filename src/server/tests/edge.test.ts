@@ -19,13 +19,15 @@ const addDummyProject = async () => {
         name: 'Test-1',
         description: 'First-project',
         owner_id: 'temp',
-        id: 0
+        id: 0,
     };
 
-    pId = (await db.query(
-        'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
-        [p.name, p.owner_id, p.description]
-    )).rows[0].id;
+    pId = (
+        await db.query(
+            'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
+            [p.name, p.owner_id, p.description]
+        )
+    ).rows[0].id;
 };
 
 const addDummyNodes = async (): Promise<void> => {
@@ -37,7 +39,7 @@ const addDummyNodes = async (): Promise<void> => {
         status: 'Doing',
         x: 0,
         y: 0,
-        project_id: pId
+        project_id: pId,
     };
 
     const n2: INode = {
@@ -46,7 +48,7 @@ const addDummyNodes = async (): Promise<void> => {
         status: 'ToDo',
         x: 1,
         y: 1,
-        project_id: pId
+        project_id: pId,
     };
 
     ids = [];
@@ -97,7 +99,7 @@ describe('POST request', () => {
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1],
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post(baseUrl).send(e).expect(200);
@@ -109,7 +111,7 @@ describe('POST request', () => {
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1],
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post(baseUrl).send(e).expect(200);
@@ -127,7 +129,7 @@ describe('POST request', () => {
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1],
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post(baseUrl).send(e).expect(200);
@@ -144,7 +146,7 @@ describe('DELETE request', () => {
         const e: IEdge = {
             source_id: ids[0],
             target_id: ids[1],
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post(baseUrl).send(e).expect(200);
@@ -167,7 +169,7 @@ describe('DELETE request', () => {
         const e: IEdge = {
             source_id: '-1',
             target_id: '-1',
-            project_id: pId
+            project_id: pId,
         };
         await api
             .delete(`${baseUrl}/${e.source_id}/${e.target_id}`)

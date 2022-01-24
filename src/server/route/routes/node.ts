@@ -8,7 +8,9 @@ router
     .route('/node/:id')
     .get(async (req: Request, res: Response) => {
         const project_id = req.params.id;
-        const q = await db.query('SELECT * FROM node WHERE project_id = $1', [project_id]);
+        const q = await db.query('SELECT * FROM node WHERE project_id = $1', [
+            project_id,
+        ]);
         res.json(q.rows);
     })
     .delete(async (req: Request, res: Response) => {
@@ -26,7 +28,14 @@ router
         try {
             const q = await db.query(
                 'INSERT INTO node (project_id, label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-                [text.project_id, text.label, text.status, text.priority, text.x, text.y]
+                [
+                    text.project_id,
+                    text.label,
+                    text.status,
+                    text.priority,
+                    text.x,
+                    text.y,
+                ]
             );
             res.status(200).json(q);
         } catch (e) {
@@ -54,6 +63,6 @@ router
             console.error('Invalid data', n);
             res.status(403).json();
         }
-    })
+    });
 
 export { router as node };

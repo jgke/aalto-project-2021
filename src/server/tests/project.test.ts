@@ -19,14 +19,14 @@ const addDummyProjects = async (): Promise<void> => {
         name: 'Test-1',
         description: 'First-project',
         owner_id: 'temp',
-        id: 0
+        id: 0,
     };
 
     const p2: IProject = {
         name: 'Test-2',
         description: 'Second-project',
         owner_id: 'temp',
-        id: 0
+        id: 0,
     };
 
     ids = [];
@@ -61,7 +61,7 @@ describe('POST request', () => {
             name: 'Test-1',
             description: 'First-project',
             owner_id: 'temp',
-            id: 0
+            id: 0,
         };
 
         await api.post(baseUrl).send(p).expect(200);
@@ -72,7 +72,7 @@ describe('POST request', () => {
             name: 'Test-1',
             description: 'First-project',
             owner_id: 'temp',
-            id: 0
+            id: 0,
         };
 
         await api.post(baseUrl).send(p).expect(200);
@@ -107,7 +107,6 @@ describe('DELETE request', () => {
         expect(result.body).toHaveLength(1);
     });
 
-
     test('deletes the right project', async () => {
         await addDummyProjects();
 
@@ -127,11 +126,9 @@ describe('DELETE request', () => {
             name: 'Not-exiting',
             description: 'Not-existing-project',
             owner_id: 'ghost',
-            id: -1
+            id: -1,
         };
-        await api
-            .delete(`${baseUrl}/${p.id}`)
-            .expect(200);
+        await api.delete(`${baseUrl}/${p.id}`).expect(200);
     });
 });
 

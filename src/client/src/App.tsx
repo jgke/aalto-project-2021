@@ -22,7 +22,7 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
-    project_id: 0
+    project_id: 0,
 };
 
 interface AppProps {
@@ -33,15 +33,17 @@ export const App = (props: AppProps) => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
     const [projects, setProjects] = useState<IProject[]>([]);
-    const [selectedProject, setSelectedProject] = useState<IProject | null>(props.selectedProject || null);
+    const [selectedProject, setSelectedProject] = useState<IProject | null>(
+        props.selectedProject || null
+    );
 
     /**
      * Fetches the elements from a database
      */
     const getProjectsHook = (): void => {
         projectService.getAll('temp').then((projects) => {
-            console.log('Projects', projects)
-            setProjects(projects)
+            console.log('Projects', projects);
+            setProjects(projects);
         });
     };
     useEffect(getProjectsHook, []);
@@ -59,7 +61,7 @@ export const App = (props: AppProps) => {
             priority: 'Urgent',
             x: 5 + elements.length * 10,
             y: 5 + elements.length * 10,
-            project_id: selectedProject.id
+            project_id: selectedProject.id,
         };
         const returnId: string | undefined = await nodeService.sendNode(n);
         if (returnId) {
@@ -134,9 +136,9 @@ export const App = (props: AppProps) => {
     };
 
     const selectProject = (projectId: number) => {
-        const project = projects.find(p => p.id === projectId);
+        const project = projects.find((p) => p.id === projectId);
         if (project) {
-            setSelectedProject(project)
+            setSelectedProject(project);
             setElements([]);
 
             nodeService.getAll(projectId).then((nodes) => {
@@ -154,22 +156,34 @@ export const App = (props: AppProps) => {
                         type: 'straight',
                         arrowHeadType: ArrowHeadType.ArrowClosed,
                     }));
-    
+
                     setElements(nodeElements.concat(edgeElements));
                 });
             });
         }
-    }
+    };
 
     if (!selectedProject) {
-        return <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject} selectProject={selectProject}/>
+        return (
+            <Projects
+                projects={projects}
+                setProjects={setProjects}
+                setSelectedProject={setSelectedProject}
+                selectProject={selectProject}
+            />
+        );
     }
 
     return (
         <div className="App">
-            <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject} selectProject={selectProject}/>
+            <Projects
+                projects={projects}
+                setProjects={setProjects}
+                setSelectedProject={setSelectedProject}
+                selectProject={selectProject}
+            />
             <h2>{selectedProject.name}</h2>
-            <div className='addTaskForm'>
+            <div className="addTaskForm">
                 <h3>Add task</h3>
                 <div>
                     Text:{' '}
@@ -182,7 +196,7 @@ export const App = (props: AppProps) => {
                     <button onClick={createNode}>Add</button>
                 </div>
             </div>
-            <div className="graph" >
+            <div className="graph">
                 <Graph
                     selectedProject={selectedProject}
                     elements={elements}

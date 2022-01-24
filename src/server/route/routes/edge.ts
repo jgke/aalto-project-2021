@@ -21,13 +21,13 @@ router
         }
     });
 
-router
-    .route('/edge/:id')
-    .get(async (req: Request, res: Response) => {
-        const project_id = req.params.id;
-        const q = await db.query('SELECT * FROM edge WHERE project_id = $1', [project_id]);
-        res.json(q.rows);
-    })
+router.route('/edge/:id').get(async (req: Request, res: Response) => {
+    const project_id = req.params.id;
+    const q = await db.query('SELECT * FROM edge WHERE project_id = $1', [
+        project_id,
+    ]);
+    res.json(q.rows);
+});
 
 router
     .route('/edge')

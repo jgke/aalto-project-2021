@@ -10,18 +10,20 @@ const api = supertest(app);
 
 let pId = 0;
 
-const addDummyProject =async () => {
+const addDummyProject = async () => {
     const p: IProject = {
         name: 'Test-1',
         description: 'First-project',
         owner_id: 'temp',
-        id: 0
+        id: 0,
     };
 
-    pId = (await db.query(
-        'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
-        [p.name, p.owner_id, p.description]
-    )).rows[0].id;
+    pId = (
+        await db.query(
+            'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
+            [p.name, p.owner_id, p.description]
+        )
+    ).rows[0].id;
 };
 
 const addDummyNodes = async () => {
@@ -31,7 +33,7 @@ const addDummyNodes = async () => {
         status: 'Doing',
         x: 0,
         y: 0,
-        project_id: pId
+        project_id: pId,
     };
 
     const n2: INode = {
@@ -40,7 +42,7 @@ const addDummyNodes = async () => {
         status: 'Done',
         x: 1,
         y: 2,
-        project_id: pId
+        project_id: pId,
     };
 
     await db.query(
@@ -70,27 +72,27 @@ describe('Basic GET request', () => {
 });
 
 describe('POST and GET request', () => {
-    test('adding node should be successful', async () => {        
+    test('adding node should be successful', async () => {
         const n: INode = {
             label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
             x: 0,
             y: 0,
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post('/api/node').send(n).expect(200);
     });
 
-    test('GET request should give us a node added to the database', async () => {        
+    test('GET request should give us a node added to the database', async () => {
         const n: INode = {
             label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
             x: 0,
             y: 0,
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post('/api/node').send(n).expect(200);
@@ -106,14 +108,14 @@ describe('POST and GET request', () => {
         expect(node).toHaveProperty('project_id');
     });
 
-    test('A node should have the proper values that were sent', async () => {        
+    test('A node should have the proper values that were sent', async () => {
         const n: INode = {
             label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
             x: 0,
             y: 0,
-            project_id: pId
+            project_id: pId,
         };
 
         await api.post('/api/node').send(n).expect(200);

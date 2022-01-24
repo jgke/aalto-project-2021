@@ -13,7 +13,7 @@ const renderGraph = () => {
         elements: [],
         setElements: () => null,
         onNodeEdit: () => null,
-        selectedProject: null
+        selectedProject: null,
     };
     return render(<Graph {...props} />);
 };

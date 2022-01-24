@@ -11,10 +11,10 @@ const selectedProject: IProject = {
     id: 1,
     name: 'Name',
     description: '',
-    owner_id: '1'
-}
+    owner_id: '1',
+};
 
-const comp = <App selectedProject={selectedProject}/>;
+const comp = <App selectedProject={selectedProject} />;
 
 test('Renders with default props', () => {
     const { getByText } = render(comp);

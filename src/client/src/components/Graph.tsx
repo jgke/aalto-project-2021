@@ -119,7 +119,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 priority: 'Urgent',
                 x: node.position.x,
                 y: node.position.y,
-                project_id: props.selectedProject?.id || 0
+                project_id: props.selectedProject?.id || 0,
             };
 
             const returnId: string | undefined = await nodeService.sendNode(n);
@@ -208,7 +208,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
             edgeService.sendEdge({
                 source_id: params.source,
                 target_id: params.target,
-                project_id: selectedProject.id
+                project_id: selectedProject.id,
             });
         } else {
             console.log(

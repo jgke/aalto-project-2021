@@ -20,7 +20,6 @@ router.route('/project/:id').delete(async (req: Request, res: Response) => {
     } else {
         console.log('could not find project with id: ', id);
     } */
-    
 });
 
 router
