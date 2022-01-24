@@ -46,7 +46,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
     };
 
     return (
-        <div className="loginDiv">
+        <div className="form-box-login">
             <form onSubmit={handleSubmit}>
                 <h1>Login</h1>
                 {errMessage.map((e) => (

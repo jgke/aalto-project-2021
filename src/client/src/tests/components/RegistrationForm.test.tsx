@@ -17,10 +17,7 @@ describe('<RegistrationForm />', () => {
     test('should be visible to users', () => {
         const { registration } = renderForm();
         const container = registration.container;
-        expect(container).toHaveTextContent('Email');
-        expect(container).toHaveTextContent('Username');
-        expect(container).toHaveTextContent('Password');
-        expect(container).toHaveTextContent('Repeat Password');
+        expect(container).toHaveTextContent('Register');
 
         const inputs = container.querySelectorAll('input');
         expect(inputs).toHaveLength(4);

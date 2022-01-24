@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { RegisterFormProps, Registration } from '../../../../types';
+import './styles/Form.css'
 
 export const RegistrationForm: ({
     createUser,
@@ -70,7 +71,7 @@ export const RegistrationForm: ({
     };
 
     return (
-        <div>
+        <div className="form-box-reg">
             <form onSubmit={handleSubmit}>
                 <h1>Register</h1>
                 {errMessage.map((e, i) => (
@@ -78,7 +79,6 @@ export const RegistrationForm: ({
                 ))}
                 <div>
                     <label htmlFor="email">
-                        <b>Email</b>
                     </label>
                     <input
                         type="text"
@@ -91,7 +91,6 @@ export const RegistrationForm: ({
                 </div>
                 <div>
                     <label htmlFor="username">
-                        <b>Username</b>
                     </label>
                     <input
                         type="text"
@@ -104,7 +103,6 @@ export const RegistrationForm: ({
                 </div>
                 <div>
                     <label htmlFor="psw">
-                        <b>Password</b>
                     </label>
                     <input
                         type="password"
@@ -113,11 +111,11 @@ export const RegistrationForm: ({
                         id="psw"
                         value={password}
                         onChange={({ target }) => setPassword(target.value)}
+                        required
                     />
                 </div>
                 <div>
                     <label htmlFor="psw-repeat">
-                        <b>Repeat Password</b>
                     </label>
                     <input
                         type="password"
@@ -126,6 +124,7 @@ export const RegistrationForm: ({
                         id="psw-repeat"
                         value={confirm}
                         onChange={({ target }) => setConfirm(target.value)}
+                        required
                     />
                 </div>
 

@@ -210,8 +210,8 @@ describe('Database', () => {
             username: 'Hacker',
         };
 
-        q = await db.query('SELECT * FROM users WHERE email=$1;', [
-            injection.email,
+        q = await db.query('SELECT * FROM users WHERE password=$1;', [
+            injection.password,
         ]);
         expect(q.rowCount).toBeGreaterThan(0);
     });
