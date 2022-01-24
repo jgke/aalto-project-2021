@@ -25,17 +25,22 @@ export const basicNode: INode = {
     project_id: 0
 };
 
-export const App: React.FC = () => {
+interface AppProps {
+    selectedProject?: IProject;
+}
+
+export const App = (props: AppProps) => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
     const [projects, setProjects] = useState<IProject[]>([]);
-    const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
+    const [selectedProject, setSelectedProject] = useState<IProject | null>(props.selectedProject || null);
 
     /**
      * Fetches the elements from a database
      */
     const getProjectsHook = (): void => {
         projectService.getAll('temp').then((projects) => {
+            console.log('Projects', projects)
             setProjects(projects)
         });
     };
@@ -164,7 +169,7 @@ export const App: React.FC = () => {
         <div className="App">
             <Projects projects={projects} setProjects={setProjects} setSelectedProject={setSelectedProject} selectProject={selectProject}/>
             <h2>{selectedProject.name}</h2>
-            <div>
+            <div className='addTaskForm'>
                 <h3>Add task</h3>
                 <div>
                     Text:{' '}
