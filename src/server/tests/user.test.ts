@@ -216,6 +216,8 @@ describe('Database', () => {
 });
 
 afterAll(async () => {
-    await db.query('DELETE FROM users; DELETE FROM edge; DELETE FROM node;', [])
-
-})
+    await db.query(
+        'DELETE FROM users; DELETE FROM edge; DELETE FROM node;',
+        []
+    );
+});

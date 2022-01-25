@@ -201,14 +201,24 @@ describe('test add node', () => {
 
 describe('test navigation bar', () => {
 
-    it('registration hyperlink works', () => {
-        cy.contains('Registration').click()
-        cy.contains('Login').click()
-        cy.contains('Home').click()
-    });
+    it('pages exist', () => {
+        cy.visit('/user/login')
+        cy.visit('/user/register')
+    })
 
-    it('writing into forms is possible', () => {
-        cy.visit('localhost:3000/user/register')
+    it('hyperlinks in the top work', () => {
+        //cy.visit('/')
+
+        cy.get('a[id=home-link]').click()
+        cy.get('a[id=register-link]').click()
+        //cy.get('a[id=login-link]').click()
+    });
+})
+
+describe('forms', () => {
+
+    it('registering should be possible', () => {
+        cy.get('a[id=register-link]').click()
         cy.get('#email').type('cypress@test.com')
         cy.get('#username').type('Mr.Cypress')
         cy.get('#psw').type('secretPassword123')
@@ -222,7 +232,7 @@ describe('test navigation bar', () => {
 
     it('should not allow registering the same email twice', () => {
 
-        cy.visit('localhost:3000/user/register')
+        cy.get('a[id=register-link]').click()
         cy.get('#email').type('cypress@test.com')
         cy.get('#username').type('Mr.Cypress')
         cy.get('#psw').type('secretPassword123')
@@ -234,16 +244,13 @@ describe('test navigation bar', () => {
 
     //Right now it doesn't actually know, wheather or not is actually logged in
     it('logging in should be possible', () => {
-        cy.visit('localhost:3000/user/login')
+        cy.get('a[id=login-link]').click()
         cy.get('#email').type('cypress@test.com')
         cy.get('#psw').type('secretPassword123')
         cy.get('#login-button').click()
 
-        //The .visit below hopefully can be removed later
-        //when the "logged as ${username}" actually renders when it needs to
-        cy.visit('localhost:3000/')
-
         //cy.contains('Logged in as Mr.Cypress')
 
     })
+
 })

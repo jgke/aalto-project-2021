@@ -21,9 +21,16 @@ router
         console.log('Receiving node...');
         const text: INode = req.body; //Might have to parse this
 
-        // eslint-disable-next-line no-prototype-builtins
-        if(!text.label || !text.status || !text.priority || !text.hasOwnProperty('x') || !text.hasOwnProperty('y')){
-            res.status(403).json({ message: 'Invalid node' })
+        if (
+            !text.label ||
+            !text.status ||
+            !text.priority ||
+            // eslint-disable-next-line no-prototype-builtins
+            !text.hasOwnProperty('x') ||
+            // eslint-disable-next-line no-prototype-builtins
+            !text.hasOwnProperty('y')
+        ) {
+            res.status(403).json({ message: 'Invalid node' });
             return;
         }
 

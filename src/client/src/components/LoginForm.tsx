@@ -9,7 +9,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
     const [errMessage, setErr] = useState(['']);
 
     const errTimeout = (message: string) => {
-        setErr(errMessage.concat(message))
+        setErr(errMessage.concat(message));
 
         setTimeout(() => {
             setErr(['']);
@@ -35,9 +35,12 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
         };
         try {
             const res: UserToken = await loginUser(user);
-            const userInfo = JSON.stringify({ ...res, token: `Bearer ${res.token}`})
-            console.log('UserInfo?!?!?', userInfo)
-            window.localStorage.setItem('loggedGraphUser', userInfo)
+            const userInfo = JSON.stringify({
+                ...res,
+                token: `Bearer ${res.token}`,
+            });
+            console.log('UserInfo?!?!?', userInfo);
+            window.localStorage.setItem('loggedGraphUser', userInfo);
 
             setEmail('');
             setPassword('');
@@ -55,8 +58,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
                     <p key={e}>{e}</p>
                 ))}
                 <div>
-                    <label htmlFor="email">
-                    </label>
+                    <label htmlFor="email"></label>
                     <input
                         type="email"
                         placeholder="Enter Email"
@@ -67,8 +69,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
                     />
                 </div>
                 <div>
-                    <label htmlFor="psw">
-                    </label>
+                    <label htmlFor="psw"></label>
                     <input
                         type="password"
                         placeholder="Enter Password"
@@ -78,7 +79,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
                         onChange={({ target }) => setPassword(target.value)}
                     />
                 </div>
-                <button id='login-button' type="submit" className="loginbutton">
+                <button id="login-button" type="submit" className="loginbutton">
                     Login
                 </button>
             </form>

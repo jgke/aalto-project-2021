@@ -31,7 +31,11 @@ export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
-    const [user, setUser] = useState<UserToken>({ username: null, email: null, token: null })
+    const [user, setUser] = useState<UserToken>({
+        username: null,
+        email: null,
+        token: null,
+    });
 
     /**
      * Fetches the elements from a database
@@ -68,11 +72,11 @@ export const App: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const loggedUserJson = window.localStorage.getItem('loggedGraphUser')
+        const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
         if (loggedUserJson) {
-            setUser(JSON.parse(loggedUserJson))
+            setUser(JSON.parse(loggedUserJson));
         }
-    }, [])
+    }, []);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -183,7 +187,6 @@ export const App: React.FC = () => {
     };
 
     return (
-
         <div className="App">
             <div>
                 <Topbar {...user} />
