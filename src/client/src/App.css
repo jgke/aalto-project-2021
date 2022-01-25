@@ -2,6 +2,7 @@
     background-color: #34303a;
     justify-content: right;
 }
+
 .toolbar {
     display: flex;
     flex-direction: column;
