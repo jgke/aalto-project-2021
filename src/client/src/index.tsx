@@ -6,16 +6,19 @@ import { reportWebVitals } from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Registration } from './pages/Registration';
 import { Login } from './pages/Login';
-import { Logout } from './pages/Logout'
+import { Logout } from './pages/Logout';
 
 ReactDOM.render(
     <React.StrictMode>
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<App />}></Route>
-                <Route path="/user/register" element={<Registration />}></Route>
-                <Route path="/user/login" element={<Login />}></Route>
-                <Route path="/user/logout" element={<Logout />} ></Route>
+                <Route
+                    path="/:user/register"
+                    element={<Registration />}
+                ></Route>
+                <Route path="/:user/login" element={<Login />}></Route>
+                <Route path="/user/logout" element={<Logout />}></Route>
             </Routes>
         </BrowserRouter>
     </React.StrictMode>,

@@ -124,7 +124,11 @@ export const RegistrationForm: ({
                     />
                 </div>
 
-                <button id='register-button' type="submit" className="registerbutton">
+                <button
+                    id="register-button"
+                    type="submit"
+                    className="registerbutton"
+                >
                     Register
                 </button>
             </form>

@@ -71,7 +71,7 @@ router.route('/user/login').post(async (req: Request, res: Response) => {
 
     const token = jwt.sign(
         userForToken,
-        process.env.SECRET ? process.env.SECRET : ''
+        process.env.SECRET ? process.env.SECRET : 'secret'
     );
 
     res.status(200).json({ token, username: user.username, email: user.email });
