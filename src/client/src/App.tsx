@@ -15,7 +15,9 @@ import {
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import { INode, IEdge } from '../../../types';
-import { NavLink } from 'react-router-dom';
+import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { Login } from './pages/Login';
+import { Registration } from './pages/Registration';
 
 
 //import './App.css';
@@ -177,8 +179,7 @@ export const App: React.FC = () => {
     return (
         <div className="App">
             <div>
-                <NavLink to="/user/register">Registration</NavLink>
-                <NavLink to="/user/login"> Login </NavLink>
+                
             </div>
             <h2>Tasks</h2>
             <div>
