@@ -183,8 +183,11 @@ export const App: React.FC = () => {
     };
 
     return (
+
         <div className="App">
-            <Topbar {...user} />
+            <div>
+                <Topbar {...user} />
+            </div>
             <h2>Tasks</h2>
             <div>
                 <h3>Add task</h3>

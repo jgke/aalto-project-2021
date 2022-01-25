@@ -56,7 +56,6 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
                 ))}
                 <div>
                     <label htmlFor="email">
-                        <b>Email</b>
                     </label>
                     <input
                         type="email"
@@ -69,7 +68,6 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
                 </div>
                 <div>
                     <label htmlFor="psw">
-                        <b>Password</b>
                     </label>
                     <input
                         type="password"

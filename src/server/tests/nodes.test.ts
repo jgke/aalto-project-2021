@@ -215,10 +215,5 @@ describe('Database', () => {
 });
 
 afterAll(async () => {
-    // Below are tries to make the weird jest warning go away.
-    //MIght become useful
-    //(await db.getPool()).end()
-    //const client = await db.getClient()
-    //client.removeAllListeners()
-    //await db.query("SELECT * FROM node", [])
+    await db.query('DELETE FROM users; DELETE FROM edge; DELETE FROM node;', [])
 });

@@ -214,3 +214,8 @@ describe('Database', () => {
         expect(q.rowCount).toBeGreaterThan(0);
     });
 });
+
+afterAll(async () => {
+    await db.query('DELETE FROM users; DELETE FROM edge; DELETE FROM node;', [])
+
+})
