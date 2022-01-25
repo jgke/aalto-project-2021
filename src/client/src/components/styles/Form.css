@@ -1,74 +1,87 @@
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-.form-box-login{
-    font-family:'Courier New', Courier, monospace;
-    background-image: linear-gradient(to bottom right, #92aae6, #5e06b6, #290066);
+.form-box-login {
+    font-family: 'Courier New', Courier, monospace;
+    background-image: linear-gradient(
+        to bottom right,
+        #92aae6,
+        #5e06b6,
+        #290066
+    );
     display: block;
     min-width: 50%;
     height: 35vh;
     border: 1px solid rgb(2, 1, 1);
     margin: 0vw;
-    padding: 5vw ;
-    position: relative; 
+    padding: 5vw;
+    position: relative;
 }
 
-.form-box-reg{
-    font-family:'Courier New', Courier, monospace;
-    background-image: linear-gradient(to bottom right, #92aae6, #5e06b6, #290066);
+.form-box-reg {
+    font-family: 'Courier New', Courier, monospace;
+    background-image: linear-gradient(
+        to bottom right,
+        #92aae6,
+        #5e06b6,
+        #290066
+    );
     display: block;
     min-width: 50%;
     height: 50vh;
     border: 1px solid rgb(2, 1, 1);
     margin: 0vw;
-    padding: 5vw ;
-    position: relative; 
+    padding: 5vw;
+    position: relative;
 }
 
-.form-box-reg label{
+.form-box-reg label {
     display: block;
     text-align: center;
     font-size: 20px;
     margin: 0 0 2vh 0;
 }
 
-.form-box-login label{
+.form-box-login label {
     display: block;
     text-align: center;
     font-size: 20px;
     margin: 0 0 2vh 0;
 }
 
-.form-box-login input, textarea{
+.form-box-login input,
+textarea {
     display: block;
     width: 100%;
-    padding: .5rem .8rem .5rem .8rem;
-    margin: .9vw 0 ;
+    padding: 0.5rem 0.8rem 0.5rem 0.8rem;
+    margin: 0.9vw 0;
     border: 20px;
     border-radius: 20px;
     font-size: 20px;
 }
 
-.form-box-reg input, textarea{
+.form-box-reg input,
+textarea {
     display: block;
     width: 100%;
-    padding: .5rem .8rem .5rem .8rem;
-    margin: .9vw 0 ;
+    padding: 0.5rem 0.8rem 0.5rem 0.8rem;
+    margin: 0.9vw 0;
     border: 20px;
     border-radius: 20px;
     font-size: 20px;
 }
 
-.form-box-login textarea{
+.form-box-login textarea {
     height: 15vh;
 }
 
-.loginbutton, .registerbutton{
+.loginbutton,
+.registerbutton {
     display: block;
-    margin: .9vw 0 ;
+    margin: 0.9vw 0;
     border-radius: 20px;
     width: 15%;
     height: 2rem;
@@ -76,6 +89,5 @@
     border: 0;
     cursor: pointer;
     font-size: 20px;
-    position:absolute;
-
+    position: absolute;
 }

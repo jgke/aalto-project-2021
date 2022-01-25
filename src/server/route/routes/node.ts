@@ -20,16 +20,18 @@ router
     .post(async (req: Request, res: Response) => {
         console.log('Receiving node...');
         const text: INode = req.body; //Might have to parse this
-        try {
-            const q = await db.query(
-                'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                [text.label, text.status, text.priority, text.x, text.y]
-            );
-            res.status(200).json(q);
-        } catch (e) {
-            console.error('Invalid node', e);
-            res.status(403).json();
+
+        // eslint-disable-next-line no-prototype-builtins
+        if(!text.label || !text.status || !text.priority || !text.hasOwnProperty('x') || !text.hasOwnProperty('y')){
+            res.status(403).json({ message: 'Invalid node' })
+            return;
         }
+
+        const q = await db.query(
+            'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+            [text.label, text.status, text.priority, text.x, text.y]
+        );
+        res.status(200).json(q);
     })
     .put(async (req: Request, res: Response) => {
         const n: INode = req.body;

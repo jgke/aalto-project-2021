@@ -1,3 +1,4 @@
+
 describe('Passing Dummy Test', () => {
     it('Does not do much', () => {
         expect(true).to.equal(true)
@@ -88,7 +89,7 @@ describe('test add node', () => {
         cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist')
 
         // remove pre-existing nodes with the test name
-        cy.get("body").then(($body) => {
+        cy.get('body').then(($body) => {
             $body.find(`.react-flow__node-default:contains(${node_name_1})`).each((index, $div, $list) => {
                 cy.wrap($div).click('topLeft', {
                     force: true
@@ -195,5 +196,54 @@ describe('test add node', () => {
         })
             
         cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('not.exist')
+    })
+})
+
+describe('test navigation bar', () => {
+
+    it('registration hyperlink works', () => {
+        cy.contains('Registration').click()
+        cy.contains('Login').click()
+        cy.contains('Home').click()
+    });
+
+    it('writing into forms is possible', () => {
+        cy.visit('localhost:3000/user/register')
+        cy.get('#email').type('cypress@test.com')
+        cy.get('#username').type('Mr.Cypress')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#psw-repeat').type('secretPassword123')
+
+        /* cy.contains('cypress@test.com')
+        cy.contains('Mr.Cypress') */
+
+        cy.get('#register-button').click()
+    })
+
+    it('should not allow registering the same email twice', () => {
+
+        cy.visit('localhost:3000/user/register')
+        cy.get('#email').type('cypress@test.com')
+        cy.get('#username').type('Mr.Cypress')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#psw-repeat').type('secretPassword123')
+
+        cy.get('#register-button').click()
+
+    })
+
+    //Right now it doesn't actually know, wheather or not is actually logged in
+    it('logging in should be possible', () => {
+        cy.visit('localhost:3000/user/login')
+        cy.get('#email').type('cypress@test.com')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#login-button').click()
+
+        //The .visit below hopefully can be removed later
+        //when the "logged as ${username}" actually renders when it needs to
+        cy.visit('localhost:3000/')
+
+        //cy.contains('Logged in as Mr.Cypress')
+
     })
 })

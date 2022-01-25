@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Login, LoginFormProps } from '../../../../types';
+import { Login, LoginFormProps, UserToken } from '../../../../types';
 
 export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
     loginUser,
@@ -8,7 +8,9 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
     const [password, setPassword] = useState('');
     const [errMessage, setErr] = useState(['']);
 
-    const errTimeout = () => {
+    const errTimeout = (message: string) => {
+        setErr(errMessage.concat(message))
+
         setTimeout(() => {
             setErr(['']);
         }, 5000);
@@ -18,14 +20,12 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
         event.preventDefault();
 
         if (email.length === 0 || password.length === 0) {
-            setErr(errMessage.concat('Fill all necessary fields'));
-            errTimeout();
+            errTimeout('Fill all necessary fields');
             return;
         }
 
         if (!email.includes('@')) {
-            setErr(errMessage.concat('Email missing @'));
-            errTimeout();
+            errTimeout('Email missing @');
             return;
         }
 
@@ -34,13 +34,15 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
             password: password,
         };
         try {
-            const res = await loginUser(user);
-            console.log('Res?', res);
+            const res: UserToken = await loginUser(user);
+            const userInfo = JSON.stringify({ ...res, token: `Bearer ${res.token}`})
+            console.log('UserInfo?!?!?', userInfo)
+            window.localStorage.setItem('loggedGraphUser', userInfo)
+
             setEmail('');
             setPassword('');
         } catch (e) {
-            setErr(errMessage.concat('Error occured when logging in'));
-            errTimeout();
+            errTimeout('Error occured when logging in');
             console.log('ERROR!', e);
         }
     };
@@ -78,7 +80,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
                         onChange={({ target }) => setPassword(target.value)}
                     />
                 </div>
-                <button type="submit" className="loginbutton">
+                <button id='login-button' type="submit" className="loginbutton">
                     Login
                 </button>
             </form>

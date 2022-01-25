@@ -1,12 +1,13 @@
 import express, { Request, Response, Router, Express } from 'express';
 import * as router from './route';
 import { RequestHandler } from 'express-serve-static-core';
-
+require('express-async-errors');
 // call express
 export const app: Express = express(); // define our app using express
 
 // configure app to use bodyParser for
 // Getting data from body of requests
+
 app.use(express.urlencoded({ extended: true }) as RequestHandler);
 
 app.use(express.json() as RequestHandler);

@@ -21,7 +21,7 @@ function path(url: string): IPathRoute {
             methods: ['POST'],
         },
         '/user/login': {
-            methods: ['POST'],
+            methods: ['POST', 'GET'],
         },
     };
     if (url.includes('/edge/')) {

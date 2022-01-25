@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RegisterFormProps, Registration } from '../../../../types';
-import './styles/Form.css'
+import './styles/Form.css';
 
 export const RegistrationForm: ({
     createUser,
@@ -78,8 +78,7 @@ export const RegistrationForm: ({
                     <p key={i}>{e}</p>
                 ))}
                 <div>
-                    <label htmlFor="email">
-                    </label>
+                    <label htmlFor="email"></label>
                     <input
                         type="text"
                         placeholder="Enter Email"
@@ -90,8 +89,7 @@ export const RegistrationForm: ({
                     />
                 </div>
                 <div>
-                    <label htmlFor="username">
-                    </label>
+                    <label htmlFor="username"></label>
                     <input
                         type="text"
                         placeholder="Enter Username"
@@ -102,8 +100,7 @@ export const RegistrationForm: ({
                     />
                 </div>
                 <div>
-                    <label htmlFor="psw">
-                    </label>
+                    <label htmlFor="psw"></label>
                     <input
                         type="password"
                         placeholder="Enter Password"
@@ -115,8 +112,7 @@ export const RegistrationForm: ({
                     />
                 </div>
                 <div>
-                    <label htmlFor="psw-repeat">
-                    </label>
+                    <label htmlFor="psw-repeat"></label>
                     <input
                         type="password"
                         placeholder="Repeat Password"
@@ -128,7 +124,7 @@ export const RegistrationForm: ({
                     />
                 </div>
 
-                <button type="submit" className="registerbutton">
+                <button id='register-button' type="submit" className="registerbutton">
                     Register
                 </button>
             </form>

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import { RegistrationForm } from '../../components/registrationForm';
+import { RegistrationForm } from '../../components/RegistrationForm';
 
 const renderForm = () => {
     const createUser = jest.fn();
