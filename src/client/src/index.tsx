@@ -13,7 +13,10 @@ ReactDOM.render(
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<App />}></Route>
-                <Route path="/:user/register" element={<Registration />}></Route>
+                <Route
+                    path="/:user/register"
+                    element={<Registration />}
+                ></Route>
                 <Route path="/:user/login" element={<Login />}></Route>
                 <Route path="/user/logout" element={<Logout />}></Route>
             </Routes>

@@ -14,7 +14,6 @@ app.use(express.json() as RequestHandler);
 
 const port: number = Number(process.env.PORT) || 8050; // set our port
 
-
 // REGISTER ROUTES
 // all of the routes will be prefixed with /api
 const routes: Router[] = Object.values(router);
@@ -24,7 +23,7 @@ app.use('/api', routes);
 app.use(express.static('dist'));
 app.get('/*', (req: Request, res: Response) => {
     console.log('sending index.html');
-    res.sendFile('/dist/index.html', { root : __dirname});
+    res.sendFile('/dist/index.html', { root: __dirname });
 });
 
 // START THE SERVER
