@@ -22,7 +22,7 @@
 //
 //
 // -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })W
+// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 
 // cypress is able to click the nodes even if they're outside the bounds as long as they are not covered by another node

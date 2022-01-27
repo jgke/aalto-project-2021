@@ -1,15 +1,20 @@
 const myConsts = {
-    host_url : 'http://localhost:3000',
+    // apparently the port changes on integration test?
+    //host_url : 'http://localhost:3000/',
+    //// empty string works on integration test, but not locally
+    host_url : '',
     global_clean : true,
     node_name_prefix : '__test__'
 }
 
 beforeEach(() => {
     if (myConsts.global_clean) {
-        cy.get('body').then( () => {
-            cy.removeAllTestNodes();
+        cy.get('body').then( ($body) => {
+            if ($body.find('.App').length) {
+                cy.removeAllTestNodes();
 
-            cy.get(`.react-flow__node-default:contains(${myConsts.node_name_prefix})`).should('not.exist');
+                cy.get(`.react-flow__node-default:contains(${myConsts.node_name_prefix})`).should('not.exist');
+            }
         });
     }
 });
@@ -49,9 +54,10 @@ describe('nodetext has add button', () => {
 });
 
 describe('test add node', () => {
+    const node_name_1 = '__test__1';
+    const node_name_2 = '__test__2';
+
     it('Can add and remove nodes', () => {
-        let node_name_1 = '__test__1';
-        let node_name_2 = '__test__2';
         const n_nodes_to_add = 3;
 
         if (!myConsts.global_clean) {
@@ -87,7 +93,6 @@ describe('test add node', () => {
 
     it('Can rename nodes with double click', () => {
         const new_node_name = '__test__NEW_NODE';
-        const node_name_1 = '__test__node_name_1';
         cy.get('input#nodetext').type(node_name_1)
         cy.get('input#nodetext').parent().contains('Add').click()
 
