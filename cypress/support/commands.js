@@ -57,3 +57,15 @@ Cypress.Commands.add('removeAllTestNodes', () => {
         });
     });
 });
+
+Cypress.Commands.add('getElemRect', (elemString) => {
+    let elem_pos = 0;
+
+    cy.get(elemString).should('have.length', 1).then(
+        ($elem) => {
+            elem_pos = $elem[0].getBoundingClientRect();
+        }
+    );
+
+    return elem_pos;
+});
