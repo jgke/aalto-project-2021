@@ -114,7 +114,7 @@ describe('User registration', () => {
 });
 
 describe('Logging in', () => {
-    test('should work given correct credentials', async () => {
+    test('should work with an email given correct credentials', async () => {
         await addDummyUsers();
 
         let user = dummyUsers[0];
@@ -136,6 +136,24 @@ describe('Logging in', () => {
         expect(res.body).toHaveProperty('token');
     });
 
+    test('should work with a username given correct credentials', async () => {
+        await addDummyUsers();
+
+        let user = dummyUsers[0];
+
+        let res = await api
+            .post(`${baseUrl}/login`)
+            .send({ username: user.username, password: user.password });
+        expect(res.body).toHaveProperty('token');
+
+        user = dummyUsers[1];
+
+        res = await api
+            .post(`${baseUrl}/login`)
+            .send({ username: user.username, password: user.password });
+        expect(res.body).toHaveProperty('token');
+    });
+
     test('giving a wrong password should not send a token back', async () => {
         await addDummyUsers();
 
@@ -154,7 +172,7 @@ describe('Logging in', () => {
         expect(res.body.message).toBe('Wrong email or password');
     });
 
-    test('giving a wrong username should not send a token back', async () => {
+    test('giving a wrong email should not send a token back', async () => {
         await addDummyUsers();
 
         let user = dummyUsers[0];
@@ -170,6 +188,24 @@ describe('Logging in', () => {
             .send({ email: 'hack@email.com', password: user.password })
             .expect(401);
         expect(res.body.message).toBe('Wrong email or password');
+    });
+
+    test('giving a wrong username should not send a token back', async () => {
+        await addDummyUsers();
+
+        let user = dummyUsers[0];
+        let res = await api
+            .post(`${baseUrl}/login`)
+            .send({ username: 'Mr.WrongGuy', password: user.password })
+            .expect(401);
+        expect(res.body.message).toBe('Wrong username or password');
+
+        user = dummyUsers[1];
+        res = await api
+            .post(`${baseUrl}/login`)
+            .send({ username: 'Ms.WrongGuy', password: user.password })
+            .expect(401);
+        expect(res.body.message).toBe('Wrong username or password');
     });
 });
 

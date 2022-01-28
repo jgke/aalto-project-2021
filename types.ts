@@ -28,7 +28,8 @@ export interface RegisterFormProps {
 }
 
 export interface Login {
-    email: string;
+    email: string | null;
+    username: string | null;
     password: string;
 }
 

@@ -44,7 +44,7 @@ export const RegistrationForm: ({
         if (password !== confirm) {
             setErr(
                 errMessage
-                    .concat('Passwords do nott match!')
+                    .concat('Passwords do not match!')
                     .filter((x) => x !== '')
             );
             errTimeout();
@@ -75,7 +75,9 @@ export const RegistrationForm: ({
             <form onSubmit={handleSubmit}>
                 <h1>Register</h1>
                 {errMessage.map((e, i) => (
-                    <p key={i}>{e}</p>
+                    <p id="register-error" key={i}>
+                        {e}
+                    </p>
                 ))}
                 <div>
                     <label htmlFor="email"></label>
