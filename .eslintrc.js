@@ -5,11 +5,14 @@ module.exports = {
         'browser': true,
         'es6': true,
         'node': true,
-        'jest': true
+        'jest': true,
+        'cypress/globals': true
+
     },
     'plugins': [
         '@typescript-eslint',
-        'import'
+        'import',
+        'cypress'
     ],
     'extends': [
         'eslint:recommended',

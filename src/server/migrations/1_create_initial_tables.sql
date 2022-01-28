@@ -31,5 +31,12 @@ CREATE TABLE edge (
     ON DELETE CASCADE
 );
 
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username TEXT NOT NULL,
+  password TEXT NOT NULL,
+  email TEXT NOT NULL
+);
+
 ALTER TABLE edge
 ADD CONSTRAINT PK_edge PRIMARY KEY (source_id, target_id);

@@ -5,7 +5,7 @@ export const logger = (
     res: Response,
     next: (param?: unknown) => void
 ): void => {
-    console.clear();
+    //console.clear();
     const date: Date = new Date();
     console.table([
         {

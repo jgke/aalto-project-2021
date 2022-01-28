@@ -12,8 +12,9 @@ import {
 import * as projectService from './services/projectService';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
-import { INode, IProject } from '../../../types';
+import { INode, IEdge, UserToken, IProject } from '../../../types';
 import { Projects } from './components/Projects';
+import { Topbar } from './components/TopBar';
 import './App.css';
 
 export const basicNode: INode = {
@@ -37,6 +38,12 @@ export const App = (props: AppProps) => {
         props.selectedProject || null
     );
 
+    const [user, setUser] = useState<UserToken>({
+        username: null,
+        email: null,
+        token: null,
+    });
+
     /**
      * Fetches the elements from a database
      */
@@ -47,6 +54,13 @@ export const App = (props: AppProps) => {
         });
     };
     useEffect(getProjectsHook, []);
+
+    useEffect(() => {
+        const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
+        if (loggedUserJson) {
+            setUser(JSON.parse(loggedUserJson));
+        }
+    }, []);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -165,17 +179,21 @@ export const App = (props: AppProps) => {
 
     if (!selectedProject) {
         return (
-            <Projects
-                projects={projects}
-                setProjects={setProjects}
-                setSelectedProject={setSelectedProject}
-                selectProject={selectProject}
-            />
+            <>
+                <Topbar {...user} />
+                <Projects
+                    projects={projects}
+                    setProjects={setProjects}
+                    setSelectedProject={setSelectedProject}
+                    selectProject={selectProject}
+                />
+            </>
         );
     }
 
     return (
         <div className="App">
+            <Topbar {...user} />
             <Projects
                 projects={projects}
                 setProjects={setProjects}

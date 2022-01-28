@@ -23,12 +23,16 @@ function path(url: string): IPathRoute {
         '/project/:id': {
             methods: ['DELETE'],
         },
+        '/user/register': {
+            methods: ['POST'],
+        },
+        '/user/login': {
+            methods: ['POST', 'GET'],
+        },
     };
     if (url.includes('/edge/')) {
-        console.log('Returning weird edge url');
         return allRoutes['/edge/:source/:target'];
     } else if (url.includes('/node/')) {
-        console.log('route found, url: ', url);
         return allRoutes['/node/:id'];
     } else if (url.includes('/project/')) {
         return allRoutes['/project/:id'];

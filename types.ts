@@ -25,3 +25,35 @@ export interface IProject {
     name: string;
     description: string;
 }
+
+export interface Registration {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export interface RegisterFormProps {
+    createUser: (user: Registration) => Promise<Registration>;
+}
+
+export interface Login {
+    email: string;
+    password: string;
+}
+
+export interface UserToken {
+    username: string | null;
+    email: string | null;
+    token: string | null;
+}
+
+export interface LoginFormProps {
+    loginUser: (user: Login) => Promise<UserToken>;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
+}
