@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import { render, fireEvent, RenderResult } from '@testing-library/react';
+import { render, RenderResult } from '@testing-library/react';
 import { App } from '../App';
 
 describe('App', () => {
@@ -43,19 +43,15 @@ describe('App', () => {
         testApp = render(<App />);
     });
 
-    test('Changin the initial node text box should be possible', () => {
-        const input = testApp.container.querySelector('input');
-        if (input) {
-            fireEvent.change(input, {
-                target: { value: 'Add physics' },
-            });
-            expect(input).toHaveValue('Add physics');
-        }
-    });
-
     test('App should include graph', () => {
         const graph = testApp.container.querySelector('Graph');
         expect(graph).toBeVisible;
         expect(graph).toBeInTheDocument;
+    });
+
+    test('should include Toolbar', () => {
+        const toolbar = testApp.container.querySelector('Toolbar');
+        expect(toolbar).toBeVisible;
+        expect(toolbar).toBeInTheDocument;
     });
 });
