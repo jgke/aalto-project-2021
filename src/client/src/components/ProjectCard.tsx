@@ -6,12 +6,11 @@ import { ProjectForm } from './ProjectForm';
 import * as projectService from '../services/projectService';
 import { Dropdown } from 'react-bootstrap';
 import CSS from 'csstype';
+import { useSelector, useDispatch } from 'react-redux'
+import * as projectReducer from '../reducers/projectReducer'
 
 interface ProjectCardProps {
     project: IProject;
-    setProjects: React.Dispatch<React.SetStateAction<IProject[]>>;
-    setSelectedProject: React.Dispatch<React.SetStateAction<IProject | null>>;
-    selectProject: (projectId: number) => void;
 }
 
 const dropdownButtonStyle: CSS.Properties = {
@@ -22,25 +21,18 @@ const dropdownButtonStyle: CSS.Properties = {
 };
 
 export const ProjectCard = (props: ProjectCardProps) => {
+    const dispatch = useDispatch();
+
     const [editMode, setEditMode] = useState<boolean>(false);
 
     const handleSubmit = async (project: IProject) => {
-        await projectService.updateProject(project);
-        props.setProjects((projects) =>
-            projects.map((p) => (p.id === project.id ? project : p))
-        );
+        dispatch(projectReducer.projectUpdate(project));
         setEditMode(false);
     };
 
     const deleteProject = async () => {
         if (props.project.id) {
-            await projectService.deleteProject(props.project.id);
-            props.setProjects((projects) =>
-                projects.filter((p) => p.id !== props.project.id)
-            );
-            props.setSelectedProject((project) =>
-                project?.id === props.project.id ? null : project
-            );
+            dispatch(projectReducer.projectDelete(props.project.id));
         }
     };
 
@@ -69,7 +61,7 @@ export const ProjectCard = (props: ProjectCardProps) => {
             onClick={() =>
                 props.project &&
                 !editMode &&
-                props.selectProject(props.project.id)
+                dispatch(projectReducer.projectSelect(props.project))
             }
         >
             <Dropdown onClick={(e) => e.stopPropagation()}>

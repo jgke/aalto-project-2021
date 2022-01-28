@@ -1,3 +1,5 @@
+import { ProjectState } from "./src/client/src/reducers/projectReducer";
+
 type Status = 'Done' | 'Doing' | 'ToDo';
 
 // Id of a node is optional since the id is created in the database
@@ -56,4 +58,8 @@ export interface User {
     password: string;
     email: string;
     id: string;
+}
+
+export interface RootState {
+    project: ProjectState
 }

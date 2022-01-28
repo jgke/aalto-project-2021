@@ -7,8 +7,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Registration } from './pages/Registration';
 import { Login } from './pages/Login';
 import { Logout } from './pages/Logout';
-import store from './store'
+import { store } from './store'
 import { Provider } from 'react-redux'
+import { Projects } from './components/Projects';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -22,6 +23,7 @@ ReactDOM.render(
                     ></Route>
                     <Route path="/:user/login" element={<Login />}></Route>
                     <Route path="/user/logout" element={<Logout />}></Route>
+                    {/* <Route path="/project" element={<Projects />}></Route> */}
                 </Routes>
             </Provider>
         </BrowserRouter>

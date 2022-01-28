@@ -2,7 +2,7 @@ import axios from 'axios';
 import { IProject } from '../../../../types';
 export const baseUrl = '/api/project';
 
-const getAll = async (userId: string): Promise<IProject[]> => {
+const getAll = async (): Promise<IProject[]> => {
     const project = await axios.get<IProject[]>(baseUrl);
     return project.data;
 };
