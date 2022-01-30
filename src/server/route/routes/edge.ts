@@ -32,12 +32,20 @@ router
         console.log('Receiving edge...', req.body);
         const text: IEdge = req.body; //Might have to parse this
         try {
-            const q = await db.query(
+            const q1 = await db.query(
+                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
+                [text.target_id, text.source_id]
+            );
+            if(q1.rowCount > 0) {
+                throw new Error('Both-way edges are not allowed');
+            }
+            
+            const q2 = await db.query(
                 'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
                 [text.source_id, text.target_id]
             );
             console.log('What was the edge q?');
-            res.status(200).json(q);
+            res.status(200).json(q2);
         } catch (e) {
             console.log(e);
             res.status(403).json();

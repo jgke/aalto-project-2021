@@ -87,7 +87,7 @@ export const App: React.FC = () => {
         setNodeText('');
     };
 
-    const onConnect = (params: Edge<IEdge> | Connection) => {
+    const onConnect = async (params: Edge<IEdge> | Connection) => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
 
@@ -99,12 +99,13 @@ export const App: React.FC = () => {
                 arrowHeadType: ArrowHeadType.ArrowClosed,
             };
 
-            setElements((els) => addEdge(b, els));
-
-            edgeService.sendEdge({
+            const success = await edgeService.sendEdge({
                 source_id: params.source,
                 target_id: params.target,
             });
+            if(success){
+                setElements((els) => addEdge(b, els))
+            }
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
