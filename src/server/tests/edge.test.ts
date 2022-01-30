@@ -109,8 +109,23 @@ describe('POST request', () => {
         await api.post(baseUrl).send(e).expect(200);
 
         await api.post(baseUrl).send(e).expect(403);
-        //Edges with switched source and target are still allowed, altough they shouldn't!
     });
+
+    test('should not allow both-way edges', async () => {
+        await addDummyNodes();
+
+        const e1: IEdge = {
+            source_id: ids[0],
+            target_id: ids[1],
+        };
+        const e2: IEdge = {
+            source_id: ids[1],
+            target_id: ids[0],
+        };
+
+        await api.post(baseUrl).send(e1).expect(200);
+        await api.post(baseUrl).send(e2).expect(403);
+    })
 });
 
 describe('DELETE request', () => {
