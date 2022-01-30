@@ -12,8 +12,8 @@ CREATE TABLE node (
   label TEXT NOT NULL,
   status TEXT NOT NULL,
   priority TEXT NOT NULL,
-  x INTEGER NOT NULL,
-  y INTEGER NOT NULL,
+  x DOUBLE PRECISION NOT NULL,
+  y DOUBLE PRECISION NOT NULL,
   project_id SERIAL NOT NULL,
   CONSTRAINT fk_project_id
     FOREIGN KEY(project_id) 

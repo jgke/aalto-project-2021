@@ -39,7 +39,7 @@ export const ProjectForm = (props: ProjectFormProps) => {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formSourceId">
-                    <Form.Label>Project name</Form.Label>
+                    <Form.Label>Description</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={2}
