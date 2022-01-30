@@ -36,10 +36,10 @@ router
                 'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
                 [text.target_id, text.source_id]
             );
-            if(q1.rowCount > 0) {
+            if (q1.rowCount > 0) {
                 throw new Error('Both-way edges are not allowed');
             }
-            
+
             const q2 = await db.query(
                 'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
                 [text.source_id, text.target_id]

@@ -125,7 +125,7 @@ describe('POST request', () => {
 
         await api.post(baseUrl).send(e1).expect(200);
         await api.post(baseUrl).send(e2).expect(403);
-    })
+    });
 });
 
 describe('DELETE request', () => {

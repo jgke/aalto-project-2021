@@ -13,10 +13,10 @@ const sendEdge = async (edge: IEdge): Promise<boolean> => {
     try {
         const response = await axios.post(baseUrl, edge);
         console.log('Edge added', response.data);
-        return true
+        return true;
     } catch (e) {
-        console.log(e)
-        return false
+        console.log(e);
+        return false;
     }
 };
 

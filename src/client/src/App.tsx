@@ -103,8 +103,8 @@ export const App: React.FC = () => {
                 source_id: params.source,
                 target_id: params.target,
             });
-            if(success){
-                setElements((els) => addEdge(b, els))
+            if (success) {
+                setElements((els) => addEdge(b, els));
             }
         } else {
             console.log(
