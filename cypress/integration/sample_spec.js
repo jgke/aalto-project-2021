@@ -1,3 +1,4 @@
+
 describe('Passing Dummy Test', () => {
     it('Does not do much', () => {
         expect(true).to.equal(true)
@@ -88,7 +89,7 @@ describe('test add node', () => {
         cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist')
 
         // remove pre-existing nodes with the test name
-        cy.get("body").then(($body) => {
+        cy.get('body').then(($body) => {
             $body.find(`.react-flow__node-default:contains(${node_name_1})`).each((index, $div, $list) => {
                 cy.wrap($div).click('topLeft', {
                     force: true
@@ -196,4 +197,60 @@ describe('test add node', () => {
             
         cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('not.exist')
     })
+})
+
+describe('test navigation bar', () => {
+
+    it('pages exist', () => {
+        cy.visit('/user/login')
+        cy.visit('/user/register')
+    })
+
+    it('hyperlinks in the top work', () => {
+        //cy.visit('/')
+
+        cy.get('a[id=home-link]').click()
+        cy.get('a[id=register-link]').click()
+        //cy.get('a[id=login-link]').click()
+    });
+})
+
+describe('forms', () => {
+
+    it('registering should be possible', () => {
+        cy.get('a[id=register-link]').click()
+        cy.get('#email').type('cypress@test.com')
+        cy.get('#username').type('Mr.Cypress')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#psw-repeat').type('secretPassword123')
+
+        /* cy.contains('cypress@test.com')
+        cy.contains('Mr.Cypress') */
+
+        cy.get('#register-button').click()
+    })
+
+    it('should not allow registering the same email twice', () => {
+
+        cy.get('a[id=register-link]').click()
+        cy.get('#email').type('cypress@test.com')
+        cy.get('#username').type('Mr.Cypress')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#psw-repeat').type('secretPassword123')
+
+        cy.get('#register-button').click()
+
+    })
+
+    //Right now it doesn't actually know, wheather or not is actually logged in
+    it('logging in should be possible', () => {
+        cy.get('a[id=login-link]').click()
+        cy.get('#email').type('cypress@test.com')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#login-button').click()
+
+        //cy.contains('Logged in as Mr.Cypress')
+
+    })
+
 })

@@ -1,3 +1,5 @@
+import { ProjectState } from "./src/client/src/reducers/projectReducer";
+
 type Status = 'Done' | 'Doing' | 'ToDo';
 
 // Id of a node is optional since the id is created in the database
@@ -24,4 +26,40 @@ export interface IProject {
     owner_id: string;
     name: string;
     description: string;
+}
+
+export interface Registration {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export interface RegisterFormProps {
+    createUser: (user: Registration) => Promise<Registration>;
+}
+
+export interface Login {
+    email: string;
+    password: string;
+}
+
+export interface UserToken {
+    username: string | null;
+    email: string | null;
+    token: string | null;
+}
+
+export interface LoginFormProps {
+    loginUser: (user: Login) => Promise<UserToken>;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
+}
+
+export interface RootState {
+    project: ProjectState
 }

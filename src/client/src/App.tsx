@@ -12,8 +12,11 @@ import {
 import * as projectService from './services/projectService';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
-import { INode, IProject } from '../../../types';
+import { INode, IEdge, UserToken, IProject, RootState } from '../../../types';
 import { Projects } from './components/Projects';
+import { Topbar } from './components/TopBar';
+import { useSelector, useDispatch } from 'react-redux'
+import * as projectReducer from './reducers/projectReducer'
 import './App.css';
 
 export const basicNode: INode = {
@@ -30,23 +33,57 @@ interface AppProps {
 }
 
 export const App = (props: AppProps) => {
+    const dispatch = useDispatch()
+
+    const projects = useSelector((state: RootState) => state.project.all.sort((a, b) => a.id > b.id ? 1 : -1))
+    const selectedProject = useSelector((state: RootState) => state.project.selected)
+
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
-    const [projects, setProjects] = useState<IProject[]>([]);
-    const [selectedProject, setSelectedProject] = useState<IProject | null>(
-        props.selectedProject || null
-    );
+
+    const [user, setUser] = useState<UserToken>({
+        username: null,
+        email: null,
+        token: null,
+    });
 
     /**
      * Fetches the elements from a database
      */
-    const getProjectsHook = (): void => {
-        projectService.getAll('temp').then((projects) => {
-            console.log('Projects', projects);
-            setProjects(projects);
-        });
-    };
-    useEffect(getProjectsHook, []);
+    useEffect(() => { dispatch(projectReducer.projectInit()) }, [dispatch])
+
+    useEffect(() => { 
+        if (selectedProject) {
+            setElements([]);
+    
+            nodeService.getAll(selectedProject.id).then((nodes) => {
+                edgeService.getAll(selectedProject.id).then((edges) => {
+                    const nodeElements: Elements = nodes.map((n) => ({
+                        id: String(n.id),
+                        data: n,
+                        position: { x: n.x, y: n.y },
+                    }));
+                    // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+                    const edgeElements: Elements = edges.map((e) => ({
+                        id: String(e.source_id) + '-' + String(e.target_id),
+                        source: String(e.source_id),
+                        target: String(e.target_id),
+                        type: 'straight',
+                        arrowHeadType: ArrowHeadType.ArrowClosed,
+                    }));
+    
+                    setElements(nodeElements.concat(edgeElements));
+                });
+            });
+        }
+    }, [selectedProject])
+
+    useEffect(() => {
+        const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
+        if (loggedUserJson) {
+            setUser(JSON.parse(loggedUserJson));
+        }
+    }, []);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -135,53 +172,19 @@ export const App = (props: AppProps) => {
         await nodeService.updateNode(data);
     };
 
-    const selectProject = (projectId: number) => {
-        const project = projects.find((p) => p.id === projectId);
-        if (project) {
-            setSelectedProject(project);
-            setElements([]);
-
-            nodeService.getAll(projectId).then((nodes) => {
-                edgeService.getAll(projectId).then((edges) => {
-                    const nodeElements: Elements = nodes.map((n) => ({
-                        id: String(n.id),
-                        data: n,
-                        position: { x: n.x, y: n.y },
-                    }));
-                    // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                    const edgeElements: Elements = edges.map((e) => ({
-                        id: String(e.source_id) + '-' + String(e.target_id),
-                        source: String(e.source_id),
-                        target: String(e.target_id),
-                        type: 'straight',
-                        arrowHeadType: ArrowHeadType.ArrowClosed,
-                    }));
-
-                    setElements(nodeElements.concat(edgeElements));
-                });
-            });
-        }
-    };
-
     if (!selectedProject) {
         return (
-            <Projects
-                projects={projects}
-                setProjects={setProjects}
-                setSelectedProject={setSelectedProject}
-                selectProject={selectProject}
-            />
+            <div>
+                <Topbar {...user} />
+                <Projects/>
+            </div>
         );
     }
 
     return (
         <div className="App">
-            <Projects
-                projects={projects}
-                setProjects={setProjects}
-                setSelectedProject={setSelectedProject}
-                selectProject={selectProject}
-            />
+            <Topbar {...user} />
+            <Projects/>
             <h2>{selectedProject.name}</h2>
             <div className="addTaskForm">
                 <h3>Add task</h3>
