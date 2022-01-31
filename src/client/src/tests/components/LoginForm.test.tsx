@@ -67,28 +67,6 @@ describe('<LoginForm>', () => {
         }
     });
 
-    test('submitting an email without @ should raise an error and not call submit function', () => {
-        const loginUser = jest.fn();
-
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
-        const input = loginForm.container.querySelectorAll('input');
-        const form = loginForm.container.querySelector('form');
-
-        fireEvent.change(input[0], {
-            target: { value: 'mrtestnodes.com' },
-        });
-
-        fireEvent.change(input[1], {
-            target: { value: 'password123' },
-        });
-
-        if (form) {
-            fireEvent.submit(form);
-            expect(loginUser.mock.calls).toHaveLength(0);
-            expect(loginForm.container).toHaveTextContent('Email missing @');
-        }
-    });
-
     test('empty email input should not call the submit function', () => {
         const loginUser = jest.fn();
 

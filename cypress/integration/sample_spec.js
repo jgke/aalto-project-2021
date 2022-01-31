@@ -228,6 +228,9 @@ describe('forms', () => {
         cy.contains('Mr.Cypress') */
 
         cy.get('#register-button').click()
+
+        //cy.contains('#register-error').should('not.exist')
+
     })
 
     it('should not allow registering the same email twice', () => {
@@ -240,16 +243,34 @@ describe('forms', () => {
 
         cy.get('#register-button').click()
 
+        //cy.contains('#register-error')
+
     })
 
     //Right now it doesn't actually know, wheather or not is actually logged in
-    it('logging in should be possible', () => {
+    it('logging in should be possible with an email', () => {
         cy.get('a[id=login-link]').click()
-        cy.get('#email').type('cypress@test.com')
+        cy.get('#emailUser').type('cypress@test.com')
         cy.get('#psw').type('secretPassword123')
         cy.get('#login-button').click()
 
-        //cy.contains('Logged in as Mr.Cypress')
+        cy.get('#logout-link').click()
+
+        //cy.contains('#login-error').should('not.exist')
+
+    })
+
+    it('logging in should be possible with a username', () => {
+        cy.get('#login-link').click()
+        cy.get('#emailUser').type('Mr.Cypress')
+        cy.get('#psw').type('secretPassword123')
+        cy.get('#login-button').click()
+        
+        cy.contains('#loing-error').should('not.exist')
+
+        cy.get('#logout-link').click()
+
+        //cy.contains('#login-error').should('not.exist')
 
     })
 

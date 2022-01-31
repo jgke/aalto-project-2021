@@ -78,7 +78,7 @@ describe('<RegistrationForm />', () => {
             fireEvent.submit(form);
             expect(createUser.mock.calls).toHaveLength(0);
             expect(registration.container).toHaveTextContent(
-                'Passwords do nott match'
+                'Passwords do not match'
             );
         }
     });
