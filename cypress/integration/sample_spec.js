@@ -18,7 +18,7 @@ describe('Has nodetext', () => {
 
 describe('nodetext has add button', () => {
     it('Has button to add node', () => {
-        cy.get('input#nodetext').parent().contains('Add')
+        cy.get('input#nodetext').parent().contains('Create')
     })
 })
 
@@ -69,20 +69,20 @@ describe('test add node', () => {
         cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist')
 
         cy.get('input#nodetext').type(node_name_1)
-        cy.get('input#nodetext').parent().contains('Add').click()
+        cy.get('input#nodetext').parent().contains('Create').click()
 
         cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist')
 
         for (let i = 0; i < 3; i++) {
             cy.get('input#nodetext').type(node_name_1)
-            cy.get('input#nodetext').parent().contains('Add').click()
+            cy.get('input#nodetext').parent().contains('Create').click()
         }
 
         cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist')
         cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist')
 
         cy.get('input#nodetext').type(node_name_2)
-        cy.get('input#nodetext').parent().contains('Add').click()
+        cy.get('input#nodetext').parent().contains('Create').click()
 
         cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist')
         cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist')
@@ -133,7 +133,7 @@ describe('test add node', () => {
     it('Can rename nodes with double click', () => {
         const new_node_name = 'NEW NODE'
         cy.get('input#nodetext').type(node_name_1)
-        cy.get('input#nodetext').parent().contains('Add').click()
+        cy.get('input#nodetext').parent().contains('Create').click()
 
         cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick()
         cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
