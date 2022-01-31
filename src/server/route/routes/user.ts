@@ -99,7 +99,12 @@ router.route('/user/login').post(async (req: Request, res: Response) => {
         process.env.SECRET ? process.env.SECRET : 'secret'
     );
 
-    res.status(200).json({ token, username: user.username, email: user.email, id: user.id });
+    res.status(200).json({
+        token,
+        username: user.username,
+        email: user.email,
+        id: user.id,
+    });
 });
 
 export { router as user };

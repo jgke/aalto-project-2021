@@ -53,8 +53,6 @@ code {
         monospace;
 }
 
-
-
 .toolbar {
     display: flex;
     flex-direction: column;

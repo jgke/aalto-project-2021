@@ -34,14 +34,10 @@ export interface Login {
 }
 
 export interface UserToken {
-    username?: string;
-    email?: string;
-    token?: string;
-    id?: string;
-}
-
-export interface LoginFormProps {
-    loginUser: (user: Login) => Promise<UserToken>;
+    username: string;
+    email: string;
+    token: string;
+    id: string;
 }
 
 export interface User {

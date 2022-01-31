@@ -5,7 +5,6 @@ export const baseUrl = '/api/edge';
 
 const getAll = async (): Promise<IEdge[]> => {
     const response = await axios.get<IEdge[]>(baseUrl);
-    console.log(response.data);
     return response.data;
 };
 

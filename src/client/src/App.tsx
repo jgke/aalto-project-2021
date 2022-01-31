@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import {
-    Elements,
-    removeElements,
-    isNode,
-    isEdge,
-    FlowElement,
-    ArrowHeadType,
-} from 'react-flow-renderer';
+import { Elements, ArrowHeadType } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import { INode, IEdge, UserToken } from '../../../types';
@@ -16,8 +9,9 @@ import { Topbar } from './components/TopBar';
 import './App.css';
 import { Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
-import { Login } from './pages/Login';
-import { Logout } from './pages/Logout';
+import { loginUser } from './services/userService';
+import { LoginForm } from './components/LoginForm';
+import { Navigate } from 'react-router-dom';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -30,7 +24,7 @@ export const basicNode: INode = {
 export const App: React.FC = () => {
     const [elements, setElements] = useState<Elements>([]);
 
-    const [user, setUser] = useState<UserToken>({});
+    const [user, setUser] = useState<UserToken | null>(null);
 
     /**
      * Fetches the elements from a database
@@ -73,25 +67,33 @@ export const App: React.FC = () => {
         }
     }, []);
 
+    if (!user && !location.pathname.startsWith('/user')) {
+        return <Navigate to="/user/login" />;
+    }
+
     return (
         <div className="app">
             <div>
-                <Topbar {...user} />
+                <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route path="/" element={
-                    <Graph
-                        elements={elements}
-                        setElements={setElements}
-                        className="graph"
-                    />
-                }></Route>
                 <Route
-                    path="/:user/register"
-                    element={<Registration />}
+                    path="/"
+                    element={
+                        <Graph
+                            elements={elements}
+                            setElements={setElements}
+                            className="graph"
+                        />
+                    }
                 ></Route>
-                <Route path="/:user/login" element={<Login />}></Route>
-                <Route path="/user/logout" element={<Logout />}></Route>
+                <Route path="/user/register" element={<Registration />}></Route>
+                <Route
+                    path="/user/login"
+                    element={
+                        <LoginForm loginUser={loginUser} setUser={setUser} />
+                    }
+                ></Route>
             </Routes>
         </div>
     );

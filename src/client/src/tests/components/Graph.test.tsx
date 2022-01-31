@@ -86,13 +86,18 @@ describe('<Graph>', () => {
                     reactFlowInstance.fitView();
                 }}
                 setElements={jest.fn()}
-                onNodeEdit={jest.fn()}
             />
         );
     };
 
     beforeEach(() => {
         testGraph = renderGraph(testElements);
+    });
+
+    test('should include Toolbar', () => {
+        const toolbar = testGraph.container.querySelector('Toolbar');
+        expect(toolbar).toBeVisible;
+        expect(toolbar).toBeInTheDocument;
     });
 
     test('is visible for users', () => {

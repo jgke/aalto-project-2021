@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Login, LoginFormProps, UserToken } from '../../../../types';
+import { useNavigate } from 'react-router-dom';
+import { Login, UserToken } from '../../../../types';
 
-export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
-    loginUser,
-}: LoginFormProps) => {
+export interface LoginFormProps {
+    loginUser: (user: Login) => Promise<UserToken>;
+    setUser: React.Dispatch<React.SetStateAction<UserToken | null>>;
+}
+
+export const LoginForm = (props: LoginFormProps) => {
     const [emailUser, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errMessage, setErr] = useState(['']);
+
+    const navigate = useNavigate();
 
     const errTimeout = (message: string) => {
         setErr(errMessage.concat(message));
@@ -37,7 +43,7 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
         }
 
         try {
-            const res: UserToken = await loginUser(user);
+            const res: UserToken = await props.loginUser(user);
             const userInfo = JSON.stringify({
                 ...res,
                 token: `Bearer ${res.token}`,
@@ -46,6 +52,8 @@ export const LoginForm: ({ loginUser }: LoginFormProps) => JSX.Element = ({
 
             setEmail('');
             setPassword('');
+            props.setUser(res);
+            navigate('/');
         } catch (e) {
             errTimeout('Error occured when logging in');
             console.log('ERROR!', e);
