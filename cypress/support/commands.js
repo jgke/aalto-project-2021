@@ -44,7 +44,7 @@ Cypress.Commands.add('insertNode', (nodeName) => {
         // nodeName should be prefixed by '__test__'
         expect(nodeName).match(/^__test__/);
     }
-    cy.get('input#nodetext').parent().contains('Add').click();
+    cy.get('input#nodetext').parent().contains('Create').click();
 });
 
 // remove nodes prefixed with __test__
