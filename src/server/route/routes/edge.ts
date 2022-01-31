@@ -6,19 +6,13 @@ import { db } from '../../dbConfigs';
 router
     .route('/edge/:source/:target')
     .delete(async (req: Request, res: Response) => {
-        try {
-            const source = req.params.source;
-            const target = req.params.target;
-            await db.query(
-                'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
-                [source, target]
-            );
-            res.status(200).json();
-        } catch (e) {
-            console.log('DELETION FAILED!');
-            console.log(e);
-            res.status(404).json();
-        }
+        const source = req.params.source;
+        const target = req.params.target;
+        await db.query(
+            'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
+            [source, target]
+        );
+        res.status(200).json();
     });
 
 router
@@ -31,17 +25,32 @@ router
     .post(async (req: Request, res: Response) => {
         console.log('Receiving edge...', req.body);
         const text: IEdge = req.body; //Might have to parse this
-        try {
-            const q = await db.query(
-                'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
-                [text.source_id, text.target_id]
-            );
-            console.log('What was the edge q?');
-            res.status(200).json(q);
-        } catch (e) {
-            console.log(e);
-            res.status(403).json();
+
+        if (!text.source_id || !text.target_id) {
+            res.status(403).json().end();
+            return;
         }
+
+        if (text.source_id === text.target_id) {
+            res.status(403).json().end();
+            return;
+        }
+
+        const duplicateCheck = await db.query(
+            'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
+            [text.source_id, text.target_id]
+        );
+
+        if (duplicateCheck.rowCount > 0) {
+            res.status(403).json().end();
+            return;
+        }
+
+        const q = await db.query(
+            'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
+            [text.source_id, text.target_id]
+        );
+        res.status(200).json(q);
     })
     .put((req: Request, res: Response) => {
         res.status(501).json({ message: 'Not implemented' });
