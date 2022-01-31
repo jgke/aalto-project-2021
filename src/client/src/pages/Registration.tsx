@@ -6,7 +6,7 @@ import { Topbar } from '../components/TopBar';
 export const Registration: React.FC = () => {
     return (
         <div>
-            <Topbar username={null} email={null} token={null} />
+            <Topbar />
             <RegistrationForm createUser={createUser} />
         </div>
     );

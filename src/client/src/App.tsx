@@ -31,11 +31,7 @@ export const App: React.FC = () => {
     const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
 
-    const [user, setUser] = useState<UserToken>({
-        username: null,
-        email: null,
-        token: null,
-    });
+    const [user, setUser] = useState<UserToken>({});
 
     /**
      * Fetches the elements from a database

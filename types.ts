@@ -34,9 +34,10 @@ export interface Login {
 }
 
 export interface UserToken {
-    username: string | null;
-    email: string | null;
-    token: string | null;
+    username?: string;
+    email?: string;
+    token?: string;
+    id?: string;
 }
 
 export interface LoginFormProps {

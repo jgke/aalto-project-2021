@@ -6,7 +6,7 @@ import { loginUser } from '../services/userService';
 export const Login: React.FC = () => {
     return (
         <div>
-            <Topbar username={null} email={null} token={null} />
+            <Topbar />
             <LoginForm loginUser={loginUser} />
         </div>
     );

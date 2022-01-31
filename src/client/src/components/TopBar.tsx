@@ -12,18 +12,21 @@ export const Topbar: ({ email, username, token }: UserToken) => JSX.Element = ({
                 {' '}
                 Home{' '}
             </a>
-            <a id="login-link" href="/user/login">
+            {!token && <a id="login-link" href="/user/login">
                 {' '}
                 Login{' '}
             </a>
-            <a id="register-link" href="/user/register">
+            }
+            {!token && <a id="register-link" href="/user/register">
                 {' '}
                 Registration{' '}
             </a>
-            <a id="logout-link" href="/user/logout">
+            }
+            {token && <a id="logout-link" href="/user/logout">
                 {' '}
                 Logout
             </a>
+            }
             {token && <b>Logged in as {username}</b>}
         </div>
     );
