@@ -49,3 +49,7 @@ export interface User {
     email: string;
     id: string;
 }
+
+export interface ToolbarProps {
+    createNode: (nodeText: string) => Promise<void>;
+}
