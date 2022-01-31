@@ -19,7 +19,8 @@ CREATE TABLE users (
   username TEXT NOT NULL,
   password TEXT NOT NULL,
   email TEXT NOT NULL,
-  UNIQUE (username, email)
+  UNIQUE (username),
+  UNIQUE (email)
 );
 
 ALTER TABLE edge

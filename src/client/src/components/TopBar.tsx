@@ -7,7 +7,7 @@ export interface TopbarProps {
     setUser: React.Dispatch<React.SetStateAction<UserToken | null>>;
 }
 
-export const Topbar = (props: TopbarProps) => {
+export const Topbar = (props: TopbarProps): JSX.Element => {
     const navigate = useNavigate();
     //The username does not rerender when logging in. Need to fix
     const user = props.user;
@@ -20,24 +20,32 @@ export const Topbar = (props: TopbarProps) => {
     return (
         <div className="topbar">
             {user && (
-                <Link id="home-link" to="/">
-                    Home
-                </Link>
+                <div>
+                    <Link id="home-link" to="/">
+                        Home
+                    </Link>
+                </div>
             )}
             {!user && (
-                <Link id="login-link" to="/user/login">
-                    Login
-                </Link>
+                <div>
+                    <Link id="login-link" to="/user/login">
+                        Login
+                    </Link>
+                </div>
             )}
             {!user && (
-                <Link id="register-link" to="/user/register">
-                    Register
-                </Link>
+                <div>
+                    <Link id="register-link" to="/user/register">
+                        Register
+                    </Link>
+                </div>
             )}
             {user && (
-                <a id="logout-link" href="#" onClick={logOut}>
-                    Logout
-                </a>
+                <div>
+                    <a id="logout-link" href="#" onClick={logOut}>
+                        Logout
+                    </a>
+                </div>
             )}
             {user && <b>Logged in as {user.username}</b>}
         </div>

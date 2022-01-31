@@ -7,7 +7,7 @@ export interface LoginFormProps {
     setUser: React.Dispatch<React.SetStateAction<UserToken | null>>;
 }
 
-export const LoginForm = (props: LoginFormProps) => {
+export const LoginForm = (props: LoginFormProps): JSX.Element => {
     const [emailUser, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errMessage, setErr] = useState(['']);

@@ -12,12 +12,12 @@ const dummyUsers = [
     {
         username: 'Mr_Test1',
         password: 'My_Secret_password',
-        email: 'mrtest@test.com',
+        email: 'mrtest@example.com',
     },
     {
         username: 'Jane_Doe',
         password: 'SweetKitties65#',
-        email: 'jane.doe100@gmail.com',
+        email: 'jane.doe100@example.com',
     },
 ];
 
@@ -40,7 +40,7 @@ describe('User registration', () => {
         const person = {
             username: 'Tommy',
             password: 'FlyingCows123',
-            email: 'tommy@gmail.com',
+            email: 'tommy@example.com',
         };
 
         await api.post(`${baseUrl}/register`).send(person).expect(200);
@@ -50,7 +50,7 @@ describe('User registration', () => {
         //Missing password
         const person1 = {
             username: 'Tommy',
-            email: 'tommy@gmail.com',
+            email: 'tommy@example.com',
         };
 
         let res = await api
@@ -62,7 +62,7 @@ describe('User registration', () => {
         //Missing username
         const person2 = {
             password: 'FlyingCows555',
-            email: 'tommy@gmail.com',
+            email: 'tommy@example.com',
         };
 
         res = await api.post(`${baseUrl}/register`).send(person2).expect(403);
@@ -110,6 +110,14 @@ describe('User registration', () => {
             );
             expect(comparison).toBeTruthy();
         }
+    });
+
+    test('username should be unique', async () => {
+        await api.post(`${baseUrl}/register`).send(dummyUsers[0]).expect(200);
+        await api
+            .post(`${baseUrl}/register`)
+            .send({ ...dummyUsers[0], email: 'randomuser@example.com' })
+            .expect(403);
     });
 });
 
@@ -178,14 +186,14 @@ describe('Logging in', () => {
         let user = dummyUsers[0];
         let res = await api
             .post(`${baseUrl}/login`)
-            .send({ email: 'hack@email.com', password: user.password })
+            .send({ email: 'hack@example.com', password: user.password })
             .expect(401);
         expect(res.body.message).toBe('Wrong email or password');
 
         user = dummyUsers[1];
         res = await api
             .post(`${baseUrl}/login`)
-            .send({ email: 'hack@email.com', password: user.password })
+            .send({ email: 'hack@example.com', password: user.password })
             .expect(401);
         expect(res.body.message).toBe('Wrong email or password');
     });
@@ -229,7 +237,7 @@ describe('Database', () => {
             // eslint-disable-next-line quotes
             username: " d'); DROP TABLE users; --",
             password: 'Attack',
-            email: 'hacker@hack.com',
+            email: 'hacker@example.com',
         };
 
         await api.post(`${baseUrl}/register`).send(injection).expect(200);
@@ -242,7 +250,7 @@ describe('Database', () => {
         injection = {
             // eslint-disable-next-line quotes
             password: " d'); DROP TABLE users; --",
-            email: 'hacker@notahack.com',
+            email: 'hackernot@example.com',
             username: 'Password hacker',
         };
 
@@ -252,8 +260,5 @@ describe('Database', () => {
 });
 
 afterAll(async () => {
-    await db.query(
-        'DELETE FROM users; DELETE FROM edge; DELETE FROM node;',
-        []
-    );
+    await db.query('TRUNCATE users;', []);
 });

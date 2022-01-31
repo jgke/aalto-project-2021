@@ -29,7 +29,7 @@ router.route('/user/register').post(async (req: Request, res: Response) => {
         res.status(200).json();
     } else {
         res.status(403).json({
-            message: `The user ${user.username} already exists`,
+            message: 'Username or email already registered',
         });
     }
 });
