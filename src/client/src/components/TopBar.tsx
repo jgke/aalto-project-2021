@@ -7,7 +7,7 @@ export interface TopbarProps {
     setUser: React.Dispatch<React.SetStateAction<UserToken | null>>;
 }
 
-export const Topbar = (props: TopbarProps) => {
+export const Topbar = (props: TopbarProps): JSX.Element => {
     const navigate = useNavigate();
     //The username does not rerender when logging in. Need to fix
     const user = props.user;
