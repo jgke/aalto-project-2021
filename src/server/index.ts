@@ -1,6 +1,7 @@
 import express, { Request, Response, Router, Express } from 'express';
 import * as router from './route';
 import { RequestHandler } from 'express-serve-static-core';
+require('express-async-errors');
 
 // call express
 export const app: Express = express(); // define our app using express

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
+import { Toolbar } from './components/Toolbar';
 import {
     Elements,
     addEdge,
@@ -14,8 +15,9 @@ import {
 } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
+import * as layoutService from './services/layoutService';
 import { INode, IEdge } from '../../../types';
-//import './App.css';
+import './App.css';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -26,8 +28,31 @@ export const basicNode: INode = {
 };
 
 export const App: React.FC = () => {
-    const [nodeText, setNodeText] = useState('');
     const [elements, setElements] = useState<Elements>([]);
+
+    //calls nodeService.updateNode for all nodes
+    const updateNodes = async (): Promise<void> => {
+        for (const el of elements) {
+            if (isNode(el)) {
+                const node: INode = el.data;
+
+                if (node) {
+                    node.x = Math.round(el.position.x);
+                    node.y = Math.round(el.position.y);
+
+                    await nodeService.updateNode(node);
+                }
+            }
+        }
+    };
+
+    const layoutWithDagre = async (direction: string) => {
+        //applies the layout
+        setElements(layoutService.dagreLayout(elements, direction));
+
+        //sends updated node positions to backend
+        await updateNodes();
+    };
 
     /**
      * Fetches the elements from a database
@@ -57,6 +82,7 @@ export const App: React.FC = () => {
                 target: String(e.target_id),
                 type: 'straight',
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: e,
             }));
             setElements(nodeElements.concat(edgeElements));
         };
@@ -66,7 +92,7 @@ export const App: React.FC = () => {
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
-    const createNode = async (): Promise<void> => {
+    const createNode = async (nodeText: string): Promise<void> => {
         const n: INode = {
             status: 'ToDo',
             label: nodeText,
@@ -84,7 +110,6 @@ export const App: React.FC = () => {
             };
             setElements(elements.concat(b));
         }
-        setNodeText('');
     };
 
     const onConnect = async (params: Edge<IEdge> | Connection) => {
@@ -97,6 +122,7 @@ export const App: React.FC = () => {
                 source: params.source,
                 target: params.target,
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: edge,
             };
 
             const success = await edgeService.sendEdge({
@@ -185,20 +211,6 @@ export const App: React.FC = () => {
 
     return (
         <div className="App">
-            <h2>Tasks</h2>
-            <div>
-                <h3>Add task</h3>
-                <div>
-                    Text:{' '}
-                    <input
-                        id="nodetext"
-                        type="text"
-                        value={nodeText}
-                        onChange={({ target }) => setNodeText(target.value)}
-                    />
-                    <button onClick={createNode}>Add</button>
-                </div>
-            </div>
             <div className="graph">
                 <Graph
                     elements={elements}
@@ -209,8 +221,13 @@ export const App: React.FC = () => {
                     onEdgeUpdate={(o, s) =>
                         console.log('What are these?', o, s)
                     }
+                    className="graph"
                 />
             </div>
+            <Toolbar
+                createNode={createNode}
+                layoutWithDagre={layoutWithDagre}
+            />
         </div>
     );
 };
