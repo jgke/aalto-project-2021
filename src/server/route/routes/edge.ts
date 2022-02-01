@@ -36,16 +36,20 @@ router
                 'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
                 [text.target_id, text.source_id]
             );
+
             if (q1.rowCount > 0) {
-                throw new Error('Both-way edges are not allowed');
+                await db.query(
+                    'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
+                    [text.target_id, text.source_id]
+                );
             }
 
-            const q2 = await db.query(
+            const q3 = await db.query(
                 'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
                 [text.source_id, text.target_id]
             );
             console.log('What was the edge q?');
-            res.status(200).json(q2);
+            res.status(200).json(q3);
         } catch (e) {
             console.log(e);
             res.status(403).json();

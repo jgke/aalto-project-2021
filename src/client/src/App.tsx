@@ -104,6 +104,17 @@ export const App: React.FC = () => {
                 target_id: params.target,
             });
             if (success) {
+                // Filter out the edge that will be replaced, if there is one
+                setElements((els) =>
+                    els.filter(
+                        (e) =>
+                            isNode(e) ||
+                            !(
+                                e.target === params.source &&
+                                e.source === params.target
+                            )
+                    )
+                );
                 setElements((els) => addEdge(b, els));
             }
         } else {

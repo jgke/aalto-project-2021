@@ -111,7 +111,7 @@ describe('POST request', () => {
         await api.post(baseUrl).send(e).expect(403);
     });
 
-    test('should not allow both-way edges', async () => {
+    test('should switch source and target when trying to make both-way edges', async () => {
         await addDummyNodes();
 
         const e1: IEdge = {
@@ -124,7 +124,12 @@ describe('POST request', () => {
         };
 
         await api.post(baseUrl).send(e1).expect(200);
-        await api.post(baseUrl).send(e2).expect(403);
+        await api.post(baseUrl).send(e2).expect(200);
+
+        const res = await api.get(baseUrl).expect(200);
+        expect(res.body).toHaveLength(1);
+        expect(res.body[0].source_id).toBe(ids[1]);
+        expect(res.body[0].target_id).toBe(ids[0]);
     });
 });
 
