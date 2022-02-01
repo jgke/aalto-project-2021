@@ -116,6 +116,10 @@ export const App: React.FC = () => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
 
+            const edge: IEdge = {
+                source_id: params.source,
+                target_id: params.target
+            }
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
                 type: 'straight',
@@ -125,10 +129,7 @@ export const App: React.FC = () => {
                 data: edge,
             };
 
-            const success = await edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-            });
+            const success = await edgeService.sendEdge(edge);
             if (success) {
                 // Filter out the edge that will be replaced, if there is one
                 setElements((els) =>
