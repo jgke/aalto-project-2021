@@ -118,8 +118,8 @@ export const App: React.FC = () => {
 
             const edge: IEdge = {
                 source_id: params.source,
-                target_id: params.target
-            }
+                target_id: params.target,
+            };
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
                 type: 'straight',
