@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Elements, ArrowHeadType } from 'react-flow-renderer';
-import * as nodeService from './services/nodeService';
-import * as edgeService from './services/edgeService';
-import { INode, IEdge, UserToken } from '../../../types';
+import { Elements } from 'react-flow-renderer';
+import { INode, UserToken } from '../../../types';
 import { Topbar } from './components/TopBar';
-
 import './App.css';
 import { Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
@@ -23,49 +20,21 @@ export const basicNode: INode = {
 
 export const App: React.FC = () => {
     const [elements, setElements] = useState<Elements>([]);
-
     const [user, setUser] = useState<UserToken | null>(null);
-
-    /**
-     * Fetches the elements from a database
-     */
-    useEffect(() => {
-        const getElementsHook = async () => {
-            let nodes: INode[];
-            let edges: IEdge[];
-            try {
-                [nodes, edges] = await Promise.all([
-                    nodeService.getAll(),
-                    edgeService.getAll(),
-                ]);
-            } catch (e) {
-                return;
-            }
-
-            const nodeElements: Elements = nodes.map((n) => ({
-                id: String(n.id),
-                data: n,
-                position: { x: n.x, y: n.y },
-            }));
-            // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-            const edgeElements: Elements = edges.map((e) => ({
-                id: String(e.source_id) + '-' + String(e.target_id),
-                source: String(e.source_id),
-                target: String(e.target_id),
-                type: 'straight',
-                arrowHeadType: ArrowHeadType.ArrowClosed,
-            }));
-            setElements(nodeElements.concat(edgeElements));
-        };
-        getElementsHook();
-    }, []);
+    const [userParsed, setUserParsed] = useState<boolean>(false);
 
     useEffect(() => {
         const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
         if (loggedUserJson) {
             setUser(JSON.parse(loggedUserJson));
         }
+        setUserParsed(true);
     }, []);
+
+    // Wait for the parsing of localStorage
+    if (!userParsed) {
+        return <></>;
+    }
 
     if (!user && !location.pathname.startsWith('/user')) {
         return <Navigate to="/user/login" />;

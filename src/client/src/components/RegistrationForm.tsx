@@ -64,7 +64,7 @@ export const RegistrationForm: ({
             setConfirm('');
             setUsername('');
         } catch (e) {
-            setErr(errMessage.concat('Error occured when creatting a user'));
+            setErr(errMessage.concat('Error occured when creating a user'));
             errTimeout();
             console.log('ERROR!', e);
         }

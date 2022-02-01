@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
+import * as layoutService from '../services/layoutService';
 import { IEdge, INode } from '../../../../types';
 import ReactFlow, {
     MiniMap,
@@ -57,6 +58,41 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         _reactFlowInstance.fitView();
         setReactFlowInstance(_reactFlowInstance);
     };
+
+    /**
+     * Fetches the elements from a database
+     */
+    useEffect(() => {
+        const getElementsHook = async () => {
+            let nodes: INode[];
+            let edges: IEdge[];
+            try {
+                [nodes, edges] = await Promise.all([
+                    nodeService.getAll(),
+                    edgeService.getAll(),
+                ]);
+            } catch (e) {
+                return;
+            }
+
+            const nodeElements: Elements = nodes.map((n) => ({
+                id: String(n.id),
+                data: n,
+                position: { x: n.x, y: n.y },
+            }));
+            // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+            const edgeElements: Elements = edges.map((e) => ({
+                id: String(e.source_id) + '-' + String(e.target_id),
+                source: String(e.source_id),
+                target: String(e.target_id),
+                type: 'straight',
+                arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: e,
+            }));
+            setElements(nodeElements.concat(edgeElements));
+        };
+        getElementsHook();
+    }, []);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -204,20 +240,23 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
 
+            const edge: IEdge = {
+                source_id: params.source,
+                target_id: params.target,
+            };
+
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
                 type: 'straight',
                 source: params.source,
                 target: params.target,
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: edge,
             };
 
             setElements((els) => addEdge(b, els));
 
-            edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-            });
+            edgeService.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
@@ -294,6 +333,30 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         await nodeService.updateNode(data);
     };
 
+    //calls nodeService.updateNode for all nodes
+    const updateNodes = async (): Promise<void> => {
+        for (const el of elements) {
+            if (isNode(el)) {
+                const node: INode = el.data;
+
+                if (node) {
+                    node.x = Math.round(el.position.x);
+                    node.y = Math.round(el.position.y);
+
+                    await nodeService.updateNode(node);
+                }
+            }
+        }
+    };
+
+    const layoutWithDagre = async (direction: string) => {
+        //applies the layout
+        setElements(layoutService.dagreLayout(elements, direction));
+
+        //sends updated node positions to backend
+        await updateNodes();
+    };
+
     return (
         <div style={{ height: '100%' }}>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
@@ -338,7 +401,10 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                     </ReactFlow>
                 </div>
             </ReactFlowProvider>
-            <Toolbar createNode={createNode} />
+            <Toolbar
+                createNode={createNode}
+                layoutWithDagre={layoutWithDagre}
+            />
         </div>
     );
 };
