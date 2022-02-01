@@ -1,12 +1,13 @@
 import React, { FormEvent, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { IProject } from '../../../../types';
+import { IProject, UserToken } from '../../../../types';
 
 interface ProjectFormProps {
     defaultProject?: IProject;
     saveMessage?: string;
     handleCancel?: () => void;
     handleSubmit: (project: IProject) => Promise<void>;
+    user: UserToken | null;
 }
 
 export const ProjectForm = (props: ProjectFormProps) => {
@@ -17,13 +18,15 @@ export const ProjectForm = (props: ProjectFormProps) => {
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        const project: IProject = {
-            name,
-            description,
-            owner_id: 'temp',
-            id: props.defaultProject?.id || 0,
-        };
-        props.handleSubmit(project);
+        if (props.user?.id) {
+            const project: IProject = {
+                name,
+                description,
+                owner_id: props.user.id,
+                id: props.defaultProject?.id || 0,
+            };
+            props.handleSubmit(project);
+        }
     };
 
     return (

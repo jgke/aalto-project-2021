@@ -9,7 +9,7 @@ import * as projectReducer from './reducers/projectReducer'
 import './App.css';
 import { Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
-import { loginUser } from './services/userService';
+import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
 import { Navigate } from 'react-router-dom';
 
@@ -29,18 +29,24 @@ export const App = () => {
     const [user, setUser] = useState<UserToken | null>(null);
     const [userParsed, setUserParsed] = useState<boolean>(false);
 
-    /**
-     * Fetches the elements from a database
-     */
-    useEffect(() => { dispatch(projectReducer.projectInit()) }, [dispatch])
-
     useEffect(() => {
         const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
         if (loggedUserJson) {
-            setUser(JSON.parse(loggedUserJson));
+            const user = JSON.parse(loggedUserJson);
+            setUser(user);
+            setToken(user.token);
         }
         setUserParsed(true);
     }, []);
+
+    /**
+     * Fetches the elements from a database
+     */
+    useEffect(() => { 
+        if (user) {
+            dispatch(projectReducer.projectInit())
+        }
+    }, [dispatch, user])
 
     // Wait for the parsing of localStorage
     if (!userParsed) {
@@ -57,7 +63,7 @@ export const App = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route path="/" element={<Projects/>}></Route>
+                <Route path="/" element={<Projects user={user}/>}></Route>
                 <Route
                     path="/project/:id"
                     element={

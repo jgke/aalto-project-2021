@@ -1,6 +1,5 @@
-import React, { FormEvent, useState } from 'react';
-import { IProject, RootState } from '../../../../types';
-import * as projectService from '../services/projectService';
+import React from 'react';
+import { IProject, RootState, UserToken } from '../../../../types';
 import { ProjectCard } from './ProjectCard';
 import CSS from 'csstype';
 import { ProjectForm } from './ProjectForm';
@@ -12,7 +11,7 @@ const projectListStyle: CSS.Properties = {
     flexWrap: 'wrap',
 };
 
-export const Projects = () => {
+export const Projects = ({ user } : {user: UserToken | null}) => {
     const dispatch = useDispatch()
 
     const projects = useSelector((state: RootState) => state.project)
@@ -27,12 +26,14 @@ export const Projects = () => {
             <ProjectForm
                 handleSubmit={handleSubmit}
                 saveMessage="New Project"
+                user={user}
             />
             <div style={projectListStyle}>
                 {projects.map((project) => (
                     <ProjectCard
                         key={project.id}
                         project={project}
+                        user={user}
                     />
                 ))}
             </div>

@@ -1,23 +1,26 @@
 import axios from 'axios';
 import { IProject } from '../../../../types';
+import { getaAuthHeader } from './userService';
 export const baseUrl = '/api/project';
 
+const getConfig = () => ({ headers: getaAuthHeader() })
+
 const getAll = async (): Promise<IProject[]> => {
-    const project = await axios.get<IProject[]>(baseUrl);
+    const project = await axios.get<IProject[]>(baseUrl, getConfig());
     return project.data;
 };
 
 const sendProject = async (project: IProject): Promise<number> => {
-    const response = await axios.post(baseUrl, project);
+    const response = await axios.post(baseUrl, project, getConfig());
     return response.data.rows[0].id;
 };
 
 const deleteProject = async (projectId: number): Promise<{ msg: string }> => {
-    const response = await axios.delete(`${baseUrl}/${projectId}`);
+    const response = await axios.delete(`${baseUrl}/${projectId}`, getConfig());
     return response.data;
 };
 const updateProject = async (project: IProject): Promise<void> => {
-    const response = await axios.put(baseUrl, project);
+    const response = await axios.put(baseUrl, project, getConfig());
     return response.data;
 };
 

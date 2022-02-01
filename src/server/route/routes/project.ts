@@ -7,9 +7,12 @@ import { db } from '../../dbConfigs';
 /* let projects: Array<IProject> = [{id: '1', name: 'test'}]; */
 
 router.route('/project/:id').delete(async (req: Request, res: Response) => {
-    console.log('Deleting project...');
+    if (!req.token || !req.user) {
+        return res.status(401).json({ error: 'token missing or invalid' })
+    }
     const id = req.params.id;
-    const q = await db.query('DELETE FROM project WHERE id = $1', [id]);
+    const ownerId = req.user.id;
+    const q = await db.query('DELETE FROM project WHERE id = $1 AND owner_id = $2', [id, ownerId]);
     res.status(200).json(q);
     //the latter part is only for testing with array
     /* const idx = projects.findIndex( p => p.id === id );
@@ -25,15 +28,28 @@ router.route('/project/:id').delete(async (req: Request, res: Response) => {
 router
     .route('/project')
     .get(async (req: Request, res: Response) => {
-        const owner_id = req.params.owner_id;
-        const q = await db.query('SELECT * FROM project', []);
+        if (!req.token || !req.user) {
+            return res.status(401).json({ error: 'token missing or invalid' })
+        }
+    
+        const ownerId = req.user.id;
+        const q = await db.query('SELECT * FROM project WHERE owner_id = $1', [ownerId]);
         res.json(q.rows);
         /* console.log('projects: ', projects);
         res.json(projects); */
     })
     .post(async (req: Request, res: Response) => {
-        console.log('Receiving project...');
-        const project: IProject = req.body; //Might have to parse this
+        if (!req.token || !req.user) {
+            return res.status(401).json({ error: 'token missing or invalid' })
+        }
+
+        const project: IProject = req.body;
+    
+        const ownerId = req.user.id;
+        if (parseInt(project.owner_id) !== ownerId) {
+            return res.status(401).json({ error: 'invalid owner id' })
+        }
+
         try {
             const q = await db.query(
                 'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
@@ -48,11 +64,20 @@ router
         }
     })
     .put(async (req: Request, res: Response) => {
+        if (!req.token || !req.user) {
+            return res.status(401).json({ error: 'token missing or invalid' })
+        }
+
         const p: IProject = req.body;
-        console.log('Updating project...', p);
+        
+        const ownerId = req.user.id;
+        if (parseInt(p.owner_id) !== ownerId) {
+            return res.status(401).json({ error: 'invalid owner id' })
+        }
+
         const q = await db.query(
-            'UPDATE project SET name = $1, description = $2 WHERE id = $3',
-            [p.name, p.description, p.id]
+            'UPDATE project SET name = $1, description = $2 WHERE id = $3 AND owner_id = $4',
+            [p.name, p.description, p.id, p.owner_id]
         );
         res.status(200).json(q);
         /* const idx = projects.findIndex( pr => pr.id === p.id );

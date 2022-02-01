@@ -1,5 +1,5 @@
-import React, { FormEvent, useState } from 'react';
-import { IProject } from '../../../../types';
+import React, { useState } from 'react';
+import { IProject, UserToken } from '../../../../types';
 import defaultBg from './../images/default.jpg';
 import { BsThreeDotsVertical, BsXLg, BsPencilFill } from 'react-icons/bs';
 import { ProjectForm } from './ProjectForm';
@@ -11,6 +11,7 @@ import * as projectReducer from '../reducers/projectReducer'
 
 interface ProjectCardProps {
     project: IProject;
+    user: UserToken | null;
 }
 
 const dropdownButtonStyle: CSS.Properties = {
@@ -51,6 +52,7 @@ export const ProjectCard = (props: ProjectCardProps) => {
                 defaultProject={props.project}
                 handleSubmit={handleSubmit}
                 handleCancel={() => console.log('äg43g3')}
+                user={props.user}
             />
         );
     }

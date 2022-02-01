@@ -44,10 +44,7 @@ export const LoginForm = (props: LoginFormProps): JSX.Element => {
 
         try {
             const res: UserToken = await props.loginUser(user);
-            const userInfo = JSON.stringify({
-                ...res,
-                token: `Bearer ${res.token}`,
-            });
+            const userInfo = JSON.stringify(res);
             window.localStorage.setItem('loggedGraphUser', userInfo);
 
             setEmail('');

@@ -3,6 +3,7 @@
     justify-content: right;
     display: flex;
     flex-flow: column;
+    color: white;
 }
 
 .detail-sidebar {
@@ -11,7 +12,7 @@
     top: 0;
     bottom: 0;
     width: 360px;
-    background-color: gainsboro;
+    background-color: rgb(219, 219, 219);
 }
 
 .icon-button {
@@ -35,10 +36,11 @@
 
 .project-card {
     transition: background-color 0.25s ease-in;
+    color: black;
 }
 
 .project-card.view:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(219, 219, 219, 1);
     cursor: pointer;
 }
 
@@ -52,6 +54,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.topbar {
+    display: flex;
+}
+
+.topbar>*{
+    margin: 2px 4px;
 }
 
 @keyframes App-logo-spin {
