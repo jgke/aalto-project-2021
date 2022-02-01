@@ -5,12 +5,20 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react';
 import { LoginForm } from '../../components/LoginForm';
+import { BrowserRouter } from 'react-router-dom';
+
+const getComponent = (loginUser?: any) => (
+    <BrowserRouter>
+        <LoginForm loginUser={loginUser || jest.fn()} setUser={jest.fn()} />
+    </BrowserRouter>
+);
 
 describe('<LoginForm>', () => {
     test('is visible to users', async () => {
-        const loginUser = jest.fn();
-
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
+        let loginForm: any;
+        act(() => {
+            loginForm = render(getComponent());
+        });
 
         /* expect(loginForm.container).toHaveTextContent('Email');
         expect(loginForm.container).toHaveTextContent('Password'); */
@@ -20,35 +28,46 @@ describe('<LoginForm>', () => {
     });
 
     test('writing into the inputs should be possible', async () => {
-        const loginUser = jest.fn();
+        let loginForm: any;
+        act(() => {
+            loginForm = render(getComponent());
+        });
 
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
         const input = loginForm.container.querySelectorAll('input');
-        fireEvent.change(input[0], {
-            target: { value: 'mrtest@nodes.com' },
+
+        act(() => {
+            fireEvent.change(input[0], {
+                target: { value: 'mrtest@example.com' },
+            });
+
+            fireEvent.change(input[1], {
+                target: { value: 'password123' },
+            });
         });
 
-        fireEvent.change(input[1], {
-            target: { value: 'password123' },
-        });
-
-        expect(input[0].value).toBe('mrtest@nodes.com');
+        expect(input[0].value).toBe('mrtest@example.com');
         expect(input[1].value).toBe('password123');
     });
 
     test('submitting a form with correct values should be possible', () => {
         const loginUser = jest.fn();
 
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
+        let loginForm: any;
+        act(() => {
+            loginForm = render(getComponent(loginUser));
+        });
+
         const input = loginForm.container.querySelectorAll('input');
         const form = loginForm.container.querySelector('form');
 
-        fireEvent.change(input[0], {
-            target: { value: 'mrtest@nodes.com' },
-        });
+        act(() => {
+            fireEvent.change(input[0], {
+                target: { value: 'mrtest@nodes.com' },
+            });
 
-        fireEvent.change(input[1], {
-            target: { value: 'password123' },
+            fireEvent.change(input[1], {
+                target: { value: 'password123' },
+            });
         });
 
         expect(form).toBeDefined();
@@ -67,37 +86,21 @@ describe('<LoginForm>', () => {
         }
     });
 
-    test('submitting an email without @ should raise an error and not call submit function', () => {
-        const loginUser = jest.fn();
-
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
-        const input = loginForm.container.querySelectorAll('input');
-        const form = loginForm.container.querySelector('form');
-
-        fireEvent.change(input[0], {
-            target: { value: 'mrtestnodes.com' },
-        });
-
-        fireEvent.change(input[1], {
-            target: { value: 'password123' },
-        });
-
-        if (form) {
-            fireEvent.submit(form);
-            expect(loginUser.mock.calls).toHaveLength(0);
-            expect(loginForm.container).toHaveTextContent('Email missing @');
-        }
-    });
-
     test('empty email input should not call the submit function', () => {
         const loginUser = jest.fn();
 
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
+        let loginForm: any;
+        act(() => {
+            loginForm = render(getComponent(loginUser));
+        });
+
         const input = loginForm.container.querySelectorAll('input');
         const form = loginForm.container.querySelector('form');
 
-        fireEvent.change(input[1], {
-            target: { value: 'password123' },
+        act(() => {
+            fireEvent.change(input[1], {
+                target: { value: 'password123' },
+            });
         });
 
         if (form) {
@@ -109,12 +112,18 @@ describe('<LoginForm>', () => {
     test('empty password input should not call the submit function', () => {
         const loginUser = jest.fn();
 
-        const loginForm = render(<LoginForm loginUser={loginUser} />);
+        let loginForm: any;
+        act(() => {
+            loginForm = render(getComponent(loginUser));
+        });
+
         const input = loginForm.container.querySelectorAll('input');
         const form = loginForm.container.querySelector('form');
 
-        fireEvent.change(input[0], {
-            target: { value: 'mrtest@nodes.com' },
+        act(() => {
+            fireEvent.change(input[0], {
+                target: { value: 'mrtest@nodes.com' },
+            });
         });
 
         if (form) {

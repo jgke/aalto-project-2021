@@ -15,7 +15,7 @@ const projectListStyle: CSS.Properties = {
 export const Projects = () => {
     const dispatch = useDispatch()
 
-    const projects = useSelector((state: RootState) => state.project.all)
+    const projects = useSelector((state: RootState) => state.project)
 
     const handleSubmit = async (project: IProject) => {
         dispatch(projectReducer.projectAdd(project))

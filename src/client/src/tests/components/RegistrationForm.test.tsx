@@ -31,7 +31,7 @@ describe('<RegistrationForm />', () => {
         const form = registration.container.querySelector('form');
 
         fireEvent.change(inputs[0], {
-            target: { value: 'mrtest@nodes.com' },
+            target: { value: 'mrtest@example.com' },
         });
 
         fireEvent.change(inputs[1], {
@@ -59,7 +59,7 @@ describe('<RegistrationForm />', () => {
         const form = registration.container.querySelector('form');
 
         fireEvent.change(inputs[0], {
-            target: { value: 'mrtest@nodes.com' },
+            target: { value: 'mrtest@example.com' },
         });
 
         fireEvent.change(inputs[1], {
@@ -78,7 +78,7 @@ describe('<RegistrationForm />', () => {
             fireEvent.submit(form);
             expect(createUser.mock.calls).toHaveLength(0);
             expect(registration.container).toHaveTextContent(
-                'Passwords do nott match'
+                'Passwords do not match'
             );
         }
     });
@@ -117,7 +117,7 @@ describe('<RegistrationForm />', () => {
         const form = registration.container.querySelector('form');
 
         fireEvent.change(inputs[0], {
-            target: { value: 'mrtest@nodes.com' },
+            target: { value: 'mrtest@example.com' },
         });
 
         fireEvent.change(inputs[2], {
@@ -144,7 +144,7 @@ describe('<RegistrationForm />', () => {
         const form = registration.container.querySelector('form');
 
         fireEvent.change(inputs[0], {
-            target: { value: 'mrtest@nodes.com' },
+            target: { value: 'mrtest@example.com' },
         });
 
         fireEvent.change(inputs[1], {
@@ -171,7 +171,7 @@ describe('<RegistrationForm />', () => {
         const form = registration.container.querySelector('form');
 
         fireEvent.change(inputs[0], {
-            target: { value: 'mrtest@nodes.com' },
+            target: { value: 'mrtest@example.com' },
         });
 
         fireEvent.change(inputs[1], {

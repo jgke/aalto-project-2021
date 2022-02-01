@@ -35,7 +35,9 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username TEXT NOT NULL,
   password TEXT NOT NULL,
-  email TEXT NOT NULL
+  email TEXT NOT NULL,
+  UNIQUE (username),
+  UNIQUE (email)
 );
 
 ALTER TABLE edge

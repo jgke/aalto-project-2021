@@ -3,10 +3,10 @@ import { IProject } from '../../../../types';
 import defaultBg from './../images/default.jpg';
 import { BsThreeDotsVertical, BsXLg, BsPencilFill } from 'react-icons/bs';
 import { ProjectForm } from './ProjectForm';
-import * as projectService from '../services/projectService';
+import { useNavigate } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
 import CSS from 'csstype';
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import * as projectReducer from '../reducers/projectReducer'
 
 interface ProjectCardProps {
@@ -22,6 +22,7 @@ const dropdownButtonStyle: CSS.Properties = {
 
 export const ProjectCard = (props: ProjectCardProps) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [editMode, setEditMode] = useState<boolean>(false);
 
@@ -61,7 +62,7 @@ export const ProjectCard = (props: ProjectCardProps) => {
             onClick={() =>
                 props.project &&
                 !editMode &&
-                dispatch(projectReducer.projectSelect(props.project))
+                navigate('/project/' + props.project.id)
             }
         >
             <Dropdown onClick={(e) => e.stopPropagation()}>

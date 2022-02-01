@@ -4,7 +4,10 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, IProject } from '../../../../types';
+import { IEdge, INode, RootState } from '../../../../types';
+import * as nodeService from '../services/nodeService';
+import * as edgeService from '../services/edgeService';
+import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
     Controls,
@@ -15,17 +18,21 @@ import ReactFlow, {
     ReactFlowProvider,
     Edge,
     Connection,
-    addEdge,
     ArrowHeadType,
+    addEdge,
+    FlowElement,
+    isNode,
+    isEdge,
+    removeElements,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
-import * as nodeService from '../services/nodeService';
-import * as edgeService from '../services/edgeService';
+import { Toolbar } from './Toolbar';
+import { Navigate, useParams } from 'react-router';
+import { useSelector } from 'react-redux'
 
 const graphStyle = {
     height: '100%',
     width: 'auto',
-    border: '5px solid gray',
     margin: 'auto',
     backgroundColor: '#eeefff',
     backgroundImage:
@@ -34,8 +41,6 @@ const graphStyle = {
 
 export interface GraphProps {
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
-    onNodeEdit: (id: string, data: INode) => void;
-    selectedProject: IProject | null;
 }
 
 interface FlowInstance {
@@ -44,21 +49,84 @@ interface FlowInstance {
 }
 
 export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
-    if (!props.selectedProject) {
-        return <></>;
-    }
-    const selectedProject = props.selectedProject;
+    const { id } = useParams();
+
+    const projects = useSelector((state: RootState) => state.project)
+    const selectedProject = projects.find(p => p.id === parseInt(id || ''));
+
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
     const elements = props.elements;
     const setElements = props.setElements;
-    const onElementsRemove = props.onElementsRemove;
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
         setReactFlowInstance(_reactFlowInstance);
+    };
+
+    /**
+     * Fetches the elements from a database
+     */
+    useEffect(() => { 
+        if (selectedProject) {
+            const getElementsHook = async () => {
+                let nodes: INode[];
+                let edges: IEdge[];
+                try {
+                    [nodes, edges] = await Promise.all([
+                        nodeService.getAll(selectedProject.id),
+                        edgeService.getAll(selectedProject.id),
+                    ]);
+                } catch (e) {
+                    return;
+                }
+    
+                const nodeElements: Elements = nodes.map((n) => ({
+                    id: String(n.id),
+                    data: n,
+                    position: { x: n.x, y: n.y },
+                }));
+                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+                const edgeElements: Elements = edges.map((e) => ({
+                    id: String(e.source_id) + '-' + String(e.target_id),
+                    source: String(e.source_id),
+                    target: String(e.target_id),
+                    type: 'straight',
+                    arrowHeadType: ArrowHeadType.ArrowClosed,
+                    data: e,
+                }));
+                setElements(nodeElements.concat(edgeElements));
+            };
+            getElementsHook();
+        }
+    }, [selectedProject])
+
+    /**
+     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
+     */
+    const createNode = async (nodeText: string): Promise<void> => {
+        if (selectedProject) {
+            const n: INode = {
+                status: 'ToDo',
+                label: nodeText,
+                priority: 'Urgent',
+                x: 5 + elements.length * 10,
+                y: 5 + elements.length * 10,
+                project_id: selectedProject.id
+            };
+            const returnId: string | undefined = await nodeService.sendNode(n);
+            if (returnId) {
+                n.id = String(returnId);
+                const b: Node<INode> = {
+                    id: String(returnId),
+                    data: n,
+                    position: { x: n.x, y: n.y },
+                };
+                setElements(elements.concat(b));
+            }
+        }
     };
 
     const onNodeDragStop = async (
@@ -94,7 +162,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         node: Node<INode>
     ) => {
         if (node.data && node.id !== 'TEMP') {
-            const form = <NodeEdit node={node} onNodeEdit={props.onNodeEdit} />;
+            const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
 
             setElements((els) =>
                 els.map((el) => {
@@ -113,36 +181,38 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
     // handle what happens on mousepress press
     const handleMousePress = (event: MouseEvent) => {
         const onEditDone = async (data: INode, node: Node) => {
-            const n: INode = {
-                status: 'ToDo',
-                label: data.label,
-                priority: 'Urgent',
-                x: node.position.x,
-                y: node.position.y,
-                project_id: props.selectedProject?.id || 0,
-            };
+            if (selectedProject) {
+                const n: INode = {
+                    status: 'ToDo',
+                    label: data.label,
+                    priority: 'Urgent',
+                    x: node.position.x,
+                    y: node.position.y,
+                    project_id: selectedProject.id,
+                };
 
-            const returnId: string | undefined = await nodeService.sendNode(n);
+                const returnId: string | undefined = await nodeService.sendNode(n);
 
-            if (returnId) {
-                n.id = returnId;
-                setElements((els) =>
-                    els.map((el) => {
-                        if (el.id === node.id) {
-                            const pos = (el as Node).position;
-                            el = {
-                                ...el,
-                                ...{
-                                    id: String(returnId),
-                                    data: n,
-                                    position: { x: pos.x, y: pos.y },
-                                    draggable: true,
-                                },
-                            };
-                        }
-                        return el;
-                    })
-                );
+                if (returnId) {
+                    n.id = returnId;
+                    setElements((els) =>
+                        els.map((el) => {
+                            if (el.id === node.id) {
+                                const pos = (el as Node).position;
+                                el = {
+                                    ...el,
+                                    ...{
+                                        id: String(returnId),
+                                        data: n,
+                                        position: { x: pos.x, y: pos.y },
+                                        draggable: true,
+                                    },
+                                };
+                            }
+                            return el;
+                        })
+                    );
+                }
             }
         };
 
@@ -181,6 +251,52 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         }
     };
 
+    /**
+     * Ordering function for elements, puts edges first and nodes last. Used in
+     * onElementsRemove.
+     */
+    const compareElementsEdgesFirst = (
+        a: FlowElement,
+        b: FlowElement
+    ): number => {
+        if (isNode(a)) {
+            if (isNode(b)) return 0;
+            else return 1;
+        } else {
+            // a is an Edge
+            if (isNode(b)) return -1;
+            else return 0;
+        }
+    };
+
+    /**
+     * Prop for Graph component, called when nodes or edges are removed. Called also
+     * for adjacent edges when a node is removed.
+     */
+    const onElementsRemove = async (elementsToRemove: Elements) => {
+        // Must remove edges first to prevent referencing issues in database
+        const sortedElementsToRemove = elementsToRemove.sort(
+            compareElementsEdgesFirst
+        );
+        for (const e of sortedElementsToRemove) {
+            if (isNode(e)) {
+                try {
+                    await nodeService.deleteNode(e);
+                } catch (e) {
+                    console.log('Error in node deletion', e);
+                }
+            } else if (isEdge(e)) {
+                await edgeService
+                    .deleteEdge(e)
+                    .catch((e: Error) =>
+                        console.log('Error when deleting edge', e)
+                    );
+            }
+        }
+
+        setElements((els) => removeElements(elementsToRemove, els));
+    };
+
     useEffect(() => {
         // attach the event listener
         document.addEventListener('click', handleMousePress);
@@ -192,8 +308,14 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
     }, [handleMousePress]);
 
     const onConnect = (params: Edge<IEdge> | Connection) => {
-        if (params.source && params.target) {
+        if (params.source && params.target && selectedProject) {
             //This does not mean params is an edge but rather a Connection
+
+            const edge: IEdge = {
+                source_id: params.source,
+                target_id: params.target,
+                project_id: selectedProject.id
+            };
 
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
@@ -201,15 +323,12 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 source: params.source,
                 target: params.target,
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: edge,
             };
 
             setElements((els) => addEdge(b, els));
 
-            edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-                project_id: selectedProject.id,
-            });
+            edgeService.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
@@ -217,47 +336,95 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         }
     };
 
+    const onNodeEdit = async (id: string, data: INode) => {
+        setElements((els) =>
+            els.map((el) => {
+                if (el.id === id) {
+                    el.data = data;
+                }
+                return el;
+            })
+        );
+
+        await nodeService.updateNode(data);
+    };
+
+    //calls nodeService.updateNode for all nodes
+    const updateNodes = async (): Promise<void> => {
+        for (const el of elements) {
+            if (isNode(el)) {
+                const node: INode = el.data;
+
+                if (node) {
+                    node.x = Math.round(el.position.x);
+                    node.y = Math.round(el.position.y);
+
+                    await nodeService.updateNode(node);
+                }
+            }
+        }
+    };
+
+    const layoutWithDagre = async (direction: string) => {
+        //applies the layout
+        setElements(layoutService.dagreLayout(elements, direction));
+
+        //sends updated node positions to backend
+        await updateNodes();
+    };
+
+    if (!selectedProject) {
+        return <></>;
+    }
+
     return (
-        <ReactFlowProvider>
-            <div
-                className="flow-wrapper"
-                style={graphStyle}
-                ref={reactFlowWrapper}
-            >
-                <ReactFlow
-                    elements={elements}
-                    onConnect={onConnect}
-                    onElementsRemove={onElementsRemove}
-                    //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
-                    // so it works as a hitbox detector
-                    onEdgeUpdate={props.onEdgeUpdate}
-                    onLoad={onLoad}
-                    onNodeDragStop={onNodeDragStop}
-                    onNodeDoubleClick={onNodeDoubleClick}
+        <div style={{ height: '100%' }}>
+            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
+            <ReactFlowProvider>
+                <div
+                    className="flow-wrapper"
+                    style={graphStyle}
+                    ref={reactFlowWrapper}
                 >
-                    <Controls />
-                    <Background color="#aaa" gap={16} />
-                    <MiniMap
-                        nodeStrokeColor={(n) => {
-                            if (n.style?.background)
-                                return n.style.background.toString();
-                            if (n.type === 'input') return '#0041d0';
-                            if (n.type === 'output') return '#ff0072';
-                            if (n.type === 'default') return '#1a192b';
+                    <ReactFlow
+                        elements={elements}
+                        onConnect={onConnect}
+                        onElementsRemove={onElementsRemove}
+                        //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
+                        // so it works as a hitbox detector
+                        onEdgeUpdate={props.onEdgeUpdate}
+                        onLoad={onLoad}
+                        onNodeDragStop={onNodeDragStop}
+                        onNodeDoubleClick={onNodeDoubleClick}
+                    >
+                        <Controls />
+                        <Background color="#aaa" gap={16} />
+                        <MiniMap
+                            nodeStrokeColor={(n) => {
+                                if (n.style?.background)
+                                    return n.style.background.toString();
+                                if (n.type === 'input') return '#0041d0';
+                                if (n.type === 'output') return '#ff0072';
+                                if (n.type === 'default') return '#1a192b';
 
-                            return '#eee';
-                        }}
-                        nodeColor={(n) => {
-                            if (n.style?.background)
-                                return n.style.background.toString();
+                                return '#eee';
+                            }}
+                            nodeColor={(n) => {
+                                if (n.style?.background)
+                                    return n.style.background.toString();
 
-                            return '#fff';
-                        }}
-                        nodeBorderRadius={2}
-                        maskColor="#69578c"
-                    />
-                </ReactFlow>
-            </div>
-        </ReactFlowProvider>
+                                return '#fff';
+                            }}
+                            nodeBorderRadius={2}
+                            maskColor="#69578c"
+                        />
+                    </ReactFlow>
+                </div>
+            </ReactFlowProvider>
+            <Toolbar
+                createNode={createNode}
+                layoutWithDagre={layoutWithDagre}
+            />
+        </div>
     );
 };

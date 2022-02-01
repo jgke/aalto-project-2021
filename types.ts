@@ -39,18 +39,16 @@ export interface RegisterFormProps {
 }
 
 export interface Login {
-    email: string;
+    email: string | null;
+    username: string | null;
     password: string;
 }
 
 export interface UserToken {
-    username: string | null;
-    email: string | null;
-    token: string | null;
-}
-
-export interface LoginFormProps {
-    loginUser: (user: Login) => Promise<UserToken>;
+    username: string;
+    email: string;
+    token: string;
+    id: string;
 }
 
 export interface User {
@@ -61,5 +59,10 @@ export interface User {
 }
 
 export interface RootState {
-    project: ProjectState
+    project: IProject[]
+}
+
+export interface ToolbarProps {
+    createNode: (nodeText: string) => Promise<void>;
+    layoutWithDagre: (direction: string) => Promise<void>;
 }

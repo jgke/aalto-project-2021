@@ -1,3 +1,10 @@
+.app {
+    background-color: #34303a;
+    justify-content: right;
+    display: flex;
+    flex-flow: column;
+}
+
 .detail-sidebar {
     position: absolute;
     right: 0;
