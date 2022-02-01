@@ -28,12 +28,12 @@ describe('Login / Register', () => {
 
         it('registering should be possible', () => {
             cy.get('a[id=register-link]').click()
-            cy.get('#email').type('cypress@test.com')
+            cy.get('#email').type('cypress@example.com')
             cy.get('#username').type('Mr.Cypress')
             cy.get('#psw').type('secretPassword123')
             cy.get('#psw-repeat').type('secretPassword123')
 
-            /* cy.contains('cypress@test.com')
+            /* cy.contains('cypress@example.com')
             cy.contains('Mr.Cypress') */
 
             cy.get('#register-button').click()
@@ -45,7 +45,7 @@ describe('Login / Register', () => {
         //Right now it doesn't actually know, wheather or not is actually logged in
         it('logging in should be possible with an email', () => {
             cy.get('a[id=login-link]').click()
-            cy.get('#emailUser').type('cypress@test.com')
+            cy.get('#emailUser').type('cypress@example.com')
             cy.get('#psw').type('secretPassword123')
             cy.get('#login-button').click()
 
@@ -228,13 +228,13 @@ describe('Graph', () => {
             cy.get('.react-flow__edge-straight').should('have.length', 1);
 
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
-                cy.log("FUBARFUBARFUBAR")
+                cy.log('FUBARFUBARFUBAR')
                 let node_pos1 = $node[0].getBoundingClientRect();
 
                 cy.get('.react-flow__pane').should('have.length', 1).then(($node) => {
                     let pane_pos = $node[0].getBoundingClientRect();
 
-                    cy.log("pane_pos.x");
+                    cy.log('pane_pos.x');
                     cy.log(pane_pos.x);
 
                     // move node
@@ -254,8 +254,8 @@ describe('Graph', () => {
             cy.get('.react-flow__edge-straight')
                 .should('have.length', 1)
                 .click('topLeft', { force: true })
-                .trigger('keydown', { key: "Backspace", charCode: 0, keyCode: 8 })
-                .trigger('keyup', { key: "Backspace", charCode: 0, keyCode: 8 });
+                .trigger('keydown', { key: 'Backspace', charCode: 0, keyCode: 8 })
+                .trigger('keyup', { key: 'Backspace', charCode: 0, keyCode: 8 });
 
             cy.get('.react-flow__edge-straight').should('not.exist');
             

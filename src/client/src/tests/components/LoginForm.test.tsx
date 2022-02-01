@@ -37,7 +37,7 @@ describe('<LoginForm>', () => {
 
         act(() => {
             fireEvent.change(input[0], {
-                target: { value: 'mrtest@nodes.com' },
+                target: { value: 'mrtest@example.com' },
             });
 
             fireEvent.change(input[1], {
@@ -45,7 +45,7 @@ describe('<LoginForm>', () => {
             });
         });
 
-        expect(input[0].value).toBe('mrtest@nodes.com');
+        expect(input[0].value).toBe('mrtest@example.com');
         expect(input[1].value).toBe('password123');
     });
 
