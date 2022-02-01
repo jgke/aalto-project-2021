@@ -19,4 +19,5 @@ export interface IEdge {
 
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
+    layoutWithDagre: (direction: string) => Promise<void>;
 }

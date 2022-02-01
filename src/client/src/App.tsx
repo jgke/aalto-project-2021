@@ -15,6 +15,7 @@ import {
 } from 'react-flow-renderer';
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
+import * as layoutService from './services/layoutService';
 import { INode, IEdge } from '../../../types';
 import './App.css';
 
@@ -28,6 +29,30 @@ export const basicNode: INode = {
 
 export const App: React.FC = () => {
     const [elements, setElements] = useState<Elements>([]);
+
+    //calls nodeService.updateNode for all nodes
+    const updateNodes = async (): Promise<void> => {
+        for (const el of elements) {
+            if (isNode(el)) {
+                const node: INode = el.data;
+
+                if (node) {
+                    node.x = Math.round(el.position.x);
+                    node.y = Math.round(el.position.y);
+
+                    await nodeService.updateNode(node);
+                }
+            }
+        }
+    };
+
+    const layoutWithDagre = async (direction: string) => {
+        //applies the layout
+        setElements(layoutService.dagreLayout(elements, direction));
+
+        //sends updated node positions to backend
+        await updateNodes();
+    };
 
     /**
      * Fetches the elements from a database
@@ -57,6 +82,7 @@ export const App: React.FC = () => {
                 target: String(e.target_id),
                 type: 'straight',
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: e,
             }));
             setElements(nodeElements.concat(edgeElements));
         };
@@ -90,20 +116,23 @@ export const App: React.FC = () => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
 
+            const edge: IEdge = {
+                source_id: params.source,
+                target_id: params.target,
+            };
+
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
                 type: 'straight',
                 source: params.source,
                 target: params.target,
                 arrowHeadType: ArrowHeadType.ArrowClosed,
+                data: edge,
             };
 
             setElements((els) => addEdge(b, els));
 
-            edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-            });
+            edgeService.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
@@ -185,7 +214,10 @@ export const App: React.FC = () => {
                     className="graph"
                 />
             </div>
-            <Toolbar createNode={createNode} />
+            <Toolbar
+                createNode={createNode}
+                layoutWithDagre={layoutWithDagre}
+            />
         </div>
     );
 };
