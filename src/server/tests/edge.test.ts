@@ -149,6 +149,7 @@ describe('DELETE request', () => {
     });
 });
 
-afterAll(() => {
+afterAll(async () => {
     console.log('Tests are done!');
+    await db.query('DELETE FROM edge;', []);
 });
