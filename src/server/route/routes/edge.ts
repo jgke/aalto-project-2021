@@ -48,7 +48,6 @@ router
                 'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
                 [text.source_id, text.target_id]
             );
-            console.log('What was the edge q?');
             res.status(200).json(q3);
         } catch (e) {
             console.log(e);
