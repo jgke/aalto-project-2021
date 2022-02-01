@@ -37,8 +37,8 @@ export const App: React.FC = () => {
                 const node: INode = el.data;
 
                 if (node) {
-                    node.x = Math.round(el.position.x);
-                    node.y = Math.round(el.position.y);
+                    node.x = el.position.x;
+                    node.y = el.position.y;
 
                     await nodeService.updateNode(node);
                 }
