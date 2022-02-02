@@ -57,7 +57,7 @@ export interface User {
 }
 
 export interface RootState {
-    project: IProject[]
+    project: IProject[];
 }
 
 export interface ToolbarProps {

@@ -7,9 +7,13 @@ export const userExtractor = (
     next: (param?: unknown) => void
 ) => {
     if (req.token) {
-        console.log(req.token)
-        req.user = jwt.verify(req.token, process.env.SECRET || 'secret') as { email: string, id: number, iat: number};
-        console.log(req.user)
+        console.log(req.token);
+        req.user = jwt.verify(req.token, process.env.SECRET || 'secret') as {
+            email: string;
+            id: number;
+            iat: number;
+        };
+        console.log(req.user);
     }
-    next()
-}
+    next();
+};

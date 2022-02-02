@@ -1,4 +1,11 @@
-import { beforeEach, beforeAll, expect, test, afterAll, describe } from '@jest/globals';
+import {
+    beforeEach,
+    beforeAll,
+    expect,
+    test,
+    afterAll,
+    describe,
+} from '@jest/globals';
 import { db } from '../dbConfigs';
 import { IProject, Registration, User } from '../../../types';
 import supertest from 'supertest';
@@ -47,7 +54,6 @@ const addDummyProjects = async (): Promise<void> => {
 
 //Helper functions end here
 describe('Projects', () => {
-    
     beforeEach(async () => {
         await db.query('TRUNCATE project, node, edge CASCADE;', []);
     });
@@ -56,21 +62,24 @@ describe('Projects', () => {
         const registration: Registration = {
             username: user.username,
             password: user.password,
-            email: user.email
-        }
-    
+            email: user.email,
+        };
+
         await api.post('/api/user/register').send(registration);
-        
+
         const res = await api
             .post('/api/user/login')
-            .send({ email: user.email, password: user.password })
+            .send({ email: user.email, password: user.password });
         user.id = String(res.body.id);
         token = res.body.token;
     });
 
     describe('GET request', () => {
         test('should give an empty array if there are no projects', async () => {
-            const res = await api.get(baseUrl).set('Authorization', `bearer ${token}`).expect(200);
+            const res = await api
+                .get(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
             expect(res.body).toHaveLength(0);
         });
     });
@@ -84,7 +93,11 @@ describe('Projects', () => {
                 id: 0,
             };
 
-            await api.post(baseUrl).set('Authorization', `bearer ${token}`).send(p).expect(200);
+            await api
+                .post(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .send(p)
+                .expect(200);
         });
 
         test('should save the project appropriately', async () => {
@@ -95,9 +108,16 @@ describe('Projects', () => {
                 id: 0,
             };
 
-            await api.post(baseUrl).set('Authorization', `bearer ${token}`).send(p).expect(200);
+            await api
+                .post(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .send(p)
+                .expect(200);
 
-            const res = await api.get(baseUrl).set('Authorization', `bearer ${token}`).expect(200);
+            const res = await api
+                .get(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
             expect(res.body).toHaveLength(1);
             const project = res.body[0];
             expect(project.name).toBe('Test-1');
@@ -110,7 +130,11 @@ describe('Projects', () => {
                 name: 'Failing-test',
                 description: 'This should fail',
             };
-            await api.post(baseUrl).set('Authorization', `bearer ${token}`).send(p).expect(401);
+            await api
+                .post(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .send(p)
+                .expect(401);
         });
     });
 
@@ -118,25 +142,43 @@ describe('Projects', () => {
         test('with an id should delete the project from the DB', async () => {
             await addDummyProjects();
 
-            let result = await api.get(baseUrl).set('Authorization', `bearer ${token}`).expect(200);
+            let result = await api
+                .get(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
             expect(result.body[0].id).toBeDefined();
             expect(result.body[1].id).toBeDefined();
             const id = result.body[0].id;
-            await api.delete(`${baseUrl}/${id}`).set('Authorization', `bearer ${token}`).expect(200);
-            result = await api.get(baseUrl).set('Authorization', `bearer ${token}`).expect(200);
+            await api
+                .delete(`${baseUrl}/${id}`)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
+            result = await api
+                .get(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
             expect(result.body).toHaveLength(1);
         });
 
         test('deletes the right project', async () => {
             await addDummyProjects();
 
-            let res = await api.get(baseUrl).set('Authorization', `bearer ${token}`).expect(200);
+            let res = await api
+                .get(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
 
             const id = res.body[0].id;
 
-            await api.delete(`${baseUrl}/${id}`).set('Authorization', `bearer ${token}`).expect(200);
+            await api
+                .delete(`${baseUrl}/${id}`)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
 
-            res = await api.get(baseUrl).set('Authorization', `bearer ${token}`).expect(200);
+            res = await api
+                .get(baseUrl)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
             const found = res.body.find((x: IProject) => x.id == id);
             expect(found).toBeUndefined();
         });
@@ -148,11 +190,14 @@ describe('Projects', () => {
                 owner_id: 'ghost',
                 id: -1,
             };
-            await api.delete(`${baseUrl}/${p.id}`).set('Authorization', `bearer ${token}`).expect(200);
+            await api
+                .delete(`${baseUrl}/${p.id}`)
+                .set('Authorization', `bearer ${token}`)
+                .expect(200);
         });
     });
 
     afterAll(() => {
         console.log('Tests are done!');
     });
-})
+});

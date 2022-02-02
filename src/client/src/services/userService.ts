@@ -6,12 +6,12 @@ const baseUrl = '/api/user';
 let token: string;
 
 const setToken = (newToken: string): void => {
-    token = `bearer ${newToken}`
-}
+    token = `bearer ${newToken}`;
+};
 
-const getAuthHeader = (): { Authorization: string} => {
+const getAuthHeader = (): { Authorization: string } => {
     return { Authorization: token };
-}
+};
 
 const createUser = async (user: Registration): Promise<Registration> => {
     const response = await axios.post(`${baseUrl}/register`, user);
@@ -26,6 +26,6 @@ const loginUser = async (user: Login): Promise<UserToken> => {
 
 const logoutUser = (): void => {
     setToken('');
-}
+};
 
 export { createUser, loginUser, logoutUser, getAuthHeader, setToken };

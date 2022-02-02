@@ -15,7 +15,7 @@ export const Topbar = (props: TopbarProps): JSX.Element => {
 
     const logOut = () => {
         window.localStorage.removeItem('loggedGraphUser');
-        logoutUser()
+        logoutUser();
         props.setUser(null);
         navigate('/user/login');
     };

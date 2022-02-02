@@ -27,7 +27,7 @@ import ReactFlow, {
 import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 
 const graphStyle = {
     height: '100%',
@@ -41,10 +41,10 @@ const graphStyle = {
 interface TestInterface {
     elements?: Elements;
     selectedProject?: IProject;
-} 
+}
 
 export interface GraphProps {
-    test?: TestInterface
+    test?: TestInterface;
 }
 
 interface FlowInstance {
@@ -55,12 +55,15 @@ interface FlowInstance {
 export const Graph = (props: GraphProps): JSX.Element => {
     const { id } = useParams();
 
-    const projects = useSelector((state: RootState) => state.project)
-    const selectedProject = props.test?.selectedProject || projects.find(p => p.id === parseInt(id || ''));
+    const projects = useSelector((state: RootState) => state.project);
+    const selectedProject =
+        props.test?.selectedProject ||
+        projects.find((p) => p.id === parseInt(id || ''));
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [elements, setElements] = useState<Elements>([]);
-    const [reactFlowInstance, setReactFlowInstance] = useState<FlowInstance | null>(null);
+    const [reactFlowInstance, setReactFlowInstance] =
+        useState<FlowInstance | null>(null);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -70,7 +73,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     /**
      * Fetches the elements from a database
      */
-    useEffect(() => { 
+    useEffect(() => {
         if (props.test?.elements) {
             setElements(props.test?.elements);
         } else if (selectedProject) {
@@ -85,7 +88,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 } catch (e) {
                     return;
                 }
-    
+
                 const nodeElements: Elements = nodes.map((n) => ({
                     id: String(n.id),
                     data: n,
@@ -104,7 +107,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             };
             getElementsHook();
         }
-    }, [selectedProject])
+    }, [selectedProject]);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -117,7 +120,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 priority: 'Urgent',
                 x: 5 + elements.length * 10,
                 y: 5 + elements.length * 10,
-                project_id: selectedProject.id
+                project_id: selectedProject.id,
             };
             const returnId: string | undefined = await nodeService.sendNode(n);
             if (returnId) {
@@ -194,7 +197,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
-                const returnId: string | undefined = await nodeService.sendNode(n);
+                const returnId: string | undefined = await nodeService.sendNode(
+                    n
+                );
 
                 if (returnId) {
                     n.id = returnId;
@@ -317,7 +322,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             const edge: IEdge = {
                 source_id: params.source,
                 target_id: params.target,
-                project_id: selectedProject.id
+                project_id: selectedProject.id,
             };
 
             const b: Edge<IEdge> = {

@@ -3,8 +3,8 @@ import { Graph } from './components/Graph';
 import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
-import { useDispatch } from 'react-redux'
-import * as projectReducer from './reducers/projectReducer'
+import { useDispatch } from 'react-redux';
+import * as projectReducer from './reducers/projectReducer';
 import './App.css';
 import { Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
@@ -22,7 +22,7 @@ export const basicNode: INode = {
 };
 
 export const App: FC = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const [user, setUser] = useState<UserToken | null>(null);
     const [userParsed, setUserParsed] = useState<boolean>(false);
@@ -40,11 +40,11 @@ export const App: FC = () => {
     /**
      * Fetches the projects from a database
      */
-    useEffect(() => { 
+    useEffect(() => {
         if (user) {
-            dispatch(projectReducer.projectInit())
+            dispatch(projectReducer.projectInit());
         }
-    }, [dispatch, user])
+    }, [dispatch, user]);
 
     // Wait for the parsing of localStorage
     if (!userParsed) {
@@ -61,13 +61,8 @@ export const App: FC = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route path="/" element={<Projects user={user}/>}></Route>
-                <Route
-                    path="/project/:id"
-                    element={
-                        <Graph />
-                    }
-                ></Route>
+                <Route path="/" element={<Projects user={user} />}></Route>
+                <Route path="/project/:id" element={<Graph />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route
                     path="/user/login"

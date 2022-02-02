@@ -3,8 +3,8 @@ import { IProject, RootState, UserToken } from '../../../../types';
 import { ProjectCard } from './ProjectCard';
 import CSS from 'csstype';
 import { ProjectForm } from './ProjectForm';
-import { useSelector, useDispatch } from 'react-redux'
-import * as projectReducer from '../reducers/projectReducer'
+import { useSelector, useDispatch } from 'react-redux';
+import * as projectReducer from '../reducers/projectReducer';
 
 const projectListStyle: CSS.Properties = {
     display: 'flex',
@@ -13,21 +13,22 @@ const projectListStyle: CSS.Properties = {
 
 interface TestInterface {
     projects?: IProject[];
-} 
-
+}
 
 interface ProjectProps {
-    user: UserToken | null,
-    test?: TestInterface
+    user: UserToken | null;
+    test?: TestInterface;
 }
 
 export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
-    const projects = props.test?.projects || useSelector((state: RootState) => state.project)
+    const projects =
+        props.test?.projects ||
+        useSelector((state: RootState) => state.project);
 
     const handleSubmit = async (project: IProject) => {
-        dispatch(projectReducer.projectAdd(project))
+        dispatch(projectReducer.projectAdd(project));
     };
 
     return (

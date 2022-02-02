@@ -25,8 +25,8 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 owner_id: props.user.id,
                 id: props.defaultProject?.id || 0,
             };
-            setName('')
-            setDescription('')
+            setName('');
+            setDescription('');
             props.handleSubmit(project);
         }
     };
@@ -43,7 +43,11 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         onChange={(e) => setName(e.target.value)}
                     />
                 </Form.Group>
-                <Form.Group id="description-field" className="mb-3" controlId="formSourceId">
+                <Form.Group
+                    id="description-field"
+                    className="mb-3"
+                    controlId="formSourceId"
+                >
                     <Form.Label>Description</Form.Label>
                     <Form.Control
                         as="textarea"
@@ -60,7 +64,9 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     </Button>
 
                     {props.handleCancel && (
-                        <Button variant="danger" onClick={props.handleCancel}>Cancel</Button>
+                        <Button variant="danger" onClick={props.handleCancel}>
+                            Cancel
+                        </Button>
                     )}
                 </div>
             </Form>

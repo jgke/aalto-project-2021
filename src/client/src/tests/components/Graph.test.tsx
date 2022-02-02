@@ -8,8 +8,8 @@ import { RenderResult } from '@testing-library/react';
 
 import { Graph } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
-import { store } from '../../store'
-import { Provider } from 'react-redux'
+import { store } from '../../store';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 describe('<Graph>', () => {
@@ -88,14 +88,14 @@ describe('<Graph>', () => {
                 id: 1,
                 owner_id: '1',
                 name: 'project',
-                description: 'decp'
-            }
-        }
+                description: 'decp',
+            },
+        };
 
         return render(
             <BrowserRouter>
                 <Provider store={store}>
-                    <Graph test={testObj}/>
+                    <Graph test={testObj} />
                 </Provider>
             </BrowserRouter>
         );

@@ -43,7 +43,14 @@ router
         if (nodeCheck(text)) {
             const q = await db.query(
                 'INSERT INTO node (label, status, priority, project_id, x, y) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-                [text.label, text.status, text.priority, text.project_id, text.x, text.y]
+                [
+                    text.label,
+                    text.status,
+                    text.priority,
+                    text.project_id,
+                    text.x,
+                    text.y,
+                ]
             );
             res.status(200).json(q);
         } else {

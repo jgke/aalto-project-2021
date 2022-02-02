@@ -6,8 +6,8 @@ import { ProjectForm } from './ProjectForm';
 import { useNavigate } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
 import CSS from 'csstype';
-import { useDispatch } from 'react-redux'
-import * as projectReducer from '../reducers/projectReducer'
+import { useDispatch } from 'react-redux';
+import * as projectReducer from '../reducers/projectReducer';
 
 interface ProjectCardProps {
     project: IProject;

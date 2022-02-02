@@ -8,8 +8,8 @@ import { act, render } from '@testing-library/react';
 import { Projects } from '../../components/Projects';
 import { IProject } from '../../../../../types';
 import { mockUserToken } from '../../../../../testmock';
-import { store } from '../../store'
-import { Provider } from 'react-redux'
+import { store } from '../../store';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 const dummyProjects: IProject[] = [
@@ -33,12 +33,17 @@ const dummyProjects: IProject[] = [
     },
 ];
 
-
 const renderComponent = () => {
     const testObj = {
-        projects: dummyProjects
-    }
-    return render(<BrowserRouter><Provider store={store}><Projects user={mockUserToken} test={testObj} /></Provider></BrowserRouter>);
+        projects: dummyProjects,
+    };
+    return render(
+        <BrowserRouter>
+            <Provider store={store}>
+                <Projects user={mockUserToken} test={testObj} />
+            </Provider>
+        </BrowserRouter>
+    );
 };
 
 describe('<Project>', () => {
