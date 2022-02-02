@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FC, FormEvent, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { IProject, UserToken } from '../../../../types';
 
@@ -10,7 +10,7 @@ interface ProjectFormProps {
     user: UserToken | null;
 }
 
-export const ProjectForm = (props: ProjectFormProps) => {
+export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     const [name, setName] = useState<string>(props.defaultProject?.name || '');
     const [description, setDescription] = useState<string>(
         props.defaultProject?.description || ''
@@ -25,6 +25,8 @@ export const ProjectForm = (props: ProjectFormProps) => {
                 owner_id: props.user.id,
                 id: props.defaultProject?.id || 0,
             };
+            setName('')
+            setDescription('')
             props.handleSubmit(project);
         }
     };
@@ -32,33 +34,33 @@ export const ProjectForm = (props: ProjectFormProps) => {
     return (
         <div>
             <Form onSubmit={handleSubmit} className="project-form">
-                <Form.Group className="mb-3" controlId="nameId">
+                <Form.Group id="name-field" className="mb-3" controlId="nameId">
                     <Form.Label>Project name</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Enter name"
-                        defaultValue={name}
+                        value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="formSourceId">
+                <Form.Group id="description-field" className="mb-3" controlId="formSourceId">
                     <Form.Label>Description</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={2}
                         placeholder="Enter Description"
-                        defaultValue={description}
+                        value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
                 </Form.Group>
 
-                <div className="flex-space-between">
+                <div id="project-button-row" className="flex-space-between">
                     <Button variant="primary" type="submit">
                         {props.saveMessage || 'Save'}
                     </Button>
 
                     {props.handleCancel && (
-                        <Button variant="danger">Cancel</Button>
+                        <Button variant="danger" onClick={props.handleCancel}>Cancel</Button>
                     )}
                 </div>
             </Form>

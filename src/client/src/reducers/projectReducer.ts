@@ -1,13 +1,33 @@
 import { IProject } from '../../../../types'
-import { ThunkDispatch } from 'redux-thunk'
+import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import { Action } from 'redux'
 import * as projectService from '../services/projectService'
 
-interface ProjectAction extends Action<string> {
-    data: IProject[] | IProject | number | null
+interface ProjectInitAction extends Action<string> {
+    type: 'PROJECT_INIT'
+    data: IProject[]
 }
 
-export const projectReducer = (state: IProject[] = [], action: ProjectAction) => {
+interface ProjectAddAction extends Action<string> {
+    type: 'PROJECT_ADD'
+    data: IProject
+}
+
+interface ProjectDeleteAction extends Action<string> {
+    type: 'PROJECT_DELETE'
+    data: number
+}
+
+interface ProjectUpdateAction extends Action<string> {
+    type: 'PROJECT_UPDATE'
+    data: IProject
+}
+
+type ProjectState = IProject[];
+type ProjectAction = ProjectInitAction | ProjectAddAction | ProjectDeleteAction | ProjectUpdateAction;
+type ProjectReturn = IProject[] | IProject | number;
+
+export const projectReducer = (state: ProjectState = [], action: ProjectAction): ProjectReturn => {
     switch(action.type) {
     case 'PROJECT_INIT': {
         return action.data
@@ -19,15 +39,14 @@ export const projectReducer = (state: IProject[] = [], action: ProjectAction) =>
         return state.filter(p => p.id !== action.data)
     }
     case 'PROJECT_UPDATE': {
-        const id = (action.data as IProject).id
-        return state.map(p => p.id !== id ? p : action.data)
+        return state.map(p => p.id !== action.data.id ? p : action.data)
     }
     default: return state
     }
 }
 
-export const projectInit = () => {
-    return async (dispatch: ThunkDispatch<IProject[], void, ProjectAction>) => {
+export const projectInit = (): ThunkAction<Promise<void>, ProjectState, void, ProjectInitAction> => {
+    return async (dispatch: ThunkDispatch<ProjectState, void, ProjectInitAction>) => {
         const blogs = await projectService.getAll()
         dispatch({
             type: 'PROJECT_INIT',
@@ -36,8 +55,8 @@ export const projectInit = () => {
     }
 }
 
-export const projectAdd = (project: IProject) => {
-    return async (dispatch: ThunkDispatch<IProject[], void, ProjectAction>) => {
+export const projectAdd = (project: IProject): ThunkAction<Promise<void>, ProjectState, void, ProjectAddAction> => {
+    return async (dispatch: ThunkDispatch<ProjectState, void, ProjectAddAction>) => {
         const projectId = await projectService.sendProject(project)
         dispatch({
             type: 'PROJECT_ADD',
@@ -46,8 +65,8 @@ export const projectAdd = (project: IProject) => {
     }
 }
 
-export const projectDelete = (projectId: number) => {
-    return async (dispatch: ThunkDispatch<IProject[], void, ProjectAction>) => {
+export const projectDelete = (projectId: number): ThunkAction<Promise<void>, ProjectState, void, ProjectDeleteAction> => {
+    return async (dispatch: ThunkDispatch<ProjectState, void, ProjectDeleteAction>) => {
         await projectService.deleteProject(projectId);
         dispatch({
             type: 'PROJECT_DELETE',
@@ -56,8 +75,8 @@ export const projectDelete = (projectId: number) => {
     }
 }
 
-export const projectUpdate = (project: IProject) => {
-    return async (dispatch: ThunkDispatch<IProject[], void, ProjectAction>) => {
+export const projectUpdate = (project: IProject): ThunkAction<Promise<void>, ProjectState, void, ProjectUpdateAction> => {
+    return async (dispatch: ThunkDispatch<ProjectState, void, ProjectUpdateAction>) => {
         await projectService.updateProject(project);
         dispatch({
             type: 'PROJECT_UPDATE',

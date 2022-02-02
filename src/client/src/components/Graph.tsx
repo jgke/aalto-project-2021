@@ -4,7 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, RootState } from '../../../../types';
+import { IEdge, INode, IProject, RootState } from '../../../../types';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as layoutService from '../services/layoutService';
@@ -12,7 +12,6 @@ import ReactFlow, {
     MiniMap,
     Controls,
     Background,
-    ReactFlowProps,
     Node,
     Elements,
     ReactFlowProvider,
@@ -27,7 +26,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
-import { Navigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { useSelector } from 'react-redux'
 
 const graphStyle = {
@@ -39,8 +38,13 @@ const graphStyle = {
         'linear-gradient(to bottom right, #00164f, #4e009c, #290066)',
 };
 
+interface TestInterface {
+    elements?: Elements;
+    selectedProject?: IProject;
+} 
+
 export interface GraphProps {
-    setElements: React.Dispatch<React.SetStateAction<Elements>>;
+    test?: TestInterface
 }
 
 interface FlowInstance {
@@ -48,18 +52,15 @@ interface FlowInstance {
     project: (pos: { x: number; y: number }) => { x: number; y: number };
 }
 
-export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
+export const Graph = (props: GraphProps): JSX.Element => {
     const { id } = useParams();
 
     const projects = useSelector((state: RootState) => state.project)
-    const selectedProject = projects.find(p => p.id === parseInt(id || ''));
+    const selectedProject = props.test?.selectedProject || projects.find(p => p.id === parseInt(id || ''));
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
-    const [reactFlowInstance, setReactFlowInstance] =
-        useState<FlowInstance | null>(null);
-
-    const elements = props.elements;
-    const setElements = props.setElements;
+    const [elements, setElements] = useState<Elements>([]);
+    const [reactFlowInstance, setReactFlowInstance] = useState<FlowInstance | null>(null);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -70,7 +71,9 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
      * Fetches the elements from a database
      */
     useEffect(() => { 
-        if (selectedProject) {
+        if (props.test?.elements) {
+            setElements(props.test?.elements);
+        } else if (selectedProject) {
             const getElementsHook = async () => {
                 let nodes: INode[];
                 let edges: IEdge[];
@@ -378,7 +381,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
     }
 
     return (
-        <div style={{ height: '100%' }}>
+        <div className="graph" style={{ height: '100%' }}>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
@@ -392,7 +395,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
                         // so it works as a hitbox detector
-                        onEdgeUpdate={props.onEdgeUpdate}
+                        onEdgeUpdate={() => null}
                         onLoad={onLoad}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}

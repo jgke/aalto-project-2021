@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { IProject, RootState, UserToken } from '../../../../types';
 import { ProjectCard } from './ProjectCard';
 import CSS from 'csstype';
@@ -11,10 +11,20 @@ const projectListStyle: CSS.Properties = {
     flexWrap: 'wrap',
 };
 
-export const Projects = ({ user } : {user: UserToken | null}) => {
+interface TestInterface {
+    projects?: IProject[];
+} 
+
+
+interface ProjectProps {
+    user: UserToken | null,
+    test?: TestInterface
+}
+
+export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
     const dispatch = useDispatch()
 
-    const projects = useSelector((state: RootState) => state.project)
+    const projects = props.test?.projects || useSelector((state: RootState) => state.project)
 
     const handleSubmit = async (project: IProject) => {
         dispatch(projectReducer.projectAdd(project))
@@ -26,14 +36,14 @@ export const Projects = ({ user } : {user: UserToken | null}) => {
             <ProjectForm
                 handleSubmit={handleSubmit}
                 saveMessage="New Project"
-                user={user}
+                user={props.user}
             />
             <div style={projectListStyle}>
                 {projects.map((project) => (
                     <ProjectCard
                         key={project.id}
                         project={project}
-                        user={user}
+                        user={props.user}
                     />
                 ))}
             </div>

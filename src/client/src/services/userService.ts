@@ -5,11 +5,11 @@ const baseUrl = '/api/user';
 
 let token: string;
 
-const setToken = (newToken: string) => {
+const setToken = (newToken: string): void => {
     token = `bearer ${newToken}`
 }
 
-const getaAuthHeader = () => {
+const getAuthHeader = (): { Authorization: string} => {
     return { Authorization: token };
 }
 
@@ -24,8 +24,8 @@ const loginUser = async (user: Login): Promise<UserToken> => {
     return response.data;
 };
 
-const logoutUser = () => {
+const logoutUser = (): void => {
     setToken('');
 }
 
-export { createUser, loginUser, logoutUser, getaAuthHeader, setToken };
+export { createUser, loginUser, logoutUser, getAuthHeader, setToken };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { IProject, UserToken } from '../../../../types';
 import defaultBg from './../images/default.jpg';
 import { BsThreeDotsVertical, BsXLg, BsPencilFill } from 'react-icons/bs';
@@ -21,7 +21,7 @@ const dropdownButtonStyle: CSS.Properties = {
     borderRadius: '50%',
 };
 
-export const ProjectCard = (props: ProjectCardProps) => {
+export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -51,7 +51,7 @@ export const ProjectCard = (props: ProjectCardProps) => {
             <ProjectForm
                 defaultProject={props.project}
                 handleSubmit={handleSubmit}
-                handleCancel={() => console.log('äg43g3')}
+                handleCancel={() => setEditMode(false)}
                 user={props.user}
             />
         );

@@ -61,7 +61,7 @@ describe('Login / Register', () => {
             cy.get('#psw').type('secretPassword123')
             cy.get('#login-button').click()
             
-            cy.contains('#loing-error').should('not.exist')
+            cy.contains('#loging-error').should('not.exist')
 
             cy.get('#logout-link').click()
 
@@ -78,6 +78,12 @@ describe('Graph', () => {
         cy.get('#emailUser').type('Mr.Cypress')
         cy.get('#psw').type('secretPassword123')
         cy.get('#login-button').click()
+
+        cy.get('#name-field>input').type('Project')
+        cy.get('#description-field>textarea').type('Lorem Ipsum')
+        cy.get('#project-button-row>button').click()
+
+        cy.get('.project-card').click()
 
         if (myConsts.global_clean) {
             cy.get('body').then( ($body) => {
@@ -98,6 +104,11 @@ describe('Graph', () => {
                 cy.get(`.react-flow__node-default:contains(${myConsts.node_name_prefix})`).should('not.exist');
             });
         }
+
+        cy.get('#home-link').click()
+        cy.get('.project-card .dropdown button').click()
+        cy.get('a').contains('Delete').click();
+
         cy.get('#logout-link').click()
     });
 

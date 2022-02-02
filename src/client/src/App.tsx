@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Elements } from 'react-flow-renderer';
 import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
@@ -22,10 +21,9 @@ export const basicNode: INode = {
     project_id: 0,
 };
 
-export const App = () => {
+export const App: FC = () => {
     const dispatch = useDispatch()
 
-    const [elements, setElements] = useState<Elements>([]);
     const [user, setUser] = useState<UserToken | null>(null);
     const [userParsed, setUserParsed] = useState<boolean>(false);
 
@@ -40,7 +38,7 @@ export const App = () => {
     }, []);
 
     /**
-     * Fetches the elements from a database
+     * Fetches the projects from a database
      */
     useEffect(() => { 
         if (user) {
@@ -67,11 +65,7 @@ export const App = () => {
                 <Route
                     path="/project/:id"
                     element={
-                        <Graph
-                            elements={elements}
-                            setElements={setElements}
-                            className="graph"
-                        />
+                        <Graph />
                     }
                 ></Route>
                 <Route path="/user/register" element={<Registration />}></Route>

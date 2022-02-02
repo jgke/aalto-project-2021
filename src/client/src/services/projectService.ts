@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { IProject } from '../../../../types';
-import { getaAuthHeader } from './userService';
+import { getAuthHeader } from './userService';
 export const baseUrl = '/api/project';
 
-const getConfig = () => ({ headers: getaAuthHeader() })
+const getConfig = () => ({ headers: getAuthHeader() })
 
 const getAll = async (): Promise<IProject[]> => {
     const project = await axios.get<IProject[]>(baseUrl, getConfig());
