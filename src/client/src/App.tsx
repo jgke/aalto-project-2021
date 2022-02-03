@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
 import { Toolbar } from './components/Toolbar';
+import { Tag } from './components/Tag';
 import {
     Elements,
     addEdge,
@@ -16,7 +17,8 @@ import {
 import * as nodeService from './services/nodeService';
 import * as edgeService from './services/edgeService';
 import * as layoutService from './services/layoutService';
-import { INode, IEdge } from '../../../types';
+import * as tagService from './services/tagService';
+import { INode, IEdge, ITag } from '../../../types';
 import './App.css';
 
 export const basicNode: INode = {
@@ -29,6 +31,7 @@ export const basicNode: INode = {
 
 export const App: React.FC = () => {
     const [elements, setElements] = useState<Elements>([]);
+    const [tags, setTags] = useState<ITag[]>([])
 
     //calls nodeService.updateNode for all nodes
     const updateNodes = async (): Promise<void> => {
@@ -199,8 +202,51 @@ export const App: React.FC = () => {
         await nodeService.updateNode(data);
     };
 
+    const createTag = async (tagLabel: string): Promise<void> => {
+        const t: ITag = {
+            id: 0,
+            label: tagLabel,
+            color: 'red',
+        };
+        const returnId: number | undefined = await tagService.sendTag(t);
+        if (returnId) {
+            t.id = returnId;
+            setTags(tags.concat(t));
+        }
+    };
+
+    const onTagEdit = async (data: ITag) => {
+        setTags((tgs) =>
+            tgs.map((tg) => {
+                if (tg.id === data.id) {
+                    tg = data;
+                }
+                return tg;
+            })
+        );
+
+        await tagService.updateTag(data);
+    }
+
+    const onTagRemove = async (id: number) => {
+        const idx = tags.findIndex( t => t.id === id );
+        if(idx >= 0){
+            console.log('deleting tag: ', tags[idx]);
+            await tagService.deleteTag(id);
+            setTags(tags.splice(idx, 1));
+        } else {
+            console.log('could not find tag with id: ', id);
+        }
+    }
+
     return (
         <div className="App">
+            <Tag
+                data={tags}
+                createTag={createTag}
+                onTagEdit={onTagEdit}
+                onTagRemove={onTagRemove}
+            />
             <div className="graph">
                 <Graph
                     elements={elements}
