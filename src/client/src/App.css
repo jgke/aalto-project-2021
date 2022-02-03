@@ -114,20 +114,21 @@
     align-self: center;
 }
 
-.button-toolbar:hover {
-    background-color: #442072;
+.button-toolbar:hover,
+.button-toolbar.active {
+    background-color: #41005f;
     border-color: #dcd9fd;
     color: #ffffff;
 }
 
 .button-layout {
     display: flex;
-    padding: 0.55em 1.7em;
+    padding: 0.2em 0.4em;
     border: 0.2em solid #21007a;
     margin: 0.1em 0.3em 0.1em;
     border-radius: 0.12em;
     box-sizing: border-box;
-    width: 90%;
+    width: 80%;
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
@@ -140,7 +141,10 @@
 }
 
 .button-layout:hover {
-    background-color: #442072;
-    border-color: #dcd9fd;
+    background-color: #2d0061;
     color: #ffffff;
+}
+
+.button-layout#dagreTB {
+    margin-top: 30px;
 }
