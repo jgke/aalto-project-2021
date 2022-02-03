@@ -155,7 +155,7 @@ describe('Graph', () => {
             cy.get('input#nodetext').type(node_name_1)
             cy.get('input#nodetext').parent().contains('Create').click()
 
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick()
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
             cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
 
             cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
@@ -172,11 +172,11 @@ describe('Graph', () => {
 
             let node_pos1
 
-            cy.get('.flow-wrapper').click('left', {ctrlKey: true})
-            cy.get('.react-flow__node input').type(new_node_name1 + '{enter}')
+            cy.get('.react-flow').click('left', {ctrlKey: true})
+            cy.get('.react-flow input').type(new_node_name1 + '{enter}')
 
-            cy.get('.flow-wrapper').click('center', {ctrlKey: true})
-            cy.get('.react-flow__node input').type(new_node_name2 + '{enter}')
+            cy.get('.react-flow').click('center', {ctrlKey: true})
+            cy.get('.react-flow input').type(new_node_name2 + '{enter}')
 
             cy.get(`.react-flow__node-default:contains(${new_node_name1})`).then(
                 ($node) => {
