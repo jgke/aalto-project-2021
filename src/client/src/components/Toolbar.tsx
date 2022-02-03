@@ -43,7 +43,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
             >
                 Horizontal Layout
             </button>
-            <button id="forceDirected" onClick={forceDirected}>
+            <button id="forceDirected" onClick={async () => await forceDirected()}>
                 Force-directed
             </button>
         </div>
