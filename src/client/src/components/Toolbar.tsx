@@ -26,6 +26,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 onChange={({ target }) => setNodeText(target.value)}
             />
             <button
+                id="createBtn"
                 className="button-toolbar"
                 onClick={() => sendCreateNode(nodeText)}
             >
@@ -36,7 +37,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}
             >
-            Vertical Layout
+                Vertical Layout
             </button>
             <button
                 className="button-layout"
