@@ -37,6 +37,5 @@ module.exports = {
         'quotes': ['error', 'single'],
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-unused-vars': [1, { 'argsIgnorePattern': '^_' }]
-
     }
 };
