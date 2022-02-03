@@ -5,6 +5,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
     const createNode = props.createNode;
     const layoutWithDagre = props.layoutWithDagre;
+    const forceDirected = props.forceDirected;
 
     /**
      * Calls createNode from App.tsx and clears state
@@ -41,6 +42,9 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 onClick={async () => await layoutWithDagre('LR')}
             >
                 Horizontal Layout
+            </button>
+            <button id="forceDirected" onClick={forceDirected}>
+                Force-directed
             </button>
         </div>
     );

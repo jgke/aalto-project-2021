@@ -369,6 +369,17 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         await updateNodes();
     };
 
+    //does force direced iterations, without scrambling the nodes
+    const forceDirected = async () => {
+        const newElements = layoutService.forceDirectedLayout(elements, 5);
+        console.log(newElements);
+
+        setElements(newElements);
+        console.log(elements); //wtf, they are not updated???
+
+        await updateNodes();
+    };
+
     return (
         <div style={{ height: '100%' }}>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
@@ -416,6 +427,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
+                forceDirected={forceDirected}
             />
         </div>
     );
