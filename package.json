@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "lint": "eslint . --ext .ts --ext .tsx",
+        "lint": "eslint . --ext .ts --ext .tsx --ext .js",
         "prettier": "npx prettier --check .",
         "prettier:write": "npx prettier --write .",
         "build-server": "cd ./src/server && npm i && npm run build && cp -r ./dist/src/server/.  ./../../build/",

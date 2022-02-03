@@ -18,7 +18,7 @@ router.route('/user/register').post(async (req: Request, res: Response) => {
     const saltRounds = 10;
     const hash = await bcrypt.hash(user.password, saltRounds);
     const q = await db.query(
-        'INSERT INTO users (username, password, email) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING (id)',
+        'INSERT INTO users (username, password, email) VALUES (LOWER($1), $2, LOWER($3)) ON CONFLICT DO NOTHING RETURNING (id)',
         [user.username, hash, user.email]
     );
     if (q.rowCount > 0) {
