@@ -26,24 +26,30 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 onChange={({ target }) => setNodeText(target.value)}
             />
             <button
-                id="button-toolbar"
+                className="button-toolbar"
                 onClick={() => sendCreateNode(nodeText)}
             >
                 Create
             </button>
             <button
+                className="button-layout"
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}
             >
-                Vertical Layout
+            Vertical Layout
             </button>
             <button
+                className="button-layout"
                 id="dagreLR"
                 onClick={async () => await layoutWithDagre('LR')}
             >
                 Horizontal Layout
             </button>
-            <button id="forceDirected" onClick={async () => await forceDirected()}>
+            <button
+                className="button-layout"
+                id="forceDirected"
+                onClick={async () => await forceDirected()}
+            >
                 Force-directed
             </button>
         </div>
