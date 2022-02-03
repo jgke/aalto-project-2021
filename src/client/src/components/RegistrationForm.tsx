@@ -57,8 +57,7 @@ export const RegistrationForm: ({
             password,
         };
         try {
-            const res = await createUser(user);
-            console.log('Res?', res);
+            await createUser(user);
             setEmail('');
             setPassword('');
             setConfirm('');

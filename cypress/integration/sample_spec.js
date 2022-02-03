@@ -16,11 +16,9 @@ describe('Login / Register', () => {
         })
 
         it('hyperlinks in the top work', () => {
-            //cy.visit('/')
 
             cy.get('a[id=login-link]').click()
             cy.get('a[id=register-link]').click()
-            //cy.get('a[id=login-link]').click()
         });
     })
 
