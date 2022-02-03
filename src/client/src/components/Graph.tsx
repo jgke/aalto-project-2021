@@ -363,16 +363,19 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     //calls nodeService.updateNode for all nodes
-    const updateNodes = async (): Promise<void> => {
-        for (const el of elements) {
+    const updateNodes = async (els: Elements): Promise<void> => {
+        console.log('I was called');
+        for (const el of els) {
             if (isNode(el)) {
                 const node: INode = el.data;
 
                 if (node) {
-                    node.x = Math.round(el.position.x);
-                    node.y = Math.round(el.position.y);
+                    node.x = el.position.x;
+                    node.y = el.position.y;
 
                     await nodeService.updateNode(node);
+                } else {
+                    console.log('What is going on?');
                 }
             }
         }
@@ -380,21 +383,21 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
-        setElements(layoutService.dagreLayout(elements, direction));
+        const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes();
+        await updateNodes(newElements);
+
+        setElements(newElements);
     };
 
     //does force direced iterations, without scrambling the nodes
     const forceDirected = async () => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
-        console.log(newElements);
+
+        await updateNodes(newElements);
 
         setElements(newElements);
-        console.log(elements); //wtf, they are not updated???
-
-        await updateNodes();
     };
 
     if (!selectedProject) {
