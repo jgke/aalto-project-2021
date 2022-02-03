@@ -386,6 +386,17 @@ export const Graph = (props: GraphProps): JSX.Element => {
         await updateNodes();
     };
 
+    //does force direced iterations, without scrambling the nodes
+    const forceDirected = async () => {
+        const newElements = layoutService.forceDirectedLayout(elements, 5);
+        console.log(newElements);
+
+        setElements(newElements);
+        console.log(elements); //wtf, they are not updated???
+
+        await updateNodes();
+    };
+
     if (!selectedProject) {
         return <></>;
     }
@@ -437,6 +448,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
+                forceDirected={forceDirected}
             />
         </div>
     );
