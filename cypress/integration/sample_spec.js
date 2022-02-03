@@ -169,11 +169,11 @@ describe('Graph', () => {
         it('Can create nodes with ctrl click', () => {
             const new_node_name1 = '__test__NEW_NODE_1'
 
-            cy.get('.react-flow').click('center', {ctrlKey: true})
+            cy.get('.react-flow__renderer').click('center', {ctrlKey: true})
             cy.get('.react-flow input').type(new_node_name1 + '{enter}')
 
             
-            cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('not.exist');
+            cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('exist');
 
             if (!myConsts.global_clean) {
                 cy.removeAllTestNodes();
