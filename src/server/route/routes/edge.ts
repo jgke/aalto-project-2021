@@ -26,14 +26,27 @@ router
         console.log('Receiving edge...', req.body);
         const text: IEdge = req.body; //Might have to parse this
 
-        if (!text.source_id || !text.target_id) {
-            res.status(403).json().end();
-            return;
-        }
+        try {
+            const q1 = await db.query(
+                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
+                [text.target_id, text.source_id]
+            );
 
-        if (text.source_id === text.target_id) {
-            res.status(403).json().end();
-            return;
+            if (q1.rowCount > 0) {
+                await db.query(
+                    'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
+                    [text.target_id, text.source_id]
+                );
+            }
+
+            const q3 = await db.query(
+                'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
+                [text.source_id, text.target_id]
+            );
+            res.status(200).json(q3);
+        } catch (e) {
+            console.log(e);
+            res.status(403).json();
         }
 
         const duplicateCheck = await db.query(

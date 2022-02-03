@@ -7,6 +7,8 @@ import { render, fireEvent, act } from '@testing-library/react';
 import { LoginForm } from '../../components/LoginForm';
 import { BrowserRouter } from 'react-router-dom';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const getComponent = (loginUser?: any) => (
     <BrowserRouter>
         <LoginForm loginUser={loginUser || jest.fn()} setUser={jest.fn()} />
