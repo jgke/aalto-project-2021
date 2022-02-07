@@ -48,8 +48,8 @@ router
                     text.status,
                     text.priority,
                     text.project_id,
-                    text.x,
-                    text.y,
+                    Math.round(text.x),
+                    Math.round(text.y),
                 ]
             );
             res.status(200).json(q);
@@ -64,7 +64,14 @@ router
         if (nodeCheck(n) && n.id) {
             const q = await db.query(
                 'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5 WHERE id = $6',
-                [n.label, n.status, n.priority, n.x, n.y, n.id]
+                [
+                    n.label,
+                    n.status,
+                    n.priority,
+                    Math.round(n.x),
+                    Math.round(n.y),
+                    n.id,
+                ]
             );
             res.status(200).json(q);
         } else {

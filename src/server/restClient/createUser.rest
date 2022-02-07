@@ -3,7 +3,7 @@ POST http://localhost:8050/api/user/register
 content-type: application/json
 
 {
-        "username": "Mr_Test1",
+        "username": "Mr_test1",
         "password": "My_Secret_password",
-        "email": "mrtest@test.com"
+        "email": "mrtest@example.com"
 }

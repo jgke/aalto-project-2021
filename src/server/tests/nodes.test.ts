@@ -1,8 +1,9 @@
 import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
 import { db } from '../dbConfigs';
-import { INode, IProject } from '../../../types';
+import { INode } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
+import { addDummyNodes, addDummyProject } from './testHelper';
 
 const api = supertest(app);
 
@@ -10,59 +11,13 @@ const api = supertest(app);
 
 let pId = 0;
 
-const addDummyProject = async () => {
-    const p: IProject = {
-        name: 'Test-1',
-        description: 'First-project',
-        owner_id: 'temp',
-        id: 0,
-    };
-
-    pId = (
-        await db.query(
-            'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
-            [p.name, p.owner_id, p.description]
-        )
-    ).rows[0].id;
-};
-
-const addDummyNodes = async () => {
-    const n1: INode = {
-        label: 'test node',
-        priority: 'Urgent',
-        status: 'Doing',
-        x: 0,
-        y: 0,
-        project_id: pId,
-    };
-
-    const n2: INode = {
-        label: 'a second test node',
-        priority: 'No rush',
-        status: 'Done',
-        x: 1,
-        y: 2,
-        project_id: pId,
-    };
-
-    await db.query(
-        'INSERT INTO node (label, priority, status, x, y, project_id) VALUES ($1, $2, $3, $4, $5, $6);',
-        [n1.label, n1.priority, n1.status, n1.x, n1.y, n1.project_id]
-    );
-
-    await db.query(
-        'INSERT INTO node (label, priority, status, x, y, project_id) VALUES ($1, $2, $3, $4, $5, $6);',
-        [n2.label, n2.priority, n2.status, n2.x, n2.y, n2.project_id]
-    );
-};
-
 //End of helper functions
 
 beforeEach(async () => {
     // DATABASE RESET
     await db.query('TRUNCATE project, node, edge CASCADE;', []);
     //adding project
-    await addDummyProject();
+    pId = await addDummyProject(db);
 });
 
 describe('Basic GET request', () => {
@@ -142,7 +97,7 @@ describe('POST and GET request', () => {
 
 describe('DELETE request', () => {
     test('with an id should delete the node from the DB', async () => {
-        await addDummyNodes();
+        await addDummyNodes(db, pId);
 
         let result = await api.get(`/api/node/${pId}`).expect(200);
         expect(result.body[0].id).toBeDefined();
@@ -155,7 +110,7 @@ describe('DELETE request', () => {
     });
 
     test('deletes the right node', async () => {
-        await addDummyNodes();
+        await addDummyNodes(db, pId);
 
         let res = await api.get(`/api/node/${pId}`).expect(200);
 
@@ -171,7 +126,7 @@ describe('DELETE request', () => {
 
 describe('PUT request', () => {
     test('should update the location of a node', async () => {
-        await addDummyNodes();
+        await addDummyNodes(db, pId);
 
         const res = await api.get(`/api/node/${pId}`);
         const dummyNode: INode = {
@@ -192,7 +147,7 @@ describe('PUT request', () => {
     });
 
     test('should update the label of a node', async () => {
-        await addDummyNodes();
+        await addDummyNodes(db, pId);
 
         const res = await api.get(`/api/node/${pId}`);
         const dummyNode: INode = {

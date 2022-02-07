@@ -29,31 +29,38 @@ router
         console.log('Receiving edge...', req.body);
         const text: IEdge = req.body; //Might have to parse this
 
-        if (!text.source_id || !text.target_id) {
-            res.status(403).json().end();
-            return;
+        try {
+            const duplicateCheck = await db.query(
+                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
+                [text.source_id, text.target_id]
+            );
+    
+            if (duplicateCheck.rowCount > 0) {
+                res.status(403).json().end();
+                return;
+            }
+
+            const reverseCheck = await db.query(
+                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
+                [text.target_id, text.source_id]
+            );
+
+            if (reverseCheck.rowCount > 0) {
+                await db.query(
+                    'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
+                    [text.target_id, text.source_id]
+                );
+            }
+
+            const edge = await db.query(
+                'INSERT INTO edge (source_id, target_id, project_id) VALUES ($1, $2, $3)',
+                [text.source_id, text.target_id, text.project_id]
+            );
+            res.status(200).json(edge);
+        } catch (e) {
+            console.log(e);
+            res.status(403).json();
         }
-
-        if (text.source_id === text.target_id) {
-            res.status(403).json().end();
-            return;
-        }
-
-        const duplicateCheck = await db.query(
-            'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
-            [text.source_id, text.target_id]
-        );
-
-        if (duplicateCheck.rowCount > 0) {
-            res.status(403).json().end();
-            return;
-        }
-
-        const q = await db.query(
-            'INSERT INTO edge (source_id, target_id, project_id) VALUES ($1, $2, $3)',
-            [text.source_id, text.target_id, text.project_id]
-        );
-        res.status(200).json(q);
     })
     .put((req: Request, res: Response) => {
         res.status(501).json({ message: 'Not implemented' });

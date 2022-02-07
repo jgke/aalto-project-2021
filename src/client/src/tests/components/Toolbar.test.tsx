@@ -19,13 +19,9 @@ describe('Toolbar', () => {
     });
 
     test('calls a function when button is clicked', () => {
-        const button = component.container.querySelector('button');
+        const button = component.container.querySelector('button')!;
         expect(button).toBeDefined;
-        if (button) {
-            fireEvent.click(button);
-        } else {
-            fail('No button found, should never enter this line');
-        }
+        fireEvent.click(button);
 
         expect(mockCreate).toBeCalled;
     });
@@ -42,12 +38,10 @@ describe('Toolbar', () => {
     });
 
     test('can change the text box value', () => {
-        const input = component.container.querySelector('input');
-        if (input) {
-            fireEvent.change(input, {
-                target: { value: 'Add physics' },
-            });
-            expect(input).toHaveValue('Add physics');
-        }
+        const input = component.container.querySelector('input')!;
+        fireEvent.change(input, {
+            target: { value: 'Add physics' },
+        });
+        expect(input).toHaveValue('Add physics');
     });
 });

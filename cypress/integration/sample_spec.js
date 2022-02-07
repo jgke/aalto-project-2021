@@ -16,11 +16,9 @@ describe('Login / Register', () => {
         })
 
         it('hyperlinks in the top work', () => {
-            //cy.visit('/')
 
             cy.get('a[id=login-link]').click()
             cy.get('a[id=register-link]').click()
-            //cy.get('a[id=login-link]').click()
         });
     })
 
@@ -168,7 +166,7 @@ describe('Graph', () => {
             cy.get('input#nodetext').type(node_name_1)
             cy.get('input#nodetext').parent().contains('Create').click()
 
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick()
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
             cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
 
             cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
@@ -181,28 +179,12 @@ describe('Graph', () => {
 
         it('Can create nodes with ctrl click', () => {
             const new_node_name1 = '__test__NEW_NODE_1'
-            const new_node_name2 = '__test__NEW_NODE_2'
 
-            let node_pos1
+            cy.get('.react-flow__renderer').click('center', {ctrlKey: true})
+            cy.get('.react-flow input').type(new_node_name1 + '{enter}')
 
-            cy.get('.flow-wrapper').click('left', {ctrlKey: true})
-            cy.get('.react-flow__node input').type(new_node_name1 + '{enter}')
-
-            cy.get('.flow-wrapper').click('center', {ctrlKey: true})
-            cy.get('.react-flow__node input').type(new_node_name2 + '{enter}')
-
-            cy.get(`.react-flow__node-default:contains(${new_node_name1})`).then(
-                ($node) => {
-                    node_pos1 = $node[0].getBoundingClientRect();
-
-                }
-            );
-
-            cy.get(`.react-flow__node-default:contains(${new_node_name2})`).should(
-                ($node) => {
-                    expect(node_pos1.x).lessThan($node[0].getBoundingClientRect().x);
-                }
-            );
+            
+            cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('exist');
 
             if (!myConsts.global_clean) {
                 cy.removeAllTestNodes();
