@@ -4,7 +4,7 @@ import { Node } from 'react-flow-renderer';
 export const baseUrl = '/api/node';
 
 // Should be possible to give "getAll" a return type
-const getAll = async (project_id: number): Promise<INode[]> => {
+const getAll = async (project_id: string): Promise<INode[]> => {
     const node = await axios.get<INode[]>(`${baseUrl}/${project_id}`);
     return node.data;
 };

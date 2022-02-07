@@ -7,11 +7,7 @@ import { addDummyNodes, addDummyProject } from './testHelper';
 
 const api = supertest(app);
 
-//Helper functions
-
-let pId = 0;
-
-//End of helper functions
+let pId: string;
 
 beforeEach(async () => {
     // DATABASE RESET

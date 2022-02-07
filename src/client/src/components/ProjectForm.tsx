@@ -23,7 +23,7 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 name,
                 description,
                 owner_id: props.user.id,
-                id: props.defaultProject?.id || 0,
+                id: props.defaultProject?.id || '',
             };
             setName('');
             setDescription('');

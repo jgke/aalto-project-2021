@@ -28,7 +28,6 @@ router
         res.json(q.rows);
     })
     .delete(async (req: Request, res: Response) => {
-        console.log('Deleting node...');
         const id = req.params.id;
         const q = await db.query('DELETE FROM node WHERE id = $1', [id]);
         res.status(200).json(q);
@@ -37,7 +36,6 @@ router
 router
     .route('/node')
     .post(async (req: Request, res: Response) => {
-        console.log('Receiving node...');
         const text: INode = req.body; //Might have to parse this
 
         if (nodeCheck(text)) {
@@ -59,7 +57,6 @@ router
     })
     .put(async (req: Request, res: Response) => {
         const n: INode = req.body;
-        console.log('Updating node...', n);
 
         if (nodeCheck(n) && n.id) {
             const q = await db.query(

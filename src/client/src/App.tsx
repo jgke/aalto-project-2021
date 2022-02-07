@@ -18,7 +18,7 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
-    project_id: 0,
+    project_id: 'id',
 };
 
 export const App: FC = () => {

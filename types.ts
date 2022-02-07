@@ -10,17 +10,17 @@ export interface INode {
     id?: string; //Could there be a more specific ID than just number?
     x: number;
     y: number;
-    project_id: number;
+    project_id: string;
 }
 
 export interface IEdge {
     source_id: string;
     target_id: string;
-    project_id: number;
+    project_id: string;
 }
 
 export interface IProject {
-    id: number;
+    id: string;
     owner_id: string;
     name: string;
     description: string;

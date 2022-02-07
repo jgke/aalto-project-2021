@@ -11,6 +11,7 @@ import { IProject, Registration, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 import { mockUser } from '../../../testmock';
+import { v4 as uuidv4 } from 'uuid';
 
 const baseUrl = '/api/project';
 
@@ -29,14 +30,14 @@ const addDummyProjects = async (): Promise<void> => {
         name: 'Test-1',
         description: 'First-project',
         owner_id: user.id,
-        id: 0,
+        id: 'temp',
     };
 
     const p2: IProject = {
         name: 'Test-2',
         description: 'Second-project',
         owner_id: user.id,
-        id: 0,
+        id: 'temp',
     };
 
     ids = [];
@@ -70,7 +71,7 @@ describe('Projects', () => {
         const res = await api
             .post('/api/user/login')
             .send({ email: user.email, password: user.password });
-        user.id = String(res.body.id);
+        user.id = res.body.id;
         token = res.body.token;
     });
 
@@ -90,7 +91,7 @@ describe('Projects', () => {
                 name: 'Test-1',
                 description: 'First-project',
                 owner_id: user.id,
-                id: 0,
+                id: 'temp',
             };
 
             await api
@@ -105,7 +106,7 @@ describe('Projects', () => {
                 name: 'Test-1',
                 description: 'First-project',
                 owner_id: user.id,
-                id: 0,
+                id: 'temp',
             };
 
             await api
@@ -188,7 +189,7 @@ describe('Projects', () => {
                 name: 'Not-exiting',
                 description: 'Not-existing-project',
                 owner_id: 'ghost',
-                id: -1,
+                id: uuidv4(),
             };
             await api
                 .delete(`${baseUrl}/${p.id}`)

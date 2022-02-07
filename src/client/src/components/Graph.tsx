@@ -57,8 +57,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const projects = useSelector((state: RootState) => state.project);
     const selectedProject =
-        props.test?.selectedProject ||
-        projects.find((p) => p.id === parseInt(id || ''));
+        props.test?.selectedProject || projects.find((p) => p.id === id);
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [elements, setElements] = useState<Elements>([]);

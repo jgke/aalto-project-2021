@@ -85,7 +85,7 @@ describe('<Graph>', () => {
         const testObj = {
             elements,
             selectedProject: {
-                id: 1,
+                id: '1',
                 owner_id: '1',
                 name: 'project',
                 description: 'decp',
