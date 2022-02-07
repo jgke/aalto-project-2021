@@ -45,6 +45,20 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
     const setElements = props.setElements;
     const onConnect = props.onConnect;
     const onElementsRemove = props.onElementsRemove;
+    const [nodeHidden, setNodeHidden] = useState(false);
+
+    const handleHidingNode = (
+        useEffect(() => {
+            setElements((els) =>
+                els.map((el) => {
+                    if (el.data === 'Urgent') {
+                        el.isHidden = nodeHidden;
+                    }
+        
+                    return el;
+                })
+            );
+        }, [nodeHidden, setElements]))
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -109,6 +123,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 priority: 'Urgent',
                 x: node.position.x,
                 y: node.position.y,
+                isHidden: false,
             };
 
             const returnId: string | undefined = await nodeService.sendNode(n);

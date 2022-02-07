@@ -25,6 +25,7 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
+    isHidden: false,
 };
 
 export const App: React.FC = () => {
@@ -99,6 +100,7 @@ export const App: React.FC = () => {
             priority: 'Urgent',
             x: 5 + elements.length * 10,
             y: 5 + elements.length * 10,
+            isHidden: false,
         };
         const returnId: string | undefined = await nodeService.sendNode(n);
         if (returnId) {

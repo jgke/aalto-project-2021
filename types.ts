@@ -10,6 +10,7 @@ export interface INode {
     id?: string; //Could there be a more specific ID than just number?
     x: number;
     y: number;
+    isHidden: boolean;
 }
 
 export interface IEdge {
