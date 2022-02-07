@@ -91,24 +91,4 @@ describe('Project', () => {
         cy.get('.project-card').should('not.exist')
         cy.get('.graph').should('exist')
     })
-
-    it('should preserve the graph', () => {
-        const node_name_1 = '__test__1'
-
-        cy.get('#name-field>input').type('Project')
-        cy.get('#description-field>textarea').type('Lorem Ipsum')
-        cy.get('#project-button-row>button').click()
-
-        cy.get('.project-card').last().click()
-
-        cy.insertNode(node_name_1);
-
-        cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-
-        // Got back to home and reload graph
-        cy.get('#home-link').click()
-        cy.get('.project-card').last().click()
-
-        cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-    })
 })

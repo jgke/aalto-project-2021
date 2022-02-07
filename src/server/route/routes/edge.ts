@@ -34,7 +34,7 @@ router
                 'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
                 [text.source_id, text.target_id]
             );
-    
+
             if (duplicateCheck.rowCount > 0) {
                 res.status(403).json().end();
                 return;
