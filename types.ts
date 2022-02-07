@@ -17,6 +17,36 @@ export interface IEdge {
     target_id: string;
 }
 
+export interface Registration {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export interface RegisterFormProps {
+    createUser: (user: Registration) => Promise<Registration>;
+}
+
+export interface Login {
+    email: string | null;
+    username: string | null;
+    password: string;
+}
+
+export interface UserToken {
+    username: string;
+    email: string;
+    token: string;
+    id: string;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
+}
+
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
     layoutWithDagre: (direction: string) => Promise<void>;

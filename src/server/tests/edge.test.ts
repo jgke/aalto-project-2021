@@ -171,5 +171,8 @@ describe('DELETE request', () => {
 
 afterAll(async () => {
     console.log('Tests are done!');
-    await db.query('DELETE FROM edge;', []);
+    await db.query(
+        'DELETE FROM users; DELETE FROM edge; DELETE FROM node;',
+        []
+    );
 });
