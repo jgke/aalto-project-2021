@@ -10,12 +10,12 @@ const getAll = async (): Promise<IProject[]> => {
     return project.data;
 };
 
-const sendProject = async (project: IProject): Promise<string> => {
+const sendProject = async (project: IProject): Promise<number> => {
     const response = await axios.post(baseUrl, project, getConfig());
     return response.data.rows[0].id;
 };
 
-const deleteProject = async (projectId: string): Promise<{ msg: string }> => {
+const deleteProject = async (projectId: number): Promise<{ msg: string }> => {
     const response = await axios.delete(`${baseUrl}/${projectId}`, getConfig());
     return response.data;
 };

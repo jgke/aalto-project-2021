@@ -7,21 +7,21 @@ export interface INode {
     label: string;
     status: Status;
     priority: string;
-    id?: string; //Could there be a more specific ID than just number?
+    id?: number; //Could there be a more specific ID than just number?
     x: number;
     y: number;
-    project_id: string;
+    project_id: number;
 }
 
 export interface IEdge {
-    source_id: string;
-    target_id: string;
-    project_id: string;
+    source_id: number;
+    target_id: number;
+    project_id: number;
 }
 
 export interface IProject {
-    id: string;
-    owner_id: string;
+    id: number;
+    owner_id: number;
     name: string;
     description: string;
 }
@@ -46,14 +46,14 @@ export interface UserToken {
     username: string;
     email: string;
     token: string;
-    id: string;
+    id: number;
 }
 
 export interface User {
     username: string;
     password: string;
     email: string;
-    id: string;
+    id: number;
 }
 
 export interface RootState {

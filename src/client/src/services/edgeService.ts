@@ -3,7 +3,7 @@ import { Edge } from 'react-flow-renderer';
 import { IEdge } from '../../../../types';
 export const baseUrl = '/api/edge';
 
-const getAll = async (project_id: string): Promise<IEdge[]> => {
+const getAll = async (project_id: number): Promise<IEdge[]> => {
     const response = await axios.get<IEdge[]>(`${baseUrl}/${project_id}`);
     return response.data;
 };

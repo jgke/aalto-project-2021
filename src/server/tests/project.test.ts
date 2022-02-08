@@ -11,7 +11,6 @@ import { IProject, Registration, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 import { mockUser } from '../../../testmock';
-import { v4 as uuidv4 } from 'uuid';
 
 const baseUrl = '/api/project';
 
@@ -30,14 +29,14 @@ const addDummyProjects = async (): Promise<void> => {
         name: 'Test-1',
         description: 'First-project',
         owner_id: user.id,
-        id: 'temp',
+        id: 0,
     };
 
     const p2: IProject = {
         name: 'Test-2',
         description: 'Second-project',
         owner_id: user.id,
-        id: 'temp',
+        id: 0,
     };
 
     ids = [];
@@ -91,7 +90,7 @@ describe('Projects', () => {
                 name: 'Test-1',
                 description: 'First-project',
                 owner_id: user.id,
-                id: 'temp',
+                id: 0,
             };
 
             await api
@@ -106,7 +105,7 @@ describe('Projects', () => {
                 name: 'Test-1',
                 description: 'First-project',
                 owner_id: user.id,
-                id: 'temp',
+                id: 0,
             };
 
             await api
@@ -123,6 +122,7 @@ describe('Projects', () => {
             const project = res.body[0];
             expect(project.name).toBe('Test-1');
             expect(project.description).toBe('First-project');
+            console.log(project, user);
             expect(project.owner_id).toBe(user.id);
         });
 
@@ -188,8 +188,8 @@ describe('Projects', () => {
             const p: IProject = {
                 name: 'Not-exiting',
                 description: 'Not-existing-project',
-                owner_id: 'ghost',
-                id: uuidv4(),
+                owner_id: 0,
+                id: 0,
             };
             await api
                 .delete(`${baseUrl}/${p.id}`)

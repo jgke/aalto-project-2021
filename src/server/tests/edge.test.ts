@@ -4,7 +4,6 @@ import { IEdge } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 import { addDummyNodes, addDummyProject } from './testHelper';
-import { v4 as uuidv4 } from 'uuid';
 
 const baseUrl = '/api/edge';
 
@@ -13,7 +12,7 @@ const api = supertest(app);
 //This holds the possible dummy node's ID's
 
 //Helper functions for the tests
-let pId: string;
+let pId: number;
 
 //Helper functions end here
 
@@ -140,8 +139,8 @@ describe('DELETE request', () => {
 
     test('should not crash the app if the edge to be deleted does not exist', async () => {
         const e: IEdge = {
-            source_id: uuidv4(),
-            target_id: uuidv4(),
+            source_id: 0,
+            target_id: 0,
             project_id: pId,
         };
         await api

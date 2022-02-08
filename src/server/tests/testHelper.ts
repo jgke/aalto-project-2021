@@ -1,16 +1,15 @@
 import { INode, IProject } from '../../../types';
 import { Database } from '../dbConfigs';
-import { v4 as uuidv4 } from 'uuid';
 
 export const addDummyProject = async (
     db: Database,
     project?: IProject
-): Promise<string> => {
+): Promise<number> => {
     const p: IProject = project || {
         name: 'Test-1',
         description: 'First-project',
-        owner_id: uuidv4(),
-        id: 'temp',
+        owner_id: 0,
+        id: 0,
     };
 
     return (
@@ -18,14 +17,14 @@ export const addDummyProject = async (
             'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
             [p.name, p.owner_id, p.description]
         )
-    ).rows[0].id as string;
+    ).rows[0].id as number;
 };
 
 export const addDummyNodes = async (
     db: Database,
-    projectId: string,
+    projectId: number,
     nodes?: INode[]
-): Promise<string[]> => {
+): Promise<number[]> => {
     const n = nodes || [
         {
             label: 'First-node',
@@ -45,7 +44,7 @@ export const addDummyNodes = async (
         },
     ];
 
-    const ids: string[] = [];
+    const ids: number[] = [];
     for (const node of n) {
         const res = await db.query(
             'INSERT INTO node (label, priority, status, x, y, project_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;',

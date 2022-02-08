@@ -9,7 +9,7 @@ export const userExtractor = (
     if (req.token) {
         req.user = jwt.verify(req.token, process.env.SECRET || 'secret') as {
             email: string;
-            id: string;
+            id: number;
             iat: number;
         };
     }

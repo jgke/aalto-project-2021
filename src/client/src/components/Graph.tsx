@@ -57,7 +57,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const projects = useSelector((state: RootState) => state.project);
     const selectedProject =
-        props.test?.selectedProject || projects.find((p) => p.id === id);
+        props.test?.selectedProject ||
+        projects.find((p) => p.id === parseInt(id || ''));
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [elements, setElements] = useState<Elements>([]);
@@ -121,9 +122,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 y: 5 + elements.length * 10,
                 project_id: selectedProject.id,
             };
-            const returnId: string | undefined = await nodeService.sendNode(n);
+            const returnId: number | undefined = await nodeService.sendNode(n);
             if (returnId) {
-                n.id = String(returnId);
+                n.id = returnId;
                 const b: Node<INode> = {
                     id: String(returnId),
                     data: n,
@@ -196,7 +197,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
-                const returnId: string | undefined = await nodeService.sendNode(
+                const returnId: number | undefined = await nodeService.sendNode(
                     n
                 );
 
@@ -319,8 +320,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
             //This does not mean params is an edge but rather a Connection
 
             const edge: IEdge = {
-                source_id: params.source,
-                target_id: params.target,
+                source_id: parseInt(params.source),
+                target_id: parseInt(params.target),
                 project_id: selectedProject.id,
             };
 

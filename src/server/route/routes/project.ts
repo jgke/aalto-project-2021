@@ -13,8 +13,6 @@ router.route('/project/:id').delete(async (req: Request, res: Response) => {
     const id = req.params.id;
     const ownerId = req.user.id;
 
-    console.log(id, ownerId);
-
     const q = await db.query(
         'DELETE FROM project WHERE id = $1 AND owner_id = $2',
         [id, ownerId]

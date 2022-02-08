@@ -15,7 +15,7 @@ interface ProjectAddAction extends Action<string> {
 
 interface ProjectDeleteAction extends Action<string> {
     type: 'PROJECT_DELETE';
-    data: string;
+    data: number;
 }
 
 interface ProjectUpdateAction extends Action<string> {
@@ -29,7 +29,7 @@ type ProjectAction =
     | ProjectAddAction
     | ProjectDeleteAction
     | ProjectUpdateAction;
-type ProjectReturn = IProject[] | IProject | string;
+type ProjectReturn = IProject[] | IProject | number;
 
 export const projectReducer = (
     state: ProjectState = [],
@@ -87,7 +87,7 @@ export const projectAdd = (
 };
 
 export const projectDelete = (
-    projectId: string
+    projectId: number
 ): ThunkAction<Promise<void>, ProjectState, void, ProjectDeleteAction> => {
     return async (
         dispatch: ThunkDispatch<ProjectState, void, ProjectDeleteAction>
