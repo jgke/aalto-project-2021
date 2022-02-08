@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react';
 import { IProject, UserToken } from '../../../../types';
-import defaultBg from './../images/default.jpg';
 import { BsThreeDotsVertical, BsXLg, BsPencilFill } from 'react-icons/bs';
 import { ProjectForm } from './ProjectForm';
 import { useNavigate } from 'react-router-dom';
@@ -86,12 +85,14 @@ export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
                     </Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
-            <img
+            <div className="card-img-top fallback-card-image"></div>
+            {/* Add this when we can save images in the project
+                <img
                 className="card-img-top"
-                src={defaultBg}
+                src={}
                 alt="Card image cap"
                 style={{ objectFit: 'cover', maxHeight: '100px' }}
-            />
+            /> */}
             <div className="card-body">{body}</div>
         </div>
     );
