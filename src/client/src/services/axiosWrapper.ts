@@ -10,7 +10,7 @@ export async function axiosWrapper<T>(
 ): Promise<T | undefined> {
     return promise
         .then((response: AxiosResponse) => {
-            return response.data;
+            return response.data || { success: true };
         })
         .catch((error: AxiosError) => {
             const response = error.response;

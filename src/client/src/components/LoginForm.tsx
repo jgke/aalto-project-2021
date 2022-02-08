@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { Login, UserToken } from '../../../../types';
 
 export interface LoginFormProps {
-    loginUser: (user: Login) => Promise<UserToken>;
+    loginUser: (user: Login) => Promise<UserToken | undefined>;
     setUser: React.Dispatch<React.SetStateAction<UserToken | null>>;
 }
 
@@ -42,8 +43,9 @@ export const LoginForm = (props: LoginFormProps): JSX.Element => {
             user.username = emailUser;
         }
 
-        try {
-            const res: UserToken = await props.loginUser(user);
+        const res = await props.loginUser(user);
+
+        if (res) {
             const userInfo = JSON.stringify({
                 ...res,
                 token: `Bearer ${res.token}`,
@@ -54,9 +56,7 @@ export const LoginForm = (props: LoginFormProps): JSX.Element => {
             setPassword('');
             props.setUser(res);
             navigate('/');
-        } catch (e) {
-            errTimeout('Error occured when logging in');
-            console.log('ERROR!', e);
+            toast('✔️ Login successful');
         }
     };
 
