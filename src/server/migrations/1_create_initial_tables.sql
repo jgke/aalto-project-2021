@@ -44,6 +44,3 @@ CREATE TABLE users (
 
 ALTER TABLE edge
 ADD CONSTRAINT PK_edge PRIMARY KEY (source_id, target_id);
-
-ALTER TABLE project
-ADD CONSTRAINT fk_owner_id FOREIGN KEY(owner_id) REFERENCES users(id);
