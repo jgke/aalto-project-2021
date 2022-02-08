@@ -50,6 +50,7 @@
         "@testing-library/react": "^12.1.2",
         "@types/dagre": "^0.7.47",
         "@types/node": "^12.20.37",
+        "axios-mock-adapter": "^1.20.0",
         "cross-env": "^7.0.3",
         "prettier": "2.5.1",
         "tslib": "^2.3.1",
