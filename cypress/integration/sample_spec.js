@@ -59,7 +59,7 @@ describe('Login / Register', () => {
             cy.get('#psw').type('secretPassword123')
             cy.get('#login-button').click()
             
-            cy.contains('#loging-error').should('not.exist')
+            cy.contains('#login-error').should('not.exist')
 
             cy.get('#logout-link').click()
 
