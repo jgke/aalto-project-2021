@@ -3,6 +3,7 @@ import { ToolbarProps } from '../../../../types';
 
 export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
+    //const [nodeHidden, setNodeHidden] = useState(false);
     const createNode = props.createNode;
     const layoutWithDagre = props.layoutWithDagre;
 
@@ -42,6 +43,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
             >
                 Horizontal Layout
             </button>
+            <label>hidden:</label>
         </div>
     );
 };

@@ -175,7 +175,6 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 priority: 'Urgent',
                 x: node.position.x,
                 y: node.position.y,
-                //isHidden: false,
             };
 
             const returnId: string | undefined = await nodeService.sendNode(n);
@@ -358,6 +357,27 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         await updateNodes();
     };
 
+    
+    const [nodeHidden, setNodeHidden] = useState(false);
+
+    useEffect(() => {
+        setElements((els) =>
+            els.map((el) => {
+                if (el.data.status === 'Done') {
+                    el.isHidden = nodeHidden;
+                    for (const e of els) {
+                        if (isEdge(e) && (e.source === el.id || e.target === el.id)) {
+                            e.isHidden = nodeHidden;
+                        }
+                    }
+                }
+                return el;
+            })
+        );
+    }, [nodeHidden, setElements]);
+
+    
+
     return (
         <div style={{ height: '100%' }}>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
@@ -406,6 +426,13 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
             />
+            <div>
+                <input
+                    type="checkbox"
+                    checked={nodeHidden}
+                    onChange={(evt) => setNodeHidden(evt.target.checked)}
+                />
+            </div>
         </div>
     );
 };

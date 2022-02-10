@@ -16,7 +16,6 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
-    //isHidden: false,
 };
 
 export const App: React.FC = () => {
