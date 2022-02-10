@@ -5,11 +5,14 @@ module.exports = {
         'browser': true,
         'es6': true,
         'node': true,
-        'jest': true
+        'jest': true,
+        'cypress/globals': true
+
     },
     'plugins': [
         '@typescript-eslint',
-        'import'
+        'import',
+        'cypress'
     ],
     'extends': [
         'eslint:recommended',
@@ -31,7 +34,8 @@ module.exports = {
         'import/no-default-export': 'warn',
         'no-mixed-spaces-and-tabs': 0,
         'indent': ['error', 4],
-        'quotes': ['error', 'single']
-
+        'quotes': ['error', 'single'],
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-unused-vars': [1, { 'argsIgnorePattern': '^_' }]
     }
 };

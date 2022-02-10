@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Toolbar } from './components/Toolbar';
-import {
-    Elements,
-    addEdge,
-    removeElements,
-    Edge,
-    Node,
-    Connection,
-    isNode,
-    isEdge,
-    FlowElement,
-    ArrowHeadType,
-} from 'react-flow-renderer';
-import * as nodeService from './services/nodeService';
-import * as edgeService from './services/edgeService';
-import * as layoutService from './services/layoutService';
-import { INode, IEdge } from '../../../types';
+import { Elements } from 'react-flow-renderer';
+import { INode, UserToken } from '../../../types';
+import { Topbar } from './components/TopBar';
 import './App.css';
+import { Route, Routes } from 'react-router';
+import { Registration } from './pages/Registration';
+import { loginUser } from './services/userService';
+import { LoginForm } from './components/LoginForm';
+import { Navigate } from 'react-router-dom';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -25,212 +16,55 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
-    isHidden: false,
+    //isHidden: false,
 };
 
 export const App: React.FC = () => {
     const [elements, setElements] = useState<Elements>([]);
+    const [user, setUser] = useState<UserToken | null>(null);
+    const [userParsed, setUserParsed] = useState<boolean>(false);
 
-    //calls nodeService.updateNode for all nodes
-    const updateNodes = async (): Promise<void> => {
-        for (const el of elements) {
-            if (isNode(el)) {
-                const node: INode = el.data;
-
-                if (node) {
-                    node.x = el.position.x;
-                    node.y = el.position.y;
-
-                    await nodeService.updateNode(node);
-                }
-            }
-        }
-    };
-
-    const layoutWithDagre = async (direction: string) => {
-        //applies the layout
-        setElements(layoutService.dagreLayout(elements, direction));
-
-        //sends updated node positions to backend
-        await updateNodes();
-    };
-
-    /**
-     * Fetches the elements from a database
-     */
     useEffect(() => {
-        const getElementsHook = async () => {
-            let nodes: INode[];
-            let edges: IEdge[];
-            try {
-                [nodes, edges] = await Promise.all([
-                    nodeService.getAll(),
-                    edgeService.getAll(),
-                ]);
-            } catch (e) {
-                return;
-            }
-
-            const nodeElements: Elements = nodes.map((n) => ({
-                id: String(n.id),
-                data: n,
-                position: { x: n.x, y: n.y },
-            }));
-            // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-            const edgeElements: Elements = edges.map((e) => ({
-                id: String(e.source_id) + '-' + String(e.target_id),
-                source: String(e.source_id),
-                target: String(e.target_id),
-                type: 'straight',
-                arrowHeadType: ArrowHeadType.ArrowClosed,
-                data: e,
-            }));
-            setElements(nodeElements.concat(edgeElements));
-        };
-        getElementsHook();
+        const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
+        if (loggedUserJson) {
+            setUser(JSON.parse(loggedUserJson));
+        }
+        setUserParsed(true);
     }, []);
 
-    /**
-     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
-     */
-    const createNode = async (nodeText: string): Promise<void> => {
-        const n: INode = {
-            status: 'ToDo',
-            label: nodeText,
-            priority: 'Urgent',
-            x: 5 + elements.length * 10,
-            y: 5 + elements.length * 10,
-            isHidden: false,
-        };
-        const returnId: string | undefined = await nodeService.sendNode(n);
-        if (returnId) {
-            n.id = String(returnId);
-            const b: Node<INode> = {
-                id: String(returnId),
-                data: n,
-                position: { x: n.x, y: n.y },
-            };
-            setElements(elements.concat(b));
-        }
-    };
+    // Wait for the parsing of localStorage
+    if (!userParsed) {
+        return <></>;
+    }
 
-    const onConnect = async (params: Edge<IEdge> | Connection) => {
-        if (params.source && params.target) {
-            //This does not mean params is an edge but rather a Connection
-
-            const edge: IEdge = {
-                source_id: params.source,
-                target_id: params.target,
-            };
-            const b: Edge<IEdge> = {
-                id: String(params.source) + '-' + String(params.target),
-                type: 'straight',
-                source: params.source,
-                target: params.target,
-                arrowHeadType: ArrowHeadType.ArrowClosed,
-                data: edge,
-            };
-
-            const success = await edgeService.sendEdge(edge);
-            if (success) {
-                // Filter out the edge that will be replaced, if there is one
-                setElements((els) =>
-                    els.filter(
-                        (e) =>
-                            isNode(e) ||
-                            !(
-                                e.target === params.source &&
-                                e.source === params.target
-                            )
-                    )
-                );
-                setElements((els) => addEdge(b, els));
-            }
-        } else {
-            console.log(
-                'source or target of edge is null, unable to send to db'
-            );
-        }
-    };
-
-    /**
-     * Ordering function for elements, puts edges first and nodes last. Used in
-     * onElementsRemove.
-     */
-    const compareElementsEdgesFirst = (
-        a: FlowElement,
-        b: FlowElement
-    ): number => {
-        if (isNode(a)) {
-            if (isNode(b)) return 0;
-            else return 1;
-        } else {
-            // a is an Edge
-            if (isNode(b)) return -1;
-            else return 0;
-        }
-    };
-
-    /**
-     * Prop for Graph component, called when nodes or edges are removed. Called also
-     * for adjacent edges when a node is removed.
-     */
-    const onElementsRemove = async (elementsToRemove: Elements) => {
-        // Must remove edges first to prevent referencing issues in database
-        const sortedElementsToRemove = elementsToRemove.sort(
-            compareElementsEdgesFirst
-        );
-        for (const e of sortedElementsToRemove) {
-            if (isNode(e)) {
-                try {
-                    await nodeService.deleteNode(e);
-                } catch (e) {
-                    console.log('Error in node deletion', e);
-                }
-            } else if (isEdge(e)) {
-                await edgeService
-                    .deleteEdge(e)
-                    .catch((e: Error) =>
-                        console.log('Error when deleting edge', e)
-                    );
-            }
-        }
-
-        setElements((els) => removeElements(elementsToRemove, els));
-    };
-
-    const onNodeEdit = async (id: string, data: INode) => {
-        setElements((els) =>
-            els.map((el) => {
-                if (el.id === id) {
-                    el.data = data;
-                }
-                return el;
-            })
-        );
-
-        await nodeService.updateNode(data);
-    };
+    if (!user && !location.pathname.startsWith('/user')) {
+        return <Navigate to="/user/login" />;
+    }
 
     return (
-        <div className="App">
-            <div className="graph">
-                <Graph
-                    elements={elements}
-                    setElements={setElements}
-                    onConnect={onConnect}
-                    onElementsRemove={onElementsRemove}
-                    onNodeEdit={onNodeEdit}
-                    onEdgeUpdate={(o, s) =>
-                        console.log('What are these?', o, s)
-                    }
-                    className="graph"
-                />
+        <div className="app">
+            <div>
+                <Topbar user={user} setUser={setUser} />
             </div>
-            <Toolbar
-                createNode={createNode}
-                layoutWithDagre={layoutWithDagre}
-            />
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <Graph
+                            elements={elements}
+                            setElements={setElements}
+                            className="graph"
+                        />
+                    }
+                ></Route>
+                <Route path="/user/register" element={<Registration />}></Route>
+                <Route
+                    path="/user/login"
+                    element={
+                        <LoginForm loginUser={loginUser} setUser={setUser} />
+                    }
+                ></Route>
+            </Routes>
         </div>
     );
 };

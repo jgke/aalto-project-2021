@@ -88,8 +88,8 @@ describe('POST and GET request', () => {
             label: 'test node',
             priority: 'Urgent',
             status: 'Doing',
-            x: 0,
-            y: 0,
+            x: 1,
+            y: 2,
         };
 
         await api.post('/api/node').send(n).expect(200);
@@ -100,8 +100,8 @@ describe('POST and GET request', () => {
         expect(node.label).toBe('test node');
         expect(node.priority).toBe('Urgent');
         expect(node.status).toBe('Doing');
-        expect(n.x).toBe(0);
-        expect(n.y).toBe(0);
+        expect(n.x).toBe(1);
+        expect(n.y).toBe(2);
     });
 
     test('an invalid node should not be added to the database', async () => {
@@ -184,11 +184,39 @@ describe('PUT request', () => {
     });
 });
 
+describe('Database', () => {
+    test('should be safe from SQL injections', async () => {
+        let node: INode = {
+            label: 'Let us hack!',
+            // eslint-disable-next-line quotes
+            priority: "'Urgent); DROP TABLE nodes; --'",
+            status: 'Doing',
+            x: 0,
+            y: 0,
+        };
+
+        await api.post('/api/node').send(node).expect(200);
+        let q = await db.query('SELECT * FROM node WHERE priority=$1', [
+            node.priority,
+        ]);
+        expect(q.rowCount).toBeGreaterThan(0);
+
+        node = {
+            ...node,
+            // eslint-disable-next-line quotes
+            label: "'Try hacking); DROP TABLE nodes; --'",
+            priority: 'Urgent',
+        };
+
+        await api.post('/api/node').send(node).expect(200);
+        q = await db.query('SELECT * FROM node WHERE  label=$1', [node.label]);
+        expect(q.rowCount).toBeGreaterThan(0);
+    });
+});
+
 afterAll(async () => {
-    // Below are tries to make the weird jest warning go away.
-    //MIght become useful
-    //(await db.getPool()).end()
-    //const client = await db.getClient()
-    //client.removeAllListeners()
-    //await db.query("SELECT * FROM node", [])
+    await db.query(
+        'DELETE FROM users; DELETE FROM edge; DELETE FROM node;',
+        []
+    );
 });

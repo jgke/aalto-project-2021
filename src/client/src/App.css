@@ -1,36 +1,6 @@
-.App {
+.app {
     background-color: #34303a;
     justify-content: right;
-}
-
-.toolbar {
     display: flex;
-    flex-direction: column;
-    align-self: center;
-    align-items: center;
-    position: absolute;
-    z-index: 4;
-}
-
-#button-toolbar {
-    display: flex;
-    padding: 0.55em 1.7em;
-    border: 0.2em solid #21007a;
-    margin: 0.1em 0.3em 0.1em;
-    border-radius: 0.12em;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    color: #ffffff;
-    background-color: #6600cc;
-    text-align: center;
-    transition: all 0.2s;
-    align-self: center;
-}
-
-#button-toolbar:hover {
-    background-color: #442072;
-    border-color: #dcd9fd;
-    color: #ffffff;
+    flex-flow: column;
 }

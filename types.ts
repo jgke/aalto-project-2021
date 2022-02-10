@@ -10,12 +10,42 @@ export interface INode {
     id?: string; //Could there be a more specific ID than just number?
     x: number;
     y: number;
-    isHidden: boolean;
+    //isHidden: boolean;
 }
 
 export interface IEdge {
     source_id: string;
     target_id: string;
+}
+
+export interface Registration {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export interface RegisterFormProps {
+    createUser: (user: Registration) => Promise<Registration>;
+}
+
+export interface Login {
+    email: string | null;
+    username: string | null;
+    password: string;
+}
+
+export interface UserToken {
+    username: string;
+    email: string;
+    token: string;
+    id: string;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
 }
 
 export interface ToolbarProps {
