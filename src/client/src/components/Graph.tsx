@@ -255,11 +255,15 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
             };
 
             setElements((els) =>
-                addEdge(b,
+                addEdge(
+                    b,
                     els.filter(
                         (e) =>
                             isNode(e) ||
-                            !(e.target === params.source && e.source === params.target)
+                            !(
+                                e.target === params.source &&
+                                e.source === params.target
+                            )
                     )
                 )
             );
