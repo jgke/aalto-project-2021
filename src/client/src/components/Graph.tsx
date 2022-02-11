@@ -254,13 +254,17 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 data: edge,
             };
 
-            setElements((els) => addEdge(b, els));
+            setElements((els) =>
+                addEdge(b,
+                    els.filter(
+                        (e) =>
+                            isNode(e) ||
+                            !(e.target === params.source && e.source === params.target)
+                    )
+                )
+            );
 
             edgeService.sendEdge(edge);
-        } else {
-            console.log(
-                'source or target of edge is null, unable to send to db'
-            );
         }
     };
 
