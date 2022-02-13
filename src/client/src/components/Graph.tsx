@@ -236,7 +236,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         }
     };
 
-    const onConnect = (params: Edge<IEdge> | Connection) => {
+    const onConnect = async (params: Edge<IEdge> | Connection) => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
 
@@ -268,7 +268,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                 )
             );
 
-            edgeService.sendEdge(edge);
+            await edgeService.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
