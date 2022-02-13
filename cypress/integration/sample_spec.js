@@ -251,12 +251,12 @@ describe('Graph', () => {
         it('should replace both-way edges', () => {
             let node_name_1 = '__test__1';
             let node_name_2 = '__test__2';
-            
+
             cy.insertNode(node_name_1);
             cy.insertNode(node_name_2);
 
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
-                cy.log('FUBARFUBARFUBAR')
+
                 let node_pos1 = $node[0].getBoundingClientRect();
 
                 cy.get('.react-flow__pane').should('have.length', 1).then(($node) => {
@@ -267,7 +267,7 @@ describe('Graph', () => {
 
                     // move node
                     cy.get(`.react-flow__node-default:contains(${node_name_2})`).trigger('mousehover').trigger('mousedown', 2, 2).then( () => {
-                        
+
                         // (x, y) at (pane_pos.x + 2, pane_pos,y + 2) sets the node perfectly at the upper left corner
                         let posX = 2 + node_pos1.x + node_pos1.width*2;
                         let posY = 2 + node_pos1.y + node_pos1.height*2;
