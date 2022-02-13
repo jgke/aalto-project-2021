@@ -32,16 +32,16 @@ const addDummyNodes = async (): Promise<void> => {
     };
 
     ids = [];
-    let r = await db.query(
+    const r1 = await db.query(
         'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
         [n1.label, n1.priority, n1.status, n1.x, n1.y]
     );
-    ids.push(r.rows[0].id);
-    r = await db.query(
+    ids.push(r1.rows[0].id);
+    const r2 = await db.query(
         'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
         [n2.label, n2.priority, n2.status, n2.x, n2.y]
     );
-    ids.push(r.rows[0].id);
+    ids.push(r2.rows[0].id);
 };
 
 //Helper functions end here
