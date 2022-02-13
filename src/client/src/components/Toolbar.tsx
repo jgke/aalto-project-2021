@@ -3,9 +3,10 @@ import { ToolbarProps } from '../../../../types';
 
 export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
-    //const [nodeHidden, setNodeHidden] = useState(false);
+    const nodeHidden = props.nodeHidden;
     const createNode = props.createNode;
     const layoutWithDagre = props.layoutWithDagre;
+    const hideNode = props.setNodeHidden;
 
     /**
      * Calls createNode from App.tsx and clears state
@@ -43,7 +44,14 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
             >
                 Horizontal Layout
             </button>
-            <label>hidden:</label>
+            <label>Hide done tasks:</label>
+            <div>
+                <input
+                    type="checkbox"
+                    checked={nodeHidden}
+                    onChange={(evt) => hideNode(evt.target.checked)}
+                />
+            </div>
         </div>
     );
 };

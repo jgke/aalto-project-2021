@@ -425,14 +425,9 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
+                setNodeHidden={setNodeHidden}
+                nodeHidden={nodeHidden}
             />
-            <div>
-                <input
-                    type="checkbox"
-                    checked={nodeHidden}
-                    onChange={(evt) => setNodeHidden(evt.target.checked)}
-                />
-            </div>
         </div>
     );
 };
