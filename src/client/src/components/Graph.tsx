@@ -260,10 +260,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
                     els.filter(
                         (e) =>
                             isNode(e) ||
-                            !(
-                                e.target === params.source &&
-                                e.source === params.target
-                            )
+                            !(e.target === params.source && e.source === params.target)
                     )
                 )
             );
