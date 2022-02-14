@@ -40,8 +40,8 @@ export const App: React.FC = () => {
                 const node: INode = el.data;
 
                 if (node) {
-                    node.x = Math.round(el.position.x);
-                    node.y = Math.round(el.position.y);
+                    node.x = el.position.x;
+                    node.y = el.position.y;
 
                     await nodeService.updateNode(node);
                 }
@@ -117,7 +117,7 @@ export const App: React.FC = () => {
         }
     };
 
-    const onConnect = (params: Edge<IEdge> | Connection) => {
+    const onConnect = async (params: Edge<IEdge> | Connection) => {
         if (params.source && params.target) {
             //This does not mean params is an edge but rather a Connection
 
@@ -125,7 +125,6 @@ export const App: React.FC = () => {
                 source_id: params.source,
                 target_id: params.target,
             };
-
             const b: Edge<IEdge> = {
                 id: String(params.source) + '-' + String(params.target),
                 type: 'straight',
@@ -135,9 +134,21 @@ export const App: React.FC = () => {
                 data: edge,
             };
 
-            setElements((els) => addEdge(b, els));
-
-            edgeService.sendEdge(edge);
+            const success = await edgeService.sendEdge(edge);
+            if (success) {
+                // Filter out the edge that will be replaced, if there is one
+                setElements((els) =>
+                    els.filter(
+                        (e) =>
+                            isNode(e) ||
+                            !(
+                                e.target === params.source &&
+                                e.source === params.target
+                            )
+                    )
+                );
+                setElements((els) => addEdge(b, els));
+            }
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
