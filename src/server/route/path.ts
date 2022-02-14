@@ -17,6 +17,9 @@ function path(url: string): IPathRoute {
         '/edge/:source/:target': {
             methods: ['DELETE'],
         },
+        '/tag': {
+            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+        },
     };
     if (url.includes('/edge/')) {
         console.log('Returning weird edge url');
@@ -25,8 +28,9 @@ function path(url: string): IPathRoute {
     if (url.includes('/node/')) {
         console.log('route found, url: ', url);
         return allRoutes['/node/:id'];
-    } else {
-        console.log('Not it fam. It was', url);
+    }
+    if (!(url in allRoutes)) {
+        console.log(`The path '${url}' was requested but not included in the list of allRoutes`);
     }
 
     return allRoutes[url];

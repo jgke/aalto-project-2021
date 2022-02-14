@@ -34,8 +34,9 @@ router
 
         try {
             const q = await db.query(
-                'INSERT INTO tag (id, label, color) VALUES ($1, $2, $3) RETURNING id',
-                [tag.id, tag.label, tag.color]
+                // ignores tag.id when inserting into table
+                'INSERT INTO tag (id, label, color) VALUES (DEFAULT, $1, $2) RETURNING id',
+                [tag.label, tag.color]
             );
             res.status(200).json(q);
             /* console.log('adding tag: ', tag);

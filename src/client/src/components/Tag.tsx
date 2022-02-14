@@ -19,7 +19,7 @@ export const Tag = (props: TagProps): JSX.Element => {
     };
 
     return (
-        <div>
+        <div className="tag-sidebar">
             <form onSubmit={handleSubmit}>
                 <input
                     autoFocus
@@ -31,9 +31,11 @@ export const Tag = (props: TagProps): JSX.Element => {
                     }}
                 />
             </form>
-            {props.data.map((tag) => (
-                <p>{tag.label}</p>
-            ))}
+            <div className="tag-taglist">
+                {props.data.map((tag) => (
+                    <p key={tag.id}>{tag.label}</p>
+                ))}
+            </div>
         </div>
     );
 };

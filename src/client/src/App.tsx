@@ -90,6 +90,8 @@ export const App: React.FC = () => {
             setElements(nodeElements.concat(edgeElements));
         };
         getElementsHook();
+
+        refreshTagList();
     }, []);
 
     /**
@@ -211,7 +213,8 @@ export const App: React.FC = () => {
         const returnId: number | undefined = await tagService.sendTag(t);
         if (returnId) {
             t.id = returnId;
-            setTags(tags.concat(t));
+            //setTags(tags.concat(t));
+            await refreshTagList();
         }
     };
 
@@ -233,9 +236,21 @@ export const App: React.FC = () => {
         if(idx >= 0){
             console.log('deleting tag: ', tags[idx]);
             await tagService.deleteTag(id);
-            setTags(tags.splice(idx, 1));
+            //setTags(tags.splice(idx, 1));
+            await refreshTagList();
         } else {
             console.log('could not find tag with id: ', id);
+        }
+    }
+
+    const refreshTagList = async () => {
+        try {
+            const tagList = await tagService.getAll();
+            // TODO: limit the number of tags returned from tagService
+            console.log(tagList[0].label)
+            setTags(tagList.slice(0, 49));
+        } catch (e) {
+            console.log('Error in tagService.getAll', e);
         }
     }
 
