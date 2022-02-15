@@ -383,8 +383,13 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
         setElements(newElements);
     };
 
+    const getTestData = async () => {
+        setElements(layoutService.getTestData);
+    };
+
     return (
         <div style={{ height: '100%' }}>
+            <button onClick={getTestData}>get test data</button>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
