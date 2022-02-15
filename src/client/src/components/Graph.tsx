@@ -118,9 +118,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 y: 5 + elements.length * 10,
                 project_id: selectedProject.id,
             };
-            const returnId: string | undefined = await nodeService.sendNode(n);
+            const returnId = await nodeService.sendNode(n);
             if (returnId) {
-                n.id = String(returnId);
                 const b: Node<INode> = {
                     id: String(returnId),
                     data: n,
@@ -193,9 +192,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
-                const returnId: string | undefined = await nodeService.sendNode(
-                    n
-                );
+                const returnId = await nodeService.sendNode(n);
 
                 if (returnId) {
                     n.id = returnId;
@@ -330,7 +327,19 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 data: edge,
             };
 
-            setElements((els) => addEdge(b, els));
+            setElements((els) =>
+                addEdge(
+                    b,
+                    els.filter(
+                        (e) =>
+                            isNode(e) ||
+                            !(
+                                e.target === params.source &&
+                                e.source === params.target
+                            )
+                    )
+                )
+            );
 
             edgeService.sendEdge(edge);
         } else {

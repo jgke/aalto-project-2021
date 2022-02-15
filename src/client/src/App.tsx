@@ -11,6 +11,7 @@ import { Registration } from './pages/Registration';
 import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
 import { Navigate } from 'react-router-dom';
+import toast, { resolveValue, Toaster } from 'react-hot-toast';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -57,6 +58,23 @@ export const App: FC = () => {
 
     return (
         <div className="app">
+            <Toaster toastOptions={{ duration: 30000 }}>
+                {(t) => (
+                    <span
+                        style={{
+                            opacity: t.visible ? 1 : 0,
+                            background: 'white',
+                            padding: 8,
+                            cursor: 'pointer',
+                            border: '1px solid black',
+                            borderRadius: '10px',
+                        }}
+                        onClick={() => toast.dismiss(t.id)}
+                    >
+                        {resolveValue(t.message, t)}
+                    </span>
+                )}
+            </Toaster>
             <div>
                 <Topbar user={user} setUser={setUser} />
             </div>

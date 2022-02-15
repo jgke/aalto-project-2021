@@ -7,7 +7,7 @@ export interface INode {
     label: string;
     status: Status;
     priority: string;
-    id?: string; //Could there be a more specific ID than just number?
+    id?: number; //Could there be a more specific ID than just number?
     x: number;
     y: number;
     project_id: number;
@@ -33,7 +33,7 @@ export interface Registration {
 }
 
 export interface RegisterFormProps {
-    createUser: (user: Registration) => Promise<Registration>;
+    createUser: (user: Registration) => Promise<boolean>;
 }
 
 export interface Login {

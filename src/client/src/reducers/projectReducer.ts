@@ -79,10 +79,12 @@ export const projectAdd = (
         dispatch: ThunkDispatch<ProjectState, void, ProjectAddAction>
     ) => {
         const projectId = await projectService.sendProject(project);
-        dispatch({
-            type: 'PROJECT_ADD',
-            data: { ...project, id: projectId },
-        });
+        if (projectId) {
+            dispatch({
+                type: 'PROJECT_ADD',
+                data: { ...project, id: projectId },
+            });
+        }
     };
 };
 
