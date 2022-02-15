@@ -24,7 +24,7 @@ export interface Registration {
 }
 
 export interface RegisterFormProps {
-    createUser: (user: Registration) => Promise<Registration>;
+    createUser: (user: Registration) => Promise<boolean>;
 }
 
 export interface Login {

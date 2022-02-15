@@ -105,7 +105,7 @@ export const Graph = (props: ReactFlowProps & GraphProps): JSX.Element => {
             x: 5 + elements.length * 10,
             y: 5 + elements.length * 10,
         };
-        const returnId: string | undefined = await nodeService.sendNode(n);
+        const returnId = await nodeService.sendNode(n);
         if (returnId) {
             n.id = String(returnId);
             const b: Node<INode> = {
