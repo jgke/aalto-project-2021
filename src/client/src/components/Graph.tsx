@@ -28,6 +28,7 @@ import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 
 const graphStyle = {
     height: '100%',
@@ -364,7 +365,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     //calls nodeService.updateNode for all nodes
     const updateNodes = async (els: Elements): Promise<void> => {
-        console.log('I was called');
         for (const el of els) {
             if (isNode(el)) {
                 const node: INode = el.data;
@@ -375,7 +375,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
                     await nodeService.updateNode(node);
                 } else {
-                    console.log('What is going on?');
+                    toast('❌ What is going on?');
                 }
             }
         }
@@ -399,10 +399,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
         setElements(newElements);
     };
-    
-    const getTestData = async () => {
-        setElements(layoutService.getTestData);
-    };
 
     if (!selectedProject) {
         return <></>;
@@ -410,7 +406,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     return (
         <div style={{ height: '100%' }}>
-            <button onClick={getTestData}>get test data</button>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div

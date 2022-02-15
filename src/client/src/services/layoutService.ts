@@ -7,186 +7,9 @@ import {
     Position,
 } from 'react-flow-renderer';
 import dagre from 'dagre';
+import toast from 'react-hot-toast';
 
-interface coords {
-    x: number;
-    y: number;
-}
-
-interface idk {
-    a: number;
-    b: number;
-}
-
-//c1 - c2
-function subCoords(c1: coords, c2: coords): coords {
-    return { x: c1.x - c2.x, y: c1.y - c2.y };
-}
-
-function coordLength(c: coords) {
-    return Math.sqrt(c.x * c.x + c.y * c.y);
-}
-
-//moves c in the direction of dir for length amount
-function moveCoordToDir(c: coords, dir: coords, length: number) {
-    const dir_len = coordLength(dir);
-    c.x += (dir.x / dir_len) * length;
-    c.y += (dir.y / dir_len) * length;
-}
-
-function negCoord(c: coords) {
-    return { x: -c.x, y: -c.y };
-}
-
-function hasNaN(c: coords) {
-    return isNaN(c.x) || isNaN(c.y);
-}
-
-//code to generate some visual testing data
-
-/*
-const randomCoordinate = () => {
-    return Math.random() * 1500;
-};
-
-const randomNodeId = () => {
-    return String(Math.floor(Math.random() * 100));
-};
-*/
-
-const nodes: INode[] = [
-    {
-        id: '8',
-        label: 'fsdgjd',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: 71,
-        y: 327,
-    },
-    {
-        id: '7',
-        label: 'sdfgh',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: 494,
-        y: 329,
-    },
-    {
-        id: '2',
-        label: 'sdfg',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: 278,
-        y: 493,
-    },
-    {
-        id: '4',
-        label: 'sfgh',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: 83,
-        y: -19,
-    },
-    {
-        id: '5',
-        label: 'sdfg',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: 367,
-        y: -69,
-    },
-    {
-        id: '1',
-        label: 'dsfgs',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: -133,
-        y: 44,
-    },
-    {
-        id: '3',
-        label: 'sdfh',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: -82,
-        y: 239,
-    },
-    {
-        id: '6',
-        label: 'sfdgjh',
-        status: 'ToDo',
-        priority: 'Urgent',
-        x: 194,
-        y: 222,
-    },
-];
-
-const edges: IEdge[] = [
-    { source_id: '1', target_id: '6' },
-    { source_id: '5', target_id: '4' },
-    { source_id: '4', target_id: '6' },
-    { source_id: '6', target_id: '8' },
-    { source_id: '6', target_id: '7' },
-    { source_id: '1', target_id: '3' },
-    { source_id: '5', target_id: '7' },
-    { source_id: '7', target_id: '2' },
-];
-
-/*
-
-//randomly generated stuff
-
-for (let i = 0; i < 100; i++) {
-    nodes.push({
-        id: String(i),
-        x: randomCoordinate(),
-        y: randomCoordinate(),
-        label: String(i),
-        status: 'Done',
-        priority: 's',
-    });
-}
-
-for (let i = 0; i < 200; i++) {
-    let id1: string, id2: string;
-
-    do {
-        id1 = randomNodeId();
-        id2 = randomNodeId();
-    } while (
-        id1 === id2 &&
-        !edges.find((obj) => {
-            (obj.source_id === id1 && obj.target_id === id2) ||
-                (obj.source_id === id2 && obj.target_id === id1);
-        })
-    );
-
-    edges.push({
-        source_id: id1,
-        target_id: id2,
-    });
-}
-
-*/
-
-export const getTestData = () => {
-    const nodeElements: Elements = nodes.map((n) => ({
-        id: String(n.id),
-        data: n,
-        position: { x: n.x, y: n.y },
-    }));
-    // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-    const edgeElements: Elements = edges.map((e) => ({
-        id: String(e.source_id) + '-' + String(e.target_id),
-        source: String(e.source_id),
-        target: String(e.target_id),
-        type: 'straight',
-        arrowHeadType: ArrowHeadType.ArrowClosed,
-    }));
-
-    return nodeElements.concat(edgeElements);
-};
-
+//dagre stuff
 //copied almost directly from react flow documentation
 
 // In order to keep this example simple the node width and height are hardcoded.
@@ -233,6 +56,36 @@ export const dagreLayout = (elements: Elements, direction = 'TB'): Elements => {
 };
 
 //copy-paste ends
+//force-directed stuff
+
+interface coords {
+    x: number;
+    y: number;
+}
+
+//c1 - c2
+function subCoords(c1: coords, c2: coords): coords {
+    return { x: c1.x - c2.x, y: c1.y - c2.y };
+}
+
+function coordLength(c: coords) {
+    return Math.sqrt(c.x * c.x + c.y * c.y);
+}
+
+//moves c in the direction of dir for length amount
+function moveCoordToDir(c: coords, dir: coords, length: number) {
+    const dir_len = coordLength(dir);
+    c.x += (dir.x / dir_len) * length;
+    c.y += (dir.y / dir_len) * length;
+}
+
+function negCoord(c: coords) {
+    return { x: -c.x, y: -c.y };
+}
+
+function hasNaN(c: coords) {
+    return isNaN(c.x) || isNaN(c.y);
+}
 
 //does not scramble nodes, as this may also be used to make
 //the result of some analytic algorithm better
@@ -243,12 +96,14 @@ export const forceDirectedLayout = (
     const nodes: INode[] = [];
     const edges: IEdge[] = [];
 
-    //console.log(JSON.stringify(elements));
-
     for (const el of elements) {
         if (isNode(el)) nodes.push(el.data);
         else if (isEdge(el))
-            edges.push({ source_id: el.source, target_id: el.target });
+            edges.push({
+                source_id: el.source,
+                target_id: el.target,
+                project_id: 0,
+            });
     }
 
     const layoutedNodes = forceDirected(nodes, edges, iterations);
@@ -267,8 +122,6 @@ export const forceDirectedLayout = (
         arrowHeadType: ArrowHeadType.ArrowClosed,
         data: e,
     }));
-
-    //console.log(JSON.stringify(nodeElements.concat(edgeElements)));
 
     return nodeElements.concat(edgeElements);
 };
@@ -295,9 +148,11 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
     //record node positions and calculate bounds
     for (let i = 0; i < N; i++) {
         const node = nodes[i];
-        positions[i] = { x: node.x, y: node.y };
-        //for some reason INode does not have to have id ???
-        if (node.id) id2idx.set(String(node.id) || 'wtf', i);
+
+        if (node.id) {
+            positions[i] = { x: node.x, y: node.y };
+            id2idx.set(String(node.id), i);
+        }
 
         if (node.x < x_min) x_min = node.x;
         else if (node.x > x_max) x_max = node.x;
@@ -312,14 +167,14 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
     y_min -= margin;
 
     //map edges to use indexes instead of ids
-    const newEdges: idk[] = [];
+    const newEdges: coords[] = [];
 
     for (const e of edges) {
-        const a = id2idx.get(e.source_id);
-        const b = id2idx.get(e.target_id);
+        const x = id2idx.get(e.source_id);
+        const y = id2idx.get(e.target_id);
 
-        if (a !== undefined && b !== undefined) {
-            newEdges.push({ a, b });
+        if (x !== undefined && y !== undefined) {
+            newEdges.push({ x, y });
         }
     }
 
@@ -355,12 +210,12 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
 
         //calculate attraction between all vertices
         for (const e of newEdges) {
-            const d = subCoords(positions[e.a], positions[e.b]);
+            const d = subCoords(positions[e.x], positions[e.y]);
             const d_len = coordLength(d);
 
             if (d_len !== 0) {
-                moveCoordToDir(forces[e.a], negCoord(d), attraction(d_len));
-                moveCoordToDir(forces[e.b], d, attraction(d_len));
+                moveCoordToDir(forces[e.x], negCoord(d), attraction(d_len));
+                moveCoordToDir(forces[e.y], d, attraction(d_len));
             }
         }
 
@@ -394,7 +249,7 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
     });
 
     if (broken) {
-        //toast
+        toast('❌ Error on autolayout');
         return nodes;
     }
 
