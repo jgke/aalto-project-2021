@@ -247,5 +247,45 @@ describe('Graph', () => {
                 cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
             }
         });
+
+        it('should replace both-way edges', () => {
+            let node_name_1 = '__test__1';
+            let node_name_2 = '__test__2';
+
+            cy.insertNode(node_name_1);
+            cy.insertNode(node_name_2);
+
+            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
+
+                let node_pos1 = $node[0].getBoundingClientRect();
+
+                cy.get('.react-flow__pane').should('have.length', 1).then(($node) => {
+                    let pane_pos = $node[0].getBoundingClientRect();
+
+                    cy.log('pane_pos.x');
+                    cy.log(pane_pos.x);
+
+                    // move node
+                    cy.get(`.react-flow__node-default:contains(${node_name_2})`).trigger('mousehover').trigger('mousedown', 2, 2).then( () => {
+
+                        // (x, y) at (pane_pos.x + 2, pane_pos,y + 2) sets the node perfectly at the upper left corner
+                        let posX = 2 + node_pos1.x + node_pos1.width*2;
+                        let posY = 2 + node_pos1.y + node_pos1.height*2;
+
+                        cy.get('body').trigger('mousemove', posX, posY, { force: true });
+                        cy.get('body').trigger('mouseup', posX, posY, { force: true });
+
+                    });
+                });
+            });
+
+            cy.get(`.react-flow__node-default:contains(${node_name_2})`).find('.react-flow__handle-bottom').should('have.length', 1).trigger('mousedown');
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).find('.react-flow__handle-top').should('have.length', 1).trigger('mouseup');
+
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).find('.react-flow__handle-bottom').should('have.length', 1).trigger('mousedown');
+            cy.get(`.react-flow__node-default:contains(${node_name_2})`).find('.react-flow__handle-top').should('have.length', 1).trigger('mouseup');
+
+            cy.get('.react-flow__edge-straight').should('have.length', 1);
+        });
     });
 });
