@@ -82,20 +82,20 @@ describe('<Graph>', () => {
     let testGraph: RenderResult;
 
     const renderGraph = (elements: Elements) => {
-        const testObj = {
-            elements,
-            selectedProject: {
-                id: 1,
-                owner_id: '1',
-                name: 'project',
-                description: 'decp',
-            },
+        const selectedProject = {
+            id: 1,
+            owner_id: '1',
+            name: 'project',
+            description: 'decp',
         };
 
         return render(
             <BrowserRouter>
                 <Provider store={store}>
-                    <Graph test={testObj} />
+                    <Graph
+                        elements={elements}
+                        selectedProject={selectedProject}
+                    />
                 </Provider>
             </BrowserRouter>
         );

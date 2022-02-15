@@ -34,13 +34,10 @@ const dummyProjects: IProject[] = [
 ];
 
 const renderComponent = () => {
-    const testObj = {
-        projects: dummyProjects,
-    };
     return render(
         <BrowserRouter>
             <Provider store={store}>
-                <Projects user={mockUserToken} test={testObj} />
+                <Projects user={mockUserToken} projects={dummyProjects} />
             </Provider>
         </BrowserRouter>
     );

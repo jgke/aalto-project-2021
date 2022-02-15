@@ -38,13 +38,9 @@ const graphStyle = {
         'linear-gradient(to bottom right, #00164f, #4e009c, #290066)',
 };
 
-interface TestInterface {
+export interface GraphProps {
     elements?: Elements;
     selectedProject?: IProject;
-}
-
-export interface GraphProps {
-    test?: TestInterface;
 }
 
 interface FlowInstance {
@@ -57,7 +53,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const projects = useSelector((state: RootState) => state.project);
     const selectedProject =
-        props.test?.selectedProject ||
+        props.selectedProject ||
         projects.find((p) => p.id === parseInt(id || ''));
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -74,8 +70,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * Fetches the elements from a database
      */
     useEffect(() => {
-        if (props.test?.elements) {
-            setElements(props.test?.elements);
+        if (props.elements) {
+            setElements(props.elements);
         } else if (selectedProject) {
             const getElementsHook = async () => {
                 let nodes: INode[];

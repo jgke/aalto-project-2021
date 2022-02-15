@@ -64,10 +64,10 @@ export const projectInit = (): ThunkAction<
     return async (
         dispatch: ThunkDispatch<ProjectState, void, ProjectInitAction>
     ) => {
-        const blogs = await projectService.getAll();
+        const projects = await projectService.getAll();
         dispatch({
             type: 'PROJECT_INIT',
-            data: blogs,
+            data: projects,
         });
     };
 };
