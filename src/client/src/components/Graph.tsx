@@ -399,13 +399,18 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
         setElements(newElements);
     };
+    
+    const getTestData = async () => {
+        setElements(layoutService.getTestData);
+    };
 
     if (!selectedProject) {
         return <></>;
     }
 
     return (
-        <div className="graph" style={{ height: '100%' }}>
+        <div style={{ height: '100%' }}>
+            <button onClick={getTestData}>get test data</button>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div

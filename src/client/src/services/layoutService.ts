@@ -38,7 +38,9 @@ function negCoord(c: coords) {
     return { x: -c.x, y: -c.y };
 }
 
-
+function hasNaN(c: coords) {
+    return isNaN(c.x) || isNaN(c.y);
+}
 
 //code to generate some visual testing data
 
@@ -185,8 +187,6 @@ export const getTestData = () => {
     return nodeElements.concat(edgeElements);
 };
 
-
-
 //copied almost directly from react flow documentation
 
 // In order to keep this example simple the node width and height are hardcoded.
@@ -326,7 +326,7 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
     const k = Math.sqrt(((x_max - x_min) * (y_max - y_min)) / N); //* constant?
     const attraction = (x: number) => (x * x) / k;
     const repulsion = (x: number) => (k * k) / x;
-    let t = 2 * k; //vertex movement is caped to this, could be defined better
+    let t = 2 * k; //vertex movement is capped to this, could be defined better
     const t_step = t / (0.9 * iterations);
     const cool = () => (t -= t_step); //could be calculated better
 
@@ -335,10 +335,20 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
         //calculate repulsion between all nodes
         for (let j = 0; j < N; j++) {
             forces[j] = { x: 0, y: 0 };
-            for (let k = 0; k < N; k++) {
-                if (j !== k) {
-                    const d = subCoords(positions[j], positions[k]);
-                    moveCoordToDir(forces[j], d, repulsion(coordLength(d)));
+            for (let l = 0; l < N; l++) {
+                if (j !== l) {
+                    const d = subCoords(positions[j], positions[l]);
+                    const d_len = coordLength(d);
+
+                    if (d_len !== 0) {
+                        moveCoordToDir(forces[j], d, repulsion(coordLength(d)));
+                    } else {
+                        moveCoordToDir(
+                            forces[j],
+                            { x: Math.sign(j - l), y: 0 },
+                            1000
+                        );
+                    }
                 }
             }
         }
@@ -347,8 +357,11 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
         for (const e of newEdges) {
             const d = subCoords(positions[e.a], positions[e.b]);
             const d_len = coordLength(d);
-            moveCoordToDir(forces[e.a], negCoord(d), attraction(d_len));
-            moveCoordToDir(forces[e.b], d, attraction(d_len));
+
+            if (d_len !== 0) {
+                moveCoordToDir(forces[e.a], negCoord(d), attraction(d_len));
+                moveCoordToDir(forces[e.b], d, attraction(d_len));
+            }
         }
 
         //move vertices
@@ -366,13 +379,24 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
         cool();
     }
 
+    let broken = false;
+
     //finally, copy data back to original INodes
     //just editing the nodes in the parameter array did not work
-    return nodes.map((n, i) => {
+    const newNodes = nodes.map((n, i) => {
         const node = { ...n };
         node.x = positions[i].x;
         node.y = positions[i].y;
 
+        if (hasNaN(positions[i])) broken = true;
+
         return node;
     });
+
+    if (broken) {
+        //toast
+        return nodes;
+    }
+
+    return newNodes;
 };
