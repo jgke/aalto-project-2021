@@ -4,8 +4,11 @@ import { IEdge } from '../../../../types';
 import { axiosWrapper } from './axiosWrapper';
 export const baseUrl = '/api/edge';
 
-const getAll = async (): Promise<IEdge[]> => {
-    return (await axiosWrapper(axios.get<IEdge[]>(baseUrl))) || [];
+const getAll = async (project_id: number): Promise<IEdge[]> => {
+    return (
+        (await axiosWrapper(axios.get<IEdge[]>(`${baseUrl}/${project_id}`))) ||
+        []
+    );
 };
 
 const sendEdge = async (edge: IEdge): Promise<boolean> => {

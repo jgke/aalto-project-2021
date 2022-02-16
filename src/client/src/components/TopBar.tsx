@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserToken } from '../../../../types';
+import { logoutUser } from '../services/userService';
 
 export interface TopbarProps {
     user: UserToken | null;
@@ -14,6 +15,7 @@ export const Topbar = (props: TopbarProps): JSX.Element => {
 
     const logOut = () => {
         window.localStorage.removeItem('loggedGraphUser');
+        logoutUser();
         props.setUser(null);
         navigate('/user/login');
     };
