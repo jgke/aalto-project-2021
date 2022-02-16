@@ -26,39 +26,34 @@ router.route('/edge/:id').get(async (req: Request, res: Response) => {
 router
     .route('/edge')
     .post(async (req: Request, res: Response) => {
-        const text: IEdge = req.body; //Might have to parse this
+        const newEdge: IEdge = req.body;
+        const source = newEdge.source_id;
+        const target = newEdge.target_id;
 
-        try {
-            const duplicateCheck = await db.query(
-                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
-                [text.source_id, text.target_id]
+        const oldEdge = await db.query(
+            'SELECT * FROM edge WHERE (source_id=$1 AND target_id=$2) OR (source_id=$2 AND target_id=$1)',
+            [source, target]
+        );
+
+        if (oldEdge.rowCount > 0) {
+            //if opposite edge exists, flip it around
+            const oppositeEdge = await db.query(
+                'UPDATE edge SET source_id=$1, target_id=$2 WHERE source_id=$2 AND target_id=$1 RETURNING *',
+                [source, target]
             );
 
-            if (duplicateCheck.rowCount > 0) {
-                res.status(403).json().end();
-                return;
+            if (oppositeEdge.rowCount > 0) {
+                res.status(200).json();
+            } else {
+                res.status(403).json({ message: 'no duplicate edges allowed' });
             }
-
-            const reverseCheck = await db.query(
-                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
-                [text.target_id, text.source_id]
-            );
-
-            if (reverseCheck.rowCount > 0) {
-                await db.query(
-                    'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
-                    [text.target_id, text.source_id]
-                );
-            }
-
-            const edge = await db.query(
+        } else {
+            await db.query(
                 'INSERT INTO edge (source_id, target_id, project_id) VALUES ($1, $2, $3)',
-                [text.source_id, text.target_id, text.project_id]
+                [source, target, newEdge.project_id]
             );
-            res.status(200).json(edge);
-        } catch (e) {
-            console.log(e);
-            res.status(403).json();
+
+            res.status(200).json();
         }
     })
     .put((req: Request, res: Response) => {
