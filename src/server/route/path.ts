@@ -20,13 +20,17 @@ function path(url: string): IPathRoute {
         '/tag': {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],
         },
+        '/user/register': {
+            methods: ['POST'],
+        },
+        '/user/login': {
+            methods: ['POST', 'GET'],
+        },
     };
     if (url.includes('/edge/')) {
-        console.log('Returning weird edge url');
         return allRoutes['/edge/:source/:target'];
     }
     if (url.includes('/node/')) {
-        console.log('route found, url: ', url);
         return allRoutes['/node/:id'];
     }
     if (!(url in allRoutes)) {
