@@ -13,34 +13,41 @@ const nodeCheck = (node: INode): boolean => {
             // eslint-disable-next-line no-prototype-builtins
             node.hasOwnProperty('x') &&
             // eslint-disable-next-line no-prototype-builtins
-            node.hasOwnProperty('y')
+            node.hasOwnProperty('y') &&
+            node.project_id
     );
 };
 
-router.route('/node/:id').delete(async (req: Request, res: Response) => {
-    console.log('Deleting node...');
-    const id = req.params.id;
-    await db.query('DELETE FROM node WHERE id = $1', [id]);
-    res.status(200).json();
-});
+router
+    .route('/node/:id')
+    .get(async (req: Request, res: Response) => {
+        const project_id = req.params.id;
+        const q = await db.query('SELECT * FROM node WHERE project_id = $1', [
+            project_id,
+        ]);
+        res.json(q.rows);
+    })
+    .delete(async (req: Request, res: Response) => {
+        console.log('Deleting node...');
+        const id = req.params.id;
+        await db.query('DELETE FROM node WHERE id = $1', [id]);
+        res.status(200).json();
+    });
 
 router
     .route('/node')
-    .get(async (req: Request, res: Response) => {
-        const q = await db.query('SELECT * FROM node', []);
-        res.status(200).json(q.rows);
-    })
     .post(async (req: Request, res: Response) => {
         console.log('Receiving node...');
         const text: INode = req.body; //Might have to parse this
 
         if (nodeCheck(text)) {
             const q = await db.query(
-                'INSERT INTO node (label, status, priority, x, y) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+                'INSERT INTO node (label, status, priority, project_id, x, y) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
                 [
                     text.label,
                     text.status,
                     text.priority,
+                    text.project_id,
                     Math.round(text.x),
                     Math.round(text.y),
                 ]

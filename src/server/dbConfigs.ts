@@ -2,7 +2,7 @@ import { getConfig } from './configs';
 import { Pool, QueryConfig } from 'pg'; //PoolConfig was unused
 import { migrate } from 'postgres-migrations';
 
-class Database {
+export class Database {
     private _pool: Pool | null = null;
     private _waiting: Promise<void> | null = null;
 

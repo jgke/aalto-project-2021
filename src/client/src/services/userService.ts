@@ -4,6 +4,16 @@ import { axiosWrapper } from './axiosWrapper';
 
 const baseUrl = '/api/user';
 
+let token: string;
+
+const setToken = (newToken: string): void => {
+    token = `bearer ${newToken}`;
+};
+
+const getAuthHeader = (): { Authorization: string } => {
+    return { Authorization: token };
+};
+
 const createUser = async (user: Registration): Promise<boolean> => {
     return (
         (await axiosWrapper(axios.post(`${baseUrl}/register`, user))) !==
@@ -12,7 +22,15 @@ const createUser = async (user: Registration): Promise<boolean> => {
 };
 
 const loginUser = async (user: Login): Promise<UserToken | undefined> => {
-    return await axiosWrapper(axios.post<UserToken>(`${baseUrl}/login`, user));
+    const response = await axiosWrapper(
+        axios.post<UserToken>(`${baseUrl}/login`, user)
+    );
+    response && setToken(response.token);
+    return response;
 };
 
-export { createUser, loginUser };
+const logoutUser = (): void => {
+    setToken('');
+};
+
+export { createUser, loginUser, logoutUser, getAuthHeader, setToken };

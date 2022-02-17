@@ -26,6 +26,7 @@
         "use-resize-observer": "^8.0.0"
     },
     "dependencies": {
-        "@types/jsonwebtoken": "^8.5.7"
+        "@types/jsonwebtoken": "^8.5.7",
+        "react-icons": "^4.3.1"
     }
 }
