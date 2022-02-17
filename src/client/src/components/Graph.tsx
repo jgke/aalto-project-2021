@@ -38,13 +38,9 @@ const graphStyle = {
         'linear-gradient(to bottom right, #00164f, #4e009c, #290066)',
 };
 
-interface TestInterface {
+export interface GraphProps {
     elements?: Elements;
     selectedProject?: IProject;
-}
-
-export interface GraphProps {
-    test?: TestInterface;
 }
 
 interface FlowInstance {
@@ -57,7 +53,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const projects = useSelector((state: RootState) => state.project);
     const selectedProject =
-        props.test?.selectedProject ||
+        props.selectedProject ||
         projects.find((p) => p.id === parseInt(id || ''));
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -74,8 +70,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * Fetches the elements from a database
      */
     useEffect(() => {
-        if (props.test?.elements) {
-            setElements(props.test?.elements);
+        if (props.elements) {
+            setElements(props.elements);
         } else if (selectedProject) {
             const getElementsHook = async () => {
                 let nodes: INode[];
@@ -122,9 +118,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 y: 5 + elements.length * 10,
                 project_id: selectedProject.id,
             };
-            const returnId: number | undefined = await nodeService.sendNode(n);
+            const returnId = await nodeService.sendNode(n);
             if (returnId) {
-                n.id = returnId;
                 const b: Node<INode> = {
                     id: String(returnId),
                     data: n,
@@ -197,9 +192,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
-                const returnId: number | undefined = await nodeService.sendNode(
-                    n
-                );
+                const returnId = await nodeService.sendNode(n);
 
                 if (returnId) {
                     n.id = returnId;
@@ -334,7 +327,19 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 data: edge,
             };
 
-            setElements((els) => addEdge(b, els));
+            setElements((els) =>
+                addEdge(
+                    b,
+                    els.filter(
+                        (e) =>
+                            isNode(e) ||
+                            !(
+                                e.target === params.source &&
+                                e.source === params.target
+                            )
+                    )
+                )
+            );
 
             edgeService.sendEdge(edge);
         } else {

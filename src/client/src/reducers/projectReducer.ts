@@ -64,10 +64,10 @@ export const projectInit = (): ThunkAction<
     return async (
         dispatch: ThunkDispatch<ProjectState, void, ProjectInitAction>
     ) => {
-        const blogs = await projectService.getAll();
+        const projects = await projectService.getAll();
         dispatch({
             type: 'PROJECT_INIT',
-            data: blogs,
+            data: projects,
         });
     };
 };
@@ -79,10 +79,12 @@ export const projectAdd = (
         dispatch: ThunkDispatch<ProjectState, void, ProjectAddAction>
     ) => {
         const projectId = await projectService.sendProject(project);
-        dispatch({
-            type: 'PROJECT_ADD',
-            data: { ...project, id: projectId },
-        });
+        if (projectId) {
+            dispatch({
+                type: 'PROJECT_ADD',
+                data: { ...project, id: projectId },
+            });
+        }
     };
 };
 

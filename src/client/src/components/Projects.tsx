@@ -11,21 +11,16 @@ const projectListStyle: CSS.Properties = {
     flexWrap: 'wrap',
 };
 
-interface TestInterface {
-    projects?: IProject[];
-}
-
 interface ProjectProps {
     user: UserToken | null;
-    test?: TestInterface;
+    projects?: IProject[];
 }
 
 export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
     const dispatch = useDispatch();
 
     const projects =
-        props.test?.projects ||
-        useSelector((state: RootState) => state.project);
+        props.projects || useSelector((state: RootState) => state.project);
 
     const handleSubmit = async (project: IProject) => {
         dispatch(projectReducer.projectAdd(project));

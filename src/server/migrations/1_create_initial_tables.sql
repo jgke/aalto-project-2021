@@ -16,21 +16,13 @@ CREATE TABLE node (
   priority TEXT NOT NULL,
   x DOUBLE PRECISION NOT NULL,
   y DOUBLE PRECISION NOT NULL,
-  project_id INTEGER NOT NULL,
-  CONSTRAINT fk_project_id
-    FOREIGN KEY(project_id) 
-    REFERENCES project(id)
-    ON DELETE CASCADE
+  project_id INTEGER NOT NULL REFERENCES project(id) ON DELETE CASCADE
 );
 
 CREATE TABLE edge (
   source_id INTEGER REFERENCES node(id),
   target_id INTEGER REFERENCES node(id),
-  project_id INTEGER NOT NULL,
-  CONSTRAINT fk_project_id
-    FOREIGN KEY(project_id) 
-    REFERENCES project(id)
-    ON DELETE CASCADE
+  project_id INTEGER NOT NULL REFERENCES project(id) ON DELETE CASCADE
 );
 
 CREATE TABLE users (

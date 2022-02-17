@@ -29,8 +29,8 @@ router
     })
     .delete(async (req: Request, res: Response) => {
         const id = req.params.id;
-        const q = await db.query('DELETE FROM node WHERE id = $1', [id]);
-        res.status(200).json(q);
+        await db.query('DELETE FROM node WHERE id = $1', [id]);
+        res.status(200).json();
     });
 
 router
@@ -50,7 +50,7 @@ router
                     Math.round(text.y),
                 ]
             );
-            res.status(200).json(q);
+            res.status(200).json({ id: q.rows[0].id });
         } else {
             res.status(403).json({ message: 'Invalid node' });
         }
@@ -59,7 +59,7 @@ router
         const n: INode = req.body;
 
         if (nodeCheck(n) && n.id) {
-            const q = await db.query(
+            await db.query(
                 'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5 WHERE id = $6',
                 [
                     n.label,
@@ -70,10 +70,10 @@ router
                     n.id,
                 ]
             );
-            res.status(200).json(q);
+            res.status(200).json();
         } else {
             console.error('Invalid data', n);
-            res.status(403).json();
+            res.status(403).json({ message: 'Invalid data' });
         }
     });
 

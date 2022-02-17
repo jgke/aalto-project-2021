@@ -61,7 +61,7 @@ router
                 'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
                 [project.name, project.owner_id, project.description]
             );
-            res.status(200).json(q);
+            res.status(200).json(q.rows[0]);
             /* console.log('adding project: ', project);
             projects.push(project) */
         } catch (e) {
