@@ -7,14 +7,23 @@ export interface INode {
     label: string;
     status: Status;
     priority: string;
-    id?: string; //Could there be a more specific ID than just number?
+    id?: number; //Could there be a more specific ID than just number?
     x: number;
     y: number;
+    project_id: number;
 }
 
 export interface IEdge {
     source_id: string;
     target_id: string;
+    project_id: number;
+}
+
+export interface IProject {
+    id: number;
+    owner_id: string;
+    name: string;
+    description: string;
 }
 
 export interface Registration {
@@ -24,7 +33,7 @@ export interface Registration {
 }
 
 export interface RegisterFormProps {
-    createUser: (user: Registration) => Promise<Registration>;
+    createUser: (user: Registration) => Promise<boolean>;
 }
 
 export interface Login {
@@ -45,6 +54,10 @@ export interface User {
     password: string;
     email: string;
     id: string;
+}
+
+export interface RootState {
+    project: IProject[];
 }
 
 export interface ToolbarProps {

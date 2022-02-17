@@ -6,15 +6,21 @@ function path(url: string): IPathRoute {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],
         },
         '/node': {
-            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+            methods: ['POST', 'PUT'],
         },
         '/node/:id': {
-            methods: ['DELETE'],
+            methods: ['GET', 'DELETE'],
         },
         '/edge': {
-            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+            methods: ['POST', 'PUT'],
         },
         '/edge/:source/:target': {
+            methods: ['GET', 'DELETE'],
+        },
+        '/project': {
+            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+        },
+        '/project/:id': {
             methods: ['DELETE'],
         },
         '/tag': {
@@ -29,9 +35,12 @@ function path(url: string): IPathRoute {
     };
     if (url.includes('/edge/')) {
         return allRoutes['/edge/:source/:target'];
-    }
-    if (url.includes('/node/')) {
+    } else if (url.includes('/node/')) {
         return allRoutes['/node/:id'];
+    } else if (url.includes('/project/')) {
+        return allRoutes['/project/:id'];
+    } else {
+        console.log('Not it fam. It was', url);
     }
     if (!(url in allRoutes)) {
         console.log(`The path '${url}' was requested but not included in the list of allRoutes`);

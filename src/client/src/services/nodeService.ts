@@ -1,32 +1,30 @@
 import axios from 'axios';
 import { INode } from '../../../../types';
 import { Node } from 'react-flow-renderer';
+import { axiosWrapper } from './axiosWrapper';
 export const baseUrl = '/api/node';
 
-// Should be possible to give "getAll" a return type
-const getAll = async (): Promise<INode[]> => {
-    const node = await axios.get<INode[]>(baseUrl);
-    return node.data;
+const getAll = async (project_id: number): Promise<INode[]> => {
+    return (
+        (await axiosWrapper(axios.get<INode[]>(`${baseUrl}/${project_id}`))) ||
+        []
+    );
 };
 
-//What is the actual type? We are sending a JSON to the backend and
-//then return an object
-const sendNode = async (node: INode): Promise<string> => {
-    const response = await axios.post(baseUrl, node);
-    //Return the id for that element created by the database
-    return response.data.rows[0].id;
+const sendNode = async (node: INode): Promise<number | undefined> => {
+    return (
+        (await axiosWrapper(axios.post<{ id: number }>(baseUrl, node))) || {
+            id: undefined,
+        }
+    ).id;
 };
 
-//deletes node from db then return an object
-const deleteNode = async (node: Node<INode>): Promise<{ msg: string }> => {
-    const response = await axios.delete(`${baseUrl}/${node.id}`);
-    console.log('Node deleted', response.data);
-    return response.data;
+const deleteNode = async (node: Node<INode>): Promise<void> => {
+    await axiosWrapper(axios.delete(`${baseUrl}/${node.id}`));
 };
+
 const updateNode = async (node: INode): Promise<void> => {
-    console.log('update');
-    const response = await axios.put(baseUrl, node);
-    return response.data;
+    await axiosWrapper(axios.put(baseUrl, node));
 };
 
 export { getAll, sendNode, deleteNode, updateNode };
