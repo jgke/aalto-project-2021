@@ -64,7 +64,7 @@ export const Tag = (props: TagProps): JSX.Element => {
 
     const refreshTagList = async (): Promise<void> => {
         try {
-            console.log('refreshing tag list');
+            //console.log('refreshing tag list');
             const tagList = await tagService.getAll();
             // TODO: limit the number of tags returned from tagService
             //console.log(tagList[0].label)
@@ -75,6 +75,8 @@ export const Tag = (props: TagProps): JSX.Element => {
     }
 
     const init = async() => {
+        refreshTagList();
+
         setInited(true);
     }
 

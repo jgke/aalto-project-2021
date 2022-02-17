@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Graph } from './components/Graph';
-import { Tag } from './components/Tag';
-import { INode, UserToken, ITag } from '../../../types';
+import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
 import { useDispatch } from 'react-redux';
@@ -28,7 +27,6 @@ export const App: FC = () => {
 
     const [user, setUser] = useState<UserToken | null>(null);
     const [userParsed, setUserParsed] = useState<boolean>(false);
-    const [tags, setTags] = useState<ITag[]>([])
 
     useEffect(() => {
         const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
@@ -80,10 +78,6 @@ export const App: FC = () => {
             <div>
                 <Topbar user={user} setUser={setUser} />
             </div>
-            <Tag
-                tags={tags}
-                setTags={setTags}
-            />
             <Routes>
                 <Route path="/" element={<Projects user={user} />}></Route>
                 <Route path="/project/:id" element={<Graph />}></Route>

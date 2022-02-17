@@ -4,7 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, IProject, RootState } from '../../../../types';
+import { IEdge, INode, IProject, RootState, ITag } from '../../../../types';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as layoutService from '../services/layoutService';
@@ -28,6 +28,7 @@ import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
+import { Tag } from './Tag';
 
 const graphStyle = {
     height: '100%',
@@ -60,6 +61,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [elements, setElements] = useState<Elements>([]);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
+
+    const [tags, setTags] = useState<ITag[]>([])
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -437,6 +440,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
+            />
+            <Tag
+                tags={tags}
+                setTags={setTags}
             />
         </div>
     );
