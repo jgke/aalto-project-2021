@@ -15,55 +15,52 @@ router
         res.status(200).json();
     });
 
+router.route('/edge/:id').get(async (req: Request, res: Response) => {
+    const project_id = req.params.id;
+    const q = await db.query('SELECT * FROM edge WHERE project_id = $1', [
+        project_id,
+    ]);
+    res.json(q.rows);
+});
+
 router
     .route('/edge')
-    .get(async (req: Request, res: Response) => {
-        const q = await db.query('SELECT * FROM edge', []);
-
-        res.json(q.rows);
-    })
     .post(async (req: Request, res: Response) => {
         console.log('Receiving edge...', req.body);
         const text: IEdge = req.body; //Might have to parse this
 
         try {
-            const q1 = await db.query(
+            const duplicateCheck = await db.query(
+                'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
+                [text.source_id, text.target_id]
+            );
+
+            if (duplicateCheck.rowCount > 0) {
+                res.status(403).json().end();
+                return;
+            }
+
+            const reverseCheck = await db.query(
                 'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
                 [text.target_id, text.source_id]
             );
 
-            if (q1.rowCount > 0) {
+            if (reverseCheck.rowCount > 0) {
                 await db.query(
                     'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
                     [text.target_id, text.source_id]
                 );
             }
 
-            const q3 = await db.query(
-                'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
-                [text.source_id, text.target_id]
+            const edge = await db.query(
+                'INSERT INTO edge (source_id, target_id, project_id) VALUES ($1, $2, $3)',
+                [text.source_id, text.target_id, text.project_id]
             );
-            res.status(200).json(q3);
+            res.status(200).json(edge);
         } catch (e) {
             console.log(e);
             res.status(403).json();
         }
-
-        const duplicateCheck = await db.query(
-            'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
-            [text.source_id, text.target_id]
-        );
-
-        if (duplicateCheck.rowCount > 0) {
-            res.status(403).json().end();
-            return;
-        }
-
-        const q = await db.query(
-            'INSERT INTO edge (source_id, target_id) VALUES ($1, $2)',
-            [text.source_id, text.target_id]
-        );
-        res.status(200).json(q);
     })
     .put((req: Request, res: Response) => {
         res.status(501).json({ message: 'Not implemented' });

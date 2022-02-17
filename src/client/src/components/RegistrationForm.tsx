@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RegisterFormProps, Registration } from '../../../../types';
 import './styles/Form.css';
+import toast from 'react-hot-toast';
 
 export const RegistrationForm: ({
     createUser,
@@ -56,16 +57,17 @@ export const RegistrationForm: ({
             username,
             password,
         };
-        try {
-            await createUser(user);
+
+        if (await createUser(user)) {
+            toast('✔️ Account created');
             setEmail('');
             setPassword('');
             setConfirm('');
             setUsername('');
-        } catch (e) {
+        } else {
             setErr(errMessage.concat('Error occured when creating a user'));
             errTimeout();
-            console.log('ERROR!', e);
+            console.log('ERROR!');
         }
     };
 

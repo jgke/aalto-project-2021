@@ -3,4 +3,87 @@
     justify-content: right;
     display: flex;
     flex-flow: column;
+    color: white;
+}
+
+.detail-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 360px;
+    background-color: rgb(219, 219, 219);
+}
+
+.icon-button {
+    background-color: rgb(13 110 253 / 25%);
+    border: none;
+    width: 32px;
+    padding: 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background-color: rgb(13 110 253 / 50%);
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.project-card {
+    transition: background-color 0.25s ease-in;
+    color: black;
+}
+
+.project-card.view {
+    height: 200px;
+}
+
+.project-card.view:hover {
+    background-color: rgba(219, 219, 219, 1);
+    cursor: pointer;
+}
+
+.fallback-card-image {
+    height: 100px;
+    background: rgb(164, 195, 215);
+    background: linear-gradient(
+        0deg,
+        rgba(164, 195, 215, 1) 0%,
+        rgba(173, 216, 230, 1) 30%,
+        rgba(118, 254, 243, 1) 100%
+    );
+}
+
+.flex-space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topbar {
+    display: flex;
+}
+
+.topbar > * {
+    margin: 2px 4px;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }

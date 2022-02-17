@@ -31,7 +31,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 onClick={() => sendCreateNode(nodeText)}
             >
                 Create
-            </button>{' '}
+            </button>
             <button
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}

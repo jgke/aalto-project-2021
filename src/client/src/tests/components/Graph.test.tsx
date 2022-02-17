@@ -8,6 +8,9 @@ import { RenderResult } from '@testing-library/react';
 
 import { Graph } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
+import { store } from '../../store';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
 describe('<Graph>', () => {
     beforeAll(() => {
@@ -79,14 +82,22 @@ describe('<Graph>', () => {
     let testGraph: RenderResult;
 
     const renderGraph = (elements: Elements) => {
+        const selectedProject = {
+            id: 1,
+            owner_id: '1',
+            name: 'project',
+            description: 'decp',
+        };
+
         return render(
-            <Graph
-                elements={elements}
-                onLoad={(reactFlowInstance) => {
-                    reactFlowInstance.fitView();
-                }}
-                setElements={jest.fn()}
-            />
+            <BrowserRouter>
+                <Provider store={store}>
+                    <Graph
+                        elements={elements}
+                        selectedProject={selectedProject}
+                    />
+                </Provider>
+            </BrowserRouter>
         );
     };
 

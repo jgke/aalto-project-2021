@@ -1,5 +1,12 @@
 --sql commands here
 
+CREATE TABLE project (
+  id SERIAL PRIMARY KEY,
+  owner_id TEXT NOT NULL,  
+  name TEXT NOT NULL,
+  description TEXT
+);
+
 CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE TABLE node (
@@ -7,13 +14,15 @@ CREATE TABLE node (
   label TEXT NOT NULL,
   status TEXT NOT NULL,
   priority TEXT NOT NULL,
-  x INTEGER NOT NULL,
-  y INTEGER NOT NULL
+  x DOUBLE PRECISION NOT NULL,
+  y DOUBLE PRECISION NOT NULL,
+  project_id INTEGER NOT NULL REFERENCES project(id) ON DELETE CASCADE
 );
 
 CREATE TABLE edge (
   source_id INTEGER REFERENCES node(id),
-  target_id INTEGER REFERENCES node(id)
+  target_id INTEGER REFERENCES node(id),
+  project_id INTEGER NOT NULL REFERENCES project(id) ON DELETE CASCADE
 );
 
 CREATE TABLE users (
