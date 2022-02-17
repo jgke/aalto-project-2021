@@ -5,6 +5,7 @@ name: help
 # How to use the app?
 
 ## Topbar
+
 On the top of every page there is navigation bar using which you can go to different pages. Registration, Login, Home and Logout
 
 ## Registering
@@ -14,7 +15,6 @@ Go to the site 'user/register' and create a user with your email, username and a
 ## Logging in and out
 
 After creating a user, go to '/user/login' and insert your email or username and password. Logout will become visible in the navigation bar after logging in.
-
 
 **NOTE** In order to access the graph, you need to be signed in.
 

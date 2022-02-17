@@ -15,8 +15,9 @@ const FeatureList: FeatureItem[] = [
         image: '/img/undraw_docusaurus_mountain.svg',
         description: (
             <>
-            Task management software created by some people! Keep track of your progress
-            and see what needs to be done before you move onto the next feature!
+                Task management software created by some people! Keep track of
+                your progress and see what needs to be done before you move onto
+                the next feature!
             </>
         ),
     },
