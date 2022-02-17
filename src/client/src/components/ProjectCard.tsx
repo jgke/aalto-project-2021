@@ -80,7 +80,7 @@ export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
                     >
                         <BsPencilFill /> Edit
                     </Dropdown.Item>
-                    <Dropdown.Item href="#" onClick={() => deleteProject()}>
+                    <Dropdown.Item href="#" onClick={() => deleteProject()} id='deleteButton'>
                         <BsXLg /> Delete
                     </Dropdown.Item>
                 </Dropdown.Menu>
