@@ -12,6 +12,8 @@ import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
 import { Navigate } from 'react-router-dom';
 import toast, { resolveValue, Toaster } from 'react-hot-toast';
+import { FloatingEdge } from './components/FloatingEdge';
+import { FloatingConnectionLine } from './components/utils/FloatingConnectionLine';
 
 export const basicNode: INode = {
     status: 'ToDo',

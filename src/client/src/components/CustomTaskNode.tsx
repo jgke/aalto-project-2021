@@ -18,10 +18,7 @@ export const CustomTaskNode = ({ data }: NodeComponentProps): JSX.Element => {
     const sourceHandleStyle = {
         width: '40%',
         height: '110%',
-        borderRadius: '5%',
-        background: 'lightGreen',
-        marginLeft: '-10%',
-        display: 'block'
+        borderRadius: '5%'
     }
     
     const targetHandleStyle = {
@@ -30,8 +27,6 @@ export const CustomTaskNode = ({ data }: NodeComponentProps): JSX.Element => {
         borderRadius: '5%',
         background: 'red',
         opacity: 0.5,
-        marginRight: '-10%',
-        display: 'block'
     }
 
     return (
