@@ -1,24 +1,26 @@
 import React from 'react';
-import { Elements } from 'react-flow-renderer';
+import { Edge, Elements } from 'react-flow-renderer';
 import { IEdge, INode } from '../../../../types';
 
 interface EdgeDetailProps {
-    data: IEdge;
+    element: Edge<IEdge>;
     elements: Elements;
-    editMode: boolean;
 }
 
 export const EdgeDetail = (props: EdgeDetailProps): JSX.Element => {
-    console.log(props.data);
-    const source = props.elements.find(
-        (el) => el.id === String(props.data.source_id)
-    )?.data as INode;
-    const target = props.elements.find(
-        (el) => el.id === String(props.data.target_id)
-    )?.data as INode;
+    const data = props.element.data;
+
+    if (!data) {
+        return <></>;
+    }
+
+    const source = props.elements.find((el) => el.id === String(data.source_id))
+        ?.data as INode;
+    const target = props.elements.find((el) => el.id === String(data.target_id))
+        ?.data as INode;
 
     return (
-        <div>
+        <>
             {source ? (
                 <>
                     <h2>Source: {source.label}</h2>
@@ -35,6 +37,6 @@ export const EdgeDetail = (props: EdgeDetailProps): JSX.Element => {
                     <p>ID: {target.id}</p>
                 </>
             ) : null}
-        </div>
+        </>
     );
 };

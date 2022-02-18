@@ -1,53 +1,106 @@
 import React, { useEffect, useState } from 'react';
 import { IEdge, INode } from '../../../../types';
-import { isNodeData } from '../services/nodeService';
 import { NodeDetail } from './NodeDetail';
-import { BsXLg, BsPencilFill } from 'react-icons/bs';
-import { Elements } from 'react-flow-renderer';
+import { BsXLg, BsPencilFill, BsFillTrashFill } from 'react-icons/bs';
+import {
+    Edge,
+    Elements,
+    isEdge,
+    isNode,
+    Node,
+    removeElements,
+} from 'react-flow-renderer';
 import { EdgeDetail } from './EdgeDetail';
+import * as nodeService from '../services/nodeService';
+import * as edgeService from '../services/edgeService';
 
 interface ElementDetailProps {
-    data: INode | IEdge | null;
+    element: Node<INode> | Edge<IEdge> | null;
     elements: Elements;
-    setSelectedData: React.Dispatch<React.SetStateAction<INode | IEdge | null>>;
+    type: 'Node' | 'Edge' | null;
+    setElements: React.Dispatch<React.SetStateAction<Elements>>;
+    closeSidebar: () => void;
 }
 
 export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
     const [editMode, setEditMode] = useState<boolean>(false);
 
-    useEffect(() => {
-        setEditMode(false);
-    }, [props.data]);
+    let element = props.element;
 
-    if (!props.data) {
+    useEffect(() => {
+        const latest = props.elements.find((el) => el.id === element?.id);
+        if (!latest) {
+            props.closeSidebar();
+        } else {
+            element = latest;
+        }
+    }, [props.elements]);
+
+    if (!props.element) {
         return <></>;
     }
+
+    const deleteElement = async () => {
+        if (!element) {
+            return;
+        }
+        const el = element;
+        props.closeSidebar();
+
+        // Get edges to be removed
+        const removeEdges = props.elements.filter(
+            (el) => isEdge(el) && (el.source === el.id || el.target === el.id)
+        );
+
+        if (props.type === 'Node') {
+            const data = props.element as Node<INode>;
+            await nodeService.deleteNode(data.id);
+        } else if (props.type === 'Edge') {
+            const data = props.element as Edge<IEdge>;
+            await edgeService.deleteEdge(data.source, data.target);
+        }
+
+        props.setElements((els) => removeElements([el, ...removeEdges], els));
+    };
 
     return (
         <div className="detail-sidebar">
             <div className="detail-sidebar-topbar">
                 <button
                     className="icon-button"
-                    onClick={() => setEditMode(!editMode)}
+                    style={{ color: 'orangered' }}
+                    onClick={async () => await deleteElement()}
                 >
-                    <BsPencilFill />
+                    <BsFillTrashFill />
                 </button>
+                {props.type === 'Node' && (
+                    <button
+                        className="icon-button"
+                        onClick={() => setEditMode(!editMode)}
+                    >
+                        <BsPencilFill />
+                    </button>
+                )}
                 <button
                     className="icon-button"
-                    onClick={() => props.setSelectedData(null)}
+                    onClick={() => props.closeSidebar()}
                 >
                     <BsXLg />
                 </button>
             </div>
-            {isNodeData(props.data) ? (
-                <NodeDetail editMode={editMode} data={props.data as INode} />
-            ) : (
-                <EdgeDetail
-                    editMode={editMode}
-                    data={props.data as IEdge}
-                    elements={props.elements}
-                />
-            )}
+            <div className="detail-sidebar-content">
+                {element && isNode(element) && (
+                    <NodeDetail
+                        element={element}
+                        editMode={editMode}
+                        setElements={props.setElements}
+                        setEditMode={setEditMode}
+                    />
+                )}
+                {element && isEdge(element) && (
+                    <EdgeDetail element={element} elements={props.elements} />
+                )}
+            </div>
         </div>
     );
 };

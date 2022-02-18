@@ -1,24 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Graph } from './components/Graph';
-import {
-    Elements,
-    addEdge,
-    removeElements,
-    Edge,
-    Node,
-    Connection,
-    isNode,
-    isEdge,
-    FlowElement,
-    ArrowHeadType,
-    updateEdge,
-} from 'react-flow-renderer';
-import * as nodeService from './services/nodeService';
-import * as edgeService from './services/edgeService';
-import { INode, IEdge } from '../../../types';
-import { ElementDetail } from './components/ElementDetail';
-import { isNodeData } from './services/nodeService';
+import React, { FC, useEffect, useState } from 'react';
+import { GraphPage } from './pages/GraphPage';
+import { INode, UserToken } from '../../../types';
+import { Projects } from './components/Projects';
+import { Topbar } from './components/TopBar';
+import { useDispatch } from 'react-redux';
+import * as projectReducer from './reducers/projectReducer';
 import './App.css';
+import { Route, Routes } from 'react-router';
+import { Registration } from './pages/Registration';
+import { loginUser, setToken } from './services/userService';
+import { LoginForm } from './components/LoginForm';
+import { Navigate } from 'react-router-dom';
+import toast, { resolveValue, Toaster } from 'react-hot-toast';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -26,195 +19,76 @@ export const basicNode: INode = {
     priority: 'Urgent',
     x: 0,
     y: 0,
+    project_id: 0,
 };
 
-export const App: React.FC = () => {
-    const [nodeText, setNodeText] = useState('');
-    const [elements, setElements] = useState<Elements>([]);
-    const [selectedData, setSelectedData] = useState<INode | IEdge | null>(
-        null
-    );
+export const App: FC = () => {
+    const dispatch = useDispatch();
+
+    const [user, setUser] = useState<UserToken | null>(null);
+    const [userParsed, setUserParsed] = useState<boolean>(false);
+
+    useEffect(() => {
+        const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
+        if (loggedUserJson) {
+            const user = JSON.parse(loggedUserJson);
+            setUser(user);
+            setToken(user.token);
+        }
+        setUserParsed(true);
+    }, []);
 
     /**
-     * Fetches the elements from a database
+     * Fetches the projects from a database
      */
-    const getElementsHook = (): void => {
-        nodeService.getAll().then((nodes) => {
-            edgeService.getAll().then((edges) => {
-                const nodeElements: Elements = nodes.map((n) => ({
-                    id: String(n.id),
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                }));
-                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                const edgeElements: Elements = edges.map((e) => ({
-                    id: String(e.source_id) + '-' + String(e.target_id),
-                    source: String(e.source_id),
-                    target: String(e.target_id),
-                    type: 'straight',
-                    arrowHeadType: ArrowHeadType.ArrowClosed,
-                    data: e,
-                }));
-
-                setElements(nodeElements.concat(edgeElements));
-            });
-        });
-    };
-    useEffect(getElementsHook, []);
-
-    /**
-     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
-     */
-    const createNode = async (): Promise<void> => {
-        const n: INode = {
-            status: 'ToDo',
-            label: nodeText,
-            priority: 'Urgent',
-            x: 5 + elements.length * 10,
-            y: 5 + elements.length * 10,
-        };
-        const returnId: string | undefined = await nodeService.sendNode(n);
-        if (returnId) {
-            n.id = String(returnId);
-            const b: Node<INode> = {
-                id: String(returnId),
-                data: n,
-                position: { x: n.x, y: n.y },
-            };
-            setElements(elements.concat(b));
+    useEffect(() => {
+        if (user) {
+            dispatch(projectReducer.projectInit());
         }
-        setNodeText('');
-    };
+    }, [dispatch, user]);
 
-    const onConnect = async (params: Edge<IEdge> | Connection) => {
-        if (params.source && params.target) {
-            //This does not mean params is an edge but rather a Connection
+    // Wait for the parsing of localStorage
+    if (!userParsed) {
+        return <></>;
+    }
 
-            const id = await edgeService.sendEdge({
-                source_id: params.source,
-                target_id: params.target,
-            });
-
-            const edge: IEdge = {
-                source_id: params.source,
-                target_id: params.target,
-            };
-
-            const b: Edge<IEdge> = {
-                id: String(params.source) + '-' + String(params.target),
-                type: 'straight',
-                source: params.source,
-                target: params.target,
-                arrowHeadType: ArrowHeadType.ArrowClosed,
-                data: edge,
-            };
-
-            setElements((els) => addEdge(b, els));
-        } else {
-            console.log(
-                'source or target of edge is null, unable to send to db'
-            );
-        }
-    };
-
-    /**
-     * Ordering function for elements, puts edges first and nodes last. Used in
-     * onElementsRemove.
-     */
-    const compareElementsEdgesFirst = (
-        a: FlowElement,
-        b: FlowElement
-    ): number => {
-        if (isNode(a)) {
-            if (isNode(b)) return 0;
-            else return 1;
-        } else {
-            // a is an Edge
-            if (isNode(b)) return -1;
-            else return 0;
-        }
-    };
-
-    /**
-     * Prop for Graph component, called when nodes or edges are removed. Called also
-     * for adjacent edges when a node is removed.
-     */
-    const onElementsRemove = async (elementsToRemove: Elements) => {
-        // Must remove edges first to prevent referencing issues in database
-        const sortedElementsToRemove = elementsToRemove.sort(
-            compareElementsEdgesFirst
-        );
-        for (const e of sortedElementsToRemove) {
-            if (isNode(e)) {
-                try {
-                    await nodeService.deleteNode(e);
-                } catch (e) {
-                    console.log('Error in node deletion', e);
-                }
-            } else if (isEdge(e)) {
-                await edgeService
-                    .deleteEdge(e)
-                    .catch((e: Error) =>
-                        console.log('Error when deleting edge', e)
-                    );
-            }
-        }
-
-        setElements((els) => removeElements(elementsToRemove, els));
-    };
-
-    const onNodeEdit = async (id: string, data: INode) => {
-        setElements((els) =>
-            els.map((el) => {
-                if (el.id === id) {
-                    el.data = data;
-                }
-                return el;
-            })
-        );
-
-        await nodeService.updateNode(data);
-    };
-
-    const onElementClick = (event: React.MouseEvent, element: FlowElement) => {
-        if (isNodeData(element.data)) {
-            setSelectedData(element.data as INode);
-        } else {
-            setSelectedData(element.data as IEdge);
-        }
-    };
+    if (!user && !location.pathname.startsWith('/user')) {
+        return <Navigate to="/user/login" />;
+    }
 
     return (
-        <div className="App">
-            <h2>Tasks</h2>
+        <div className="app">
+            <Toaster toastOptions={{ duration: 30000 }}>
+                {(t) => (
+                    <span
+                        style={{
+                            opacity: t.visible ? 1 : 0,
+                            background: 'white',
+                            padding: 8,
+                            cursor: 'pointer',
+                            border: '1px solid black',
+                            borderRadius: '10px',
+                        }}
+                        onClick={() => toast.dismiss(t.id)}
+                    >
+                        {resolveValue(t.message, t)}
+                    </span>
+                )}
+            </Toaster>
             <div>
-                <h3>Add task</h3>
-                <div>
-                    Text:{' '}
-                    <input
-                        id="nodetext"
-                        type="text"
-                        value={nodeText}
-                        onChange={({ target }) => setNodeText(target.value)}
-                    />
-                    <button onClick={createNode}>Add</button>
-                </div>
+                <Topbar user={user} setUser={setUser} />
             </div>
-            <div className="graph">
-                <Graph
-                    elements={elements}
-                    setElements={setElements}
-                    onConnect={onConnect}
-                    onElementsRemove={onElementsRemove}
-                    onNodeEdit={onNodeEdit}
-                    onElementClick={onElementClick}
-                />
-            </div>
-            <ElementDetail
-                data={selectedData}
-                elements={elements}
-                setSelectedData={setSelectedData}
-            />
+            <Routes>
+                <Route path="/" element={<Projects user={user} />}></Route>
+                <Route path="/project/:id" element={<GraphPage />}></Route>
+                <Route path="/user/register" element={<Registration />}></Route>
+                <Route
+                    path="/user/login"
+                    element={
+                        <LoginForm loginUser={loginUser} setUser={setUser} />
+                    }
+                ></Route>
+            </Routes>
         </div>
     );
 };

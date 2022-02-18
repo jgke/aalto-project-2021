@@ -1,4 +1,5 @@
-type Status = 'Done' | 'Doing' | 'ToDo';
+export type Status = 'Done' | 'Doing' | 'ToDo';
+export type Priority = 'Urgent' | 'Normal' | 'Lax';
 
 // Id of a node is optional since the id is created in the database
 // so when sent to backend we don't give it any id
@@ -6,13 +7,61 @@ type Status = 'Done' | 'Doing' | 'ToDo';
 export interface INode {
     label: string;
     status: Status;
-    priority: string;
-    id?: string;
+    priority: Priority;
+    id?: number;
     x: number;
     y: number;
+    project_id: number;
 }
 
 export interface IEdge {
     source_id: string;
     target_id: string;
+    project_id: number;
+}
+
+export interface IProject {
+    id: number;
+    owner_id: string;
+    name: string;
+    description: string;
+}
+
+export interface Registration {
+    username: string;
+    password: string;
+    email: string;
+}
+
+export interface RegisterFormProps {
+    createUser: (user: Registration) => Promise<boolean>;
+}
+
+export interface Login {
+    email: string | null;
+    username: string | null;
+    password: string;
+}
+
+export interface UserToken {
+    username: string;
+    email: string;
+    token: string;
+    id: string;
+}
+
+export interface User {
+    username: string;
+    password: string;
+    email: string;
+    id: string;
+}
+
+export interface RootState {
+    project: IProject[];
+}
+
+export interface ToolbarProps {
+    createNode: (nodeText: string) => Promise<void>;
+    layoutWithDagre: (direction: string) => Promise<void>;
 }
