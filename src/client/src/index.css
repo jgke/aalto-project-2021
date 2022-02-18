@@ -86,3 +86,11 @@ code {
     border-color: #dcd9fd;
     color: #ffffff;
 }
+
+.react-flow__handle-left {
+    opacity: 0;
+}
+
+.react-flow__handle-left:hover {
+    opacity: 0.5;
+}

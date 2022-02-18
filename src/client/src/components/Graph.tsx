@@ -29,7 +29,7 @@ import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { setOnConnectStart } from 'react-flow-renderer/dist/store/actions';
-import { CustomNodeComponent } from './CustomNode';
+import { CustomTaskNode } from './CustomTaskNode';
 
 const graphStyle = {
     height: '100%',
@@ -63,8 +63,11 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
+    //DEV HELPER
     const [connectState, setConnectState] = useState(false)
     const flipConnectState = () => setConnectState(s => !s)
+
+    const DefaultNodeType = 'taskNode';
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -92,8 +95,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
                 const nodeElements: Elements = nodes.map((n) => ({
                     id: String(n.id),
-                    type: 'special',
+                    type: DefaultNodeType,
                     data: n,
+                    connectState: connectState,
                     position: { x: n.x, y: n.y },
                 }));
                 // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
@@ -211,6 +215,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                                     ...{
                                         id: String(returnId),
                                         data: n,
+                                        type: DefaultNodeType,
                                         position: { x: pos.x, y: pos.y },
                                         draggable: true,
                                     },
@@ -240,6 +245,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             const b: Node = {
                 id: 'TEMP',
                 data: {},
+                type: DefaultNodeType,
                 position,
                 draggable: false,
             };
@@ -397,7 +403,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }
     
     const nodeTypes = {
-        special: CustomNodeComponent
+        taskNode: CustomTaskNode
     }
 
     return (
