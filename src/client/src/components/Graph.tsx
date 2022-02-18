@@ -23,6 +23,7 @@ import ReactFlow, {
     isNode,
     isEdge,
     removeElements,
+    ConnectionLineType,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
@@ -105,7 +106,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     id: String(e.source_id) + '-' + String(e.target_id),
                     source: String(e.source_id),
                     target: String(e.target_id),
-                    type: 'floating',
+                    type: 'straight',
                     arrowHeadType: ArrowHeadType.ArrowClosed,
                     data: e,
                 }));
@@ -419,6 +420,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         elements={elements}
                         nodeTypes={nodeTypes}
                         onConnect={onConnect}
+                        connectionLineType={ConnectionLineType.Straight}
                         //onConnectStart={onConnectStart}
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
