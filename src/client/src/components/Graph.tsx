@@ -30,8 +30,6 @@ import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { setOnConnectStart } from 'react-flow-renderer/dist/store/actions';
 import { CustomTaskNode } from './CustomTaskNode';
-import { FloatingConnectionLine } from './utils/FloatingConnectionLine';
-import { FloatingEdge } from './FloatingEdge';
 
 const graphStyle = {
     height: '100%',
@@ -408,10 +406,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         taskNode: CustomTaskNode
     }
 
-    const edgeTypes = {
-        floating: FloatingEdge
-    }
-
     return (
         <div className="graph" style={{ height: '100%' }}>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
@@ -424,9 +418,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     <ReactFlow
                         elements={elements}
                         nodeTypes={nodeTypes}
-                        edgeTypes={edgeTypes}
                         onConnect={onConnect}
-                        connectionLineComponent={FloatingConnectionLine}
                         //onConnectStart={onConnectStart}
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge

@@ -16,26 +16,20 @@ const customNodeStyles = {
 export const CustomTaskNode = ({ data }: NodeComponentProps): JSX.Element => {
     
     const sourceHandleStyle = {
-        width: '40%',
-        height: '110%',
         borderRadius: '5%'
     }
     
     const targetHandleStyle = {
-        width: '40%',
-        height: '110%',
         borderRadius: '5%',
-        background: 'red',
-        opacity: 0.5,
     }
 
     return (
         <div style={customNodeStyles}>
-            <Handle type="source" position={Position.Left} style={sourceHandleStyle} />
+            <Handle type="target" position={Position.Top} style={sourceHandleStyle} />
             <div style={{textAlign: 'center'}}>{data.label}</div>
             <Handle
-                type="target"
-                position={Position.Right}
+                type="source"
+                position={Position.Bottom}
                 style={targetHandleStyle}
             />
         </div>

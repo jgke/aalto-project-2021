@@ -86,16 +86,3 @@ code {
     border-color: #dcd9fd;
     color: #ffffff;
 }
-
-.react-flow__handle-left {
-    margin-left: -5%;
-    opacity: 0;
-}
-
-.react-flow__handle-right {
-    margin-right: -5%;
-}
-
-.react-flow__handle-left:hover {
-    opacity: 0.5;
-}
