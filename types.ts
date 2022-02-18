@@ -62,5 +62,7 @@ export interface RootState {
 
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
+    flipConnectState: () => void;
+    connectState: boolean;
     layoutWithDagre: (direction: string) => Promise<void>;
 }

@@ -4,6 +4,8 @@ import { ToolbarProps } from '../../../../types';
 export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
     const createNode = props.createNode;
+    const flipConnectState = props.flipConnectState;
+    const connectState = props.connectState;
     const layoutWithDagre = props.layoutWithDagre;
 
     /**
@@ -30,6 +32,15 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
             >
                 Create
             </button>
+            <button
+                id="button-toolbar"
+                onClick={flipConnectState}
+            >
+                Connect
+            </button>
+            <div style={{color: '#ffffff'}}>
+                {connectState.toString()}
+            </div>
             <button
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}

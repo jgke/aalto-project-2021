@@ -28,6 +28,8 @@ import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
+import { setOnConnectStart } from 'react-flow-renderer/dist/store/actions';
+import { CustomNodeComponent } from './CustomNode';
 
 const graphStyle = {
     height: '100%',
@@ -61,6 +63,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
+    const [connectState, setConnectState] = useState(false)
+    const flipConnectState = () => setConnectState(s => !s)
+
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
         setReactFlowInstance(_reactFlowInstance);
@@ -87,6 +92,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
                 const nodeElements: Elements = nodes.map((n) => ({
                     id: String(n.id),
+                    type: 'special',
                     data: n,
                     position: { x: n.x, y: n.y },
                 }));
@@ -389,6 +395,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
     if (!selectedProject) {
         return <></>;
     }
+    
+    const nodeTypes = {
+        special: CustomNodeComponent
+    }
 
     return (
         <div className="graph" style={{ height: '100%' }}>
@@ -401,7 +411,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 >
                     <ReactFlow
                         elements={elements}
+                        nodeTypes={nodeTypes}
                         onConnect={onConnect}
+                        //onConnectStart={onConnectStart}
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
                         // so it works as a hitbox detector
@@ -436,6 +448,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             <Toolbar
                 createNode={createNode}
+                flipConnectState={flipConnectState}
+                connectState={connectState}
                 layoutWithDagre={layoutWithDagre}
             />
         </div>
