@@ -7,7 +7,7 @@ describe('Project', () => {
         cy.get('#home-link').click()
     })
 
-    after(() => {
+    afterEach(() => {
         cy.deleteAllProjects()
     })
 
@@ -67,6 +67,12 @@ describe('Project', () => {
     })
 
     it('should delete a project with the delete button', () => {
+        for (let i = 0; i < 4; i++) {
+            cy.get('#name-field>input').type('Project')
+            cy.get('#description-field>textarea').type('Lorem Ipsum')
+            cy.get('#project-button-row>button').click()
+        }
+
         cy.get('.project-card').then($elements => {
             const projectCount = $elements.length;
 
