@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { IEdge, INode } from '../../../../types';
 import { NodeDetail } from './NodeDetail';
 import { BsXLg, BsPencilFill, BsFillTrashFill } from 'react-icons/bs';
@@ -25,16 +25,7 @@ interface ElementDetailProps {
 export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
     const [editMode, setEditMode] = useState<boolean>(false);
 
-    let element = props.element;
-
-    useEffect(() => {
-        const latest = props.elements.find((el) => el.id === element?.id);
-        if (!latest) {
-            props.closeSidebar();
-        } else {
-            element = latest;
-        }
-    }, [props.elements]);
+    const element = props.element;
 
     if (!props.element) {
         return <></>;
@@ -49,7 +40,10 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
 
         // Get edges to be removed
         const removeEdges = props.elements.filter(
-            (el) => isEdge(el) && (el.source === el.id || el.target === el.id)
+            (el) =>
+                props.type === 'Node' &&
+                isEdge(el) &&
+                (el.source === el.id || el.target === el.id)
         );
 
         if (props.type === 'Node') {

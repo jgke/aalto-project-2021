@@ -17,8 +17,9 @@ export const NodeDetail = (props: NodeDetailProps): JSX.Element => {
         return <></>;
     }
 
+    let content;
     if (props.editMode) {
-        return (
+        content = (
             <>
                 <h2>{data.label}</h2>
                 <NodeForm
@@ -28,14 +29,21 @@ export const NodeDetail = (props: NodeDetailProps): JSX.Element => {
                 />
             </>
         );
+    } else {
+        content = (
+            <>
+                <h2>{data.label}</h2>
+                <p>Status: {data.status}</p>
+                <p>Priority: {data.priority}</p>
+                <p>ID: {data.id}</p>
+            </>
+        );
     }
 
     return (
         <>
-            <h2>{data.label}</h2>
-            <p>Status: {data.status}</p>
-            <p>Priority: {data.priority}</p>
-            <p>ID: {data.id}</p>
+            <h5>Node:</h5>
+            {content}
         </>
     );
 };

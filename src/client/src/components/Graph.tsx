@@ -37,9 +37,9 @@ const graphStyle = {
 };
 
 export interface GraphProps {
+    selectedProject: IProject;
     elements: Elements;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
-    selectedProject: IProject;
     onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
 
@@ -102,10 +102,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
             setElements((els) =>
                 els.map((el) => {
                     const node = el as Node<INode>;
-                    if (node.position && el.id === node.id) {
+                    if (node.position && node.id === String(n.id)) {
                         node.position = {
-                            x: node.position.x,
-                            y: node.position.y,
+                            x: n.x,
+                            y: n.y,
                         };
                     }
                     return el;

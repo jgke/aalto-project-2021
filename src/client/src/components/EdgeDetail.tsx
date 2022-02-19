@@ -21,6 +21,7 @@ export const EdgeDetail = (props: EdgeDetailProps): JSX.Element => {
 
     return (
         <>
+            <h5>Edge:</h5>
             {source ? (
                 <>
                     <h2>Source: {source.label}</h2>

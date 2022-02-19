@@ -1,5 +1,4 @@
 export type Status = 'Done' | 'Doing' | 'ToDo';
-export type Priority = 'Urgent' | 'Normal' | 'Lax';
 
 // Id of a node is optional since the id is created in the database
 // so when sent to backend we don't give it any id
@@ -7,7 +6,7 @@ export type Priority = 'Urgent' | 'Normal' | 'Lax';
 export interface INode {
     label: string;
     status: Status;
-    priority: Priority;
+    priority: string;
     id?: number;
     x: number;
     y: number;

@@ -66,6 +66,15 @@ export const GraphPage = (): JSX.Element => {
         }
     }, [selectedProject]);
 
+    useEffect(() => {
+        const element = elements.find((e) => e.id === selectedElement?.id);
+        if (element) {
+            element && setSelectedElement(element);
+        } else if (!element) {
+            closeSidebar();
+        }
+    }, [elements]);
+
     const onElementClick = (event: React.MouseEvent, element: FlowElement) => {
         if (isNode(element)) {
             setSelectedElement(element);

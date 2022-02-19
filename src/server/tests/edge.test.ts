@@ -137,14 +137,16 @@ describe('DELETE request', () => {
             project_id: pId,
         };
 
-        const result = await api.post(baseUrl).send(e).expect(200);
-
-        e.id = result.body[0];
+        await api.post(baseUrl).send(e).expect(200);
 
         let res = await api.get(`${baseUrl}/${pId}`).expect(200);
         expect(res.body).toHaveLength(1);
 
-        await api.delete(`${baseUrl}/${res.body[0].id}`).expect(200);
+        await api
+            .delete(
+                `${baseUrl}/${res.body[0].source_id}/${res.body[0].target_id}`
+            )
+            .expect(200);
 
         res = await api.get(`${baseUrl}/${pId}`).expect(200);
 
@@ -153,12 +155,13 @@ describe('DELETE request', () => {
 
     test('should not crash the app if the id does not exist', async () => {
         const e: IEdge = {
-            id: '-1',
             source_id: '-1',
             target_id: '-1',
             project_id: pId,
         };
-        await api.delete(`${baseUrl}/${e.id}`).expect(200);
+        await api
+            .delete(`${baseUrl}/${e.source_id}/${e.target_id}`)
+            .expect(200);
     });
 });
 

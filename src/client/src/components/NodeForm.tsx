@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { INode, Priority, Status } from '../../../../types';
+import { INode, Status } from '../../../../types';
 import { Form, Button } from 'react-bootstrap';
 import { Elements, isNode, Node } from 'react-flow-renderer';
 import * as nodeService from '../services/nodeService';
@@ -19,7 +19,7 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
 
     const [label, setLabel] = useState<string>(data.label);
     const [status, setStatus] = useState<Status>(data.status);
-    const [priority, setPriority] = useState<Priority>(data.priority);
+    const [priority, setPriority] = useState<string>(data.priority);
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -43,6 +43,10 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
         );
 
         await nodeService.updateNode(node);
+    };
+
+    const handleCancel = () => {
+        props.setEditMode(false);
     };
 
     if (!data) {
@@ -77,7 +81,7 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                 <Form.Select
                     aria-label="Default select example"
                     defaultValue={priority}
-                    onChange={(e) => setPriority(e.target.value as Priority)}
+                    onChange={(e) => setPriority(e.target.value)}
                 >
                     <option value={'Urgent'}>Urgent</option>
                     <option value={'Normal'}>Normal</option>
@@ -85,9 +89,15 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                 </Form.Select>
             </Form.Group>
 
-            <Button variant="primary" type="submit">
-                Save
-            </Button>
+            <div id="node-form-button-row" className="flex-space-between">
+                <Button variant="primary" type="submit">
+                    Save
+                </Button>
+
+                <Button variant="danger" onClick={handleCancel}>
+                    Cancel
+                </Button>
+            </div>
         </Form>
     );
 };
