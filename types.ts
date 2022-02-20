@@ -1,3 +1,5 @@
+import { RefObject } from './src/client/node_modules/@types/react';
+
 type Status = 'Done' | 'Doing' | 'ToDo';
 
 // Id of a node is optional since the id is created in the database
@@ -62,7 +64,6 @@ export interface RootState {
 
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
-    flipConnectState: () => void;
-    connectState: boolean;
+    switchConnectState: (newValue: boolean) => void;
     layoutWithDagre: (direction: string) => Promise<void>;
 }

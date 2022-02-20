@@ -66,7 +66,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     //DEV HELPER
     const [connectState, setConnectState] = useState(false)
-    const flipConnectState = () => setConnectState(s => !s)
+    const switchConnectState = (newValue: boolean): void => {
+        if(connectState) {
+            document.body.style.setProperty('--bottom-handle-size', '6px');
+        } else {
+            document.body.style.setProperty('--bottom-handle-size', '100%')
+        }
+        console.log('connectstate ->', newValue);
+        setConnectState(() => newValue);
+    }
 
     const DefaultNodeType = 'taskNode';
 
@@ -98,7 +106,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     id: String(n.id),
                     type: DefaultNodeType,
                     data: n,
-                    connectState: connectState,
                     position: { x: n.x, y: n.y },
                 }));
                 // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
@@ -265,6 +272,22 @@ export const Graph = (props: GraphProps): JSX.Element => {
         }
     };
 
+    const handleKeyPress = (event: KeyboardEvent) => {
+        if(event.shiftKey) {
+            switchConnectState(true);
+        }
+    }
+
+    const onConnectStart = () => {
+        document.body.style.setProperty('--top-handle-size', '100%')
+        if(connectState)
+            switchConnectState(false);
+    }
+
+    const onConnectEnd = () => {
+        document.body.style.setProperty('--top-handle-size', '6px')
+    }
+
     /**
      * Ordering function for elements, puts edges first and nodes last. Used in
      * onElementsRemove.
@@ -361,6 +384,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
         }
     };
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
 
     const onNodeEdit = async (id: string, data: INode) => {
         setElements((els) =>
@@ -421,7 +453,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         nodeTypes={nodeTypes}
                         onConnect={onConnect}
                         connectionLineType={ConnectionLineType.Straight}
-                        //onConnectStart={onConnectStart}
+                        onConnectStart={onConnectStart}
+                        onConnectEnd={onConnectEnd}
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
                         // so it works as a hitbox detector
@@ -429,6 +462,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onLoad={onLoad}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
+                        selectionKeyCode={'e'}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -456,8 +490,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             <Toolbar
                 createNode={createNode}
-                flipConnectState={flipConnectState}
-                connectState={connectState}
+                switchConnectState={switchConnectState}
                 layoutWithDagre={layoutWithDagre}
             />
         </div>

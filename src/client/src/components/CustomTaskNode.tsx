@@ -14,13 +14,15 @@ const customNodeStyles = {
 };
 
 export const CustomTaskNode = ({ data }: NodeComponentProps): JSX.Element => {
+    //TODO: try useImperativeHandle 
+    //const [largeHandles, setLargeHandles] = useState(false)
     
     const sourceHandleStyle = {
-        borderRadius: '5%'
+        borderRadius: '100%',
     }
     
     const targetHandleStyle = {
-        borderRadius: '5%',
+        borderRadius: '100%',
     }
 
     return (

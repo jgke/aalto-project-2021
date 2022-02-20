@@ -4,8 +4,7 @@ import { ToolbarProps } from '../../../../types';
 export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
     const createNode = props.createNode;
-    const flipConnectState = props.flipConnectState;
-    const connectState = props.connectState;
+    const switchConnectState = props.switchConnectState;
     const layoutWithDagre = props.layoutWithDagre;
 
     /**
@@ -34,13 +33,10 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
             </button>
             <button
                 id="button-toolbar"
-                onClick={flipConnectState}
+                onClick={() => switchConnectState(true)}
             >
                 Connect
             </button>
-            <div style={{color: '#ffffff'}}>
-                {connectState.toString()}
-            </div>
             <button
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}
