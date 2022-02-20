@@ -72,12 +72,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if(newValue === true) {
             document.body.style.setProperty('--bottom-handle-size', '100%');
             document.body.style.setProperty('--source-handle-border-radius', '0');
+            document.body.style.setProperty('--source-handle-opacity', '0');
             if(connectButtonRef.current){
                 connectButtonRef.current.setConnectText('Connecting')
             } 
         } else {
             document.body.style.setProperty('--bottom-handle-size', '6px');
             document.body.style.setProperty('--source-handle-border-radius', '100%');
+            document.body.style.setProperty('--source-handle-opacity', '0.5');
             if(connectButtonRef.current){
                 connectButtonRef.current.setConnectText('Connect')
             }
@@ -319,12 +321,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
         document.body.style.setProperty('--top-handle-size', '100%');
         document.body.style.setProperty('--source-handle-visibility', 'none');
         document.body.style.setProperty('--target-handle-border-radius', '0');
+        document.body.style.setProperty('--target-handle-opacity', '0');
     }
 
     const onConnectEnd = () => {
         document.body.style.setProperty('--top-handle-size', '6px');
         document.body.style.setProperty('--source-handle-visibility', 'block');
         document.body.style.setProperty('--target-handle-border-radius', '100%');
+        document.body.style.setProperty('--target-handle-opacity', '0.5');
     }
 
     /**

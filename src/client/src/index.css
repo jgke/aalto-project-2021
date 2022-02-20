@@ -51,6 +51,8 @@ body {
     --source-handle-visibility: block;
     --target-handle-border-radius: 100%;
     --source-handle-border-radius: 100%;
+    --target-handle-opacity: 0.5;
+    --source-handle-opacity: 0.5;
 }
 
 code {
@@ -86,10 +88,6 @@ code {
     align-self: center;
 }
 
-.react-flow__handle {
-    opacity: 0.5;
-}
-
 #button-toolbar:hover {
     background-color: #442072;
     border-color: #dcd9fd;
@@ -101,11 +99,13 @@ code {
     height: var(--bottom-handle-size) !important;
     display: var(--source-handle-visibility) !important;
     border-radius: var(--source-handle-border-radius) !important;
+    opacity: var(--source-handle-opacity) !important;
 }
 
 .react-flow__handle-top {
     width: var(--top-handle-size) !important;
     height: var(--top-handle-size) !important;
     border-radius: var(--target-handle-border-radius) !important;
+    opacity: var(--target-handle-opacity) !important;
 }
 
