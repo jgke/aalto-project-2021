@@ -10,6 +10,7 @@ describe('Toolbar', () => {
     let component: RenderResult;
     const mockCreate = jest.fn();
     const mockReverseConnectState = jest.fn();
+    const mockLayout = jest.fn();
 
     beforeEach(() => {
         mockCreate.mockRestore();
@@ -17,8 +18,7 @@ describe('Toolbar', () => {
             
             <Toolbar
                 createNode={mockCreate}
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                layoutWithDagre={async() => {}}
+                layoutWithDagre={mockLayout}
                 reverseConnectState={mockReverseConnectState}
             />
         );
