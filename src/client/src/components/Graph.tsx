@@ -26,11 +26,9 @@ import ReactFlow, {
     ConnectionLineType,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
-import { Toolbar } from './Toolbar';
+import { Toolbar, ToolbarHandle } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
-import { setOnConnectStart } from 'react-flow-renderer/dist/store/actions';
-import { CustomTaskNode } from './CustomTaskNode';
 
 const graphStyle = {
     height: '100%',
@@ -64,19 +62,32 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
-    //DEV HELPER
+    const connectButtonRef = useRef<ToolbarHandle>()
+
+    // State for keeping track of node source handle sizes
     const [connectState, setConnectState] = useState(false)
+
+    // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
-        if(connectState) {
-            document.body.style.setProperty('--bottom-handle-size', '6px');
+        if(newValue === true) {
+            document.body.style.setProperty('--bottom-handle-size', '100%');
+            document.body.style.setProperty('--source-handle-border-radius', '0');
+            if(connectButtonRef.current){
+                connectButtonRef.current.setConnectText('Connecting')
+            } 
         } else {
-            document.body.style.setProperty('--bottom-handle-size', '100%')
+            document.body.style.setProperty('--bottom-handle-size', '6px');
+            document.body.style.setProperty('--source-handle-border-radius', '100%');
+            if(connectButtonRef.current){
+                connectButtonRef.current.setConnectText('Connect')
+            }
         }
         console.log('connectstate ->', newValue);
         setConnectState(() => newValue);
     }
+    const reverseConnectState = () => switchConnectState(!connectState)
 
-    const DefaultNodeType = 'taskNode';
+    const DefaultNodeType = 'default';
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -278,14 +289,42 @@ export const Graph = (props: GraphProps): JSX.Element => {
         }
     }
 
-    const onConnectStart = () => {
-        document.body.style.setProperty('--top-handle-size', '100%')
-        if(connectState)
+    const handleKeyUp = (event: KeyboardEvent) => {
+        if(event.key === 'Shift') {
             switchConnectState(false);
+        }
+    }
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keyup', handleKeyUp);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [handleKeyUp]);
+
+    const onConnectStart = () => {
+        document.body.style.setProperty('--top-handle-size', '100%');
+        document.body.style.setProperty('--source-handle-visibility', 'none');
+        document.body.style.setProperty('--target-handle-border-radius', '0');
     }
 
     const onConnectEnd = () => {
-        document.body.style.setProperty('--top-handle-size', '6px')
+        document.body.style.setProperty('--top-handle-size', '6px');
+        document.body.style.setProperty('--source-handle-visibility', 'block');
+        document.body.style.setProperty('--target-handle-border-radius', '100%');
     }
 
     /**
@@ -434,10 +473,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
     if (!selectedProject) {
         return <></>;
     }
-    
-    const nodeTypes = {
-        taskNode: CustomTaskNode
-    }
 
     return (
         <div className="graph" style={{ height: '100%' }}>
@@ -450,7 +485,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 >
                     <ReactFlow
                         elements={elements}
-                        nodeTypes={nodeTypes}
                         onConnect={onConnect}
                         connectionLineType={ConnectionLineType.Straight}
                         onConnectStart={onConnectStart}
@@ -490,8 +524,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             <Toolbar
                 createNode={createNode}
-                switchConnectState={switchConnectState}
+                reverseConnectState={reverseConnectState}
                 layoutWithDagre={layoutWithDagre}
+                ref={connectButtonRef}
             />
         </div>
     );
