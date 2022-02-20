@@ -9,12 +9,13 @@ import { Toolbar } from '../../components/Toolbar';
 describe('Toolbar', () => {
     let component: RenderResult;
     const mockCreate = jest.fn();
+    const mockHidden = jest.fn();
 
     beforeEach(() => {
         mockCreate.mockRestore();
         component = render(
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            <Toolbar createNode={mockCreate} layoutWithDagre={async () => {}} />
+            <Toolbar createNode={mockCreate} layoutWithDagre={async () => { } } setNodeHidden={mockHidden} nodeHidden={false} />
         );
     });
 

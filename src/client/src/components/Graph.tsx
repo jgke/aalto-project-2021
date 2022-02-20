@@ -60,6 +60,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [elements, setElements] = useState<Elements>([]);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
+    const [nodeHidden, setNodeHidden] = useState(false);
+
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -386,16 +388,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
         await updateNodes();
     };
 
-    
-    const [nodeHidden, setNodeHidden] = useState(false);
-
+    //for hiding done nodes and edges
     useEffect(() => {
         setElements((els) =>
             els.map((el) => {
-                if (el.data.status === 'Done') {
+                const node: INode = el.data;
+                if (node.status === 'Done') {
                     el.isHidden = nodeHidden;
                     for (const e of els) {
-                        if (isEdge(e) && (e.source === el.id || e.target === el.id)) {
+                        if (isEdge(e) && (e.source == el.id || e.target == el.id)) {
                             e.isHidden = nodeHidden;
                         }
                     }

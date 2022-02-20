@@ -47,19 +47,19 @@ describe('<Graph>', () => {
         {
             id: '1',
             type: 'input',
-            data: { label: 'Input node' },
+            data: { label: 'Input node', status: 'ToDo' },
             position: { x: 100, y: 5 },
         },
         {
             id: '2',
             type: 'default',
-            data: { label: 'Default node' },
+            data: { label: 'Default node', status: 'Done' },
             position: { x: 100, y: 100 },
         },
         {
             id: '3',
             type: 'output',
-            data: { label: 'Output node' },
+            data: { label: 'Output node', status: 'Doing' },
             position: { x: 100, y: 200 },
         },
         {
