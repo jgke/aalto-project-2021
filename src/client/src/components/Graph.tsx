@@ -392,12 +392,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
     useEffect(() => {
         setElements((els) =>
             els.map((el) => {
-                const node: INode = el.data;
-                if (node.status === 'Done') {
-                    el.isHidden = nodeHidden;
-                    for (const e of els) {
-                        if (isEdge(e) && (e.source == el.id || e.target == el.id)) {
-                            e.isHidden = nodeHidden;
+                if (isNode(el)) {
+                    const node: INode = el.data;
+                    if (node.status == 'Done') {
+                        el.isHidden = nodeHidden;
+                        for (const e of els) {
+                            if (isEdge(e) && (e.source == el.id || e.target == el.id)) {
+                                e.isHidden = nodeHidden;
+                            }
                         }
                     }
                 }

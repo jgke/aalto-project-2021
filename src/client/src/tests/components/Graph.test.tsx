@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { RenderResult } from '@testing-library/react';
 
 import { Graph } from '../../components/Graph';
@@ -131,4 +131,22 @@ describe('<Graph>', () => {
         const c = testGraph.container.querySelectorAll('.react-flow__edge');
         expect(c).toHaveLength(3);
     });
+
+    test('calls a function when checkbox is checked', () => {
+        const cb = testGraph.container.querySelector('input')!;
+        expect(cb).toBeDefined;
+        fireEvent.change(cb, {
+            target: { checked: true }
+        });
+
+        const i = testGraph.container.querySelector('Input node')!;
+        const o = testGraph.container.querySelector('Output node')!;
+        const d = testGraph.container.querySelector('Default node')!;
+
+
+        expect(cb).toBeChecked;
+        expect(i).toBeVisible;
+        expect(o).toBeVisible;
+        expect(d).not.toBeVisible;
+    })
 });

@@ -45,4 +45,15 @@ describe('Toolbar', () => {
         });
         expect(input).toHaveValue('Add physics');
     });
+
+    test('calls a function when checkbox is checked', () => {
+        const cb = component.container.querySelector('input')!;
+        expect(cb).toBeDefined;
+        fireEvent.change(cb, {
+            target: { checked: true }
+        });
+
+        expect(cb).toBeChecked;
+        expect(mockHidden).toBeCalled;
+    });
 });
