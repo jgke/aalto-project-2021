@@ -15,7 +15,6 @@ describe('Toolbar', () => {
     beforeEach(() => {
         mockCreate.mockRestore();
         component = render(
-            
             <Toolbar
                 createNode={mockCreate}
                 layoutWithDagre={mockLayout}
