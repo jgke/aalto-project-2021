@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { RenderResult } from '@testing-library/react';
 
 import { Graph } from '../../components/Graph';
@@ -131,4 +131,24 @@ describe('<Graph>', () => {
         const c = testGraph.container.querySelectorAll('.react-flow__edge');
         expect(c).toHaveLength(3);
     });
+
+    test('changes the Connect button text when clicking it', () => {
+        const toolbarButtons = testGraph.container.querySelectorAll('#button-toolbar');
+        const connectButton = toolbarButtons[1];
+        expect(connectButton).toHaveTextContent('Connect');
+        fireEvent.click(connectButton);
+        expect(connectButton).toHaveTextContent('Connecting');
+        fireEvent.click(connectButton);
+        expect(connectButton).toHaveTextContent('Connect');
+    })
+
+    test('changes the Connect button text when holding Shift', () => {
+        const toolbarButtons = testGraph.container.querySelectorAll('#button-toolbar');
+        const connectButton = toolbarButtons[1];
+        expect(connectButton).toHaveTextContent('Connect');
+        fireEvent.keyDown(connectButton, {shiftKey: true})
+        expect(connectButton).toHaveTextContent('Connecting');
+        fireEvent.keyUp(connectButton, {shiftKey: true})
+        expect(connectButton).toHaveTextContent('Connect');
+    })
 });

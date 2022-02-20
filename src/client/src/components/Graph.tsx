@@ -84,7 +84,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 connectButtonRef.current.setConnectText('Connect')
             }
         }
-        console.log('connectstate ->', newValue);
         setConnectState(() => newValue);
     }
     const reverseConnectState = () => switchConnectState(!connectState)
