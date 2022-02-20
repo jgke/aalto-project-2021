@@ -14,13 +14,18 @@ describe('Toolbar', () => {
     beforeEach(() => {
         mockCreate.mockRestore();
         component = render(
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            <Toolbar createNode={mockCreate} layoutWithDagre={async () => {}} reverseConnectState={mockReverseConnectState} />
+            
+            <Toolbar
+                createNode={mockCreate}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                layoutWithDagre={async() => {}}
+                reverseConnectState={mockReverseConnectState}
+            />
         );
     });
 
     test('calls an appropriate function when a button is clicked', () => {
-        const buttons = component.container.querySelectorAll('button')
+        const buttons = component.container.querySelectorAll('button');
         expect(buttons[0]).toBeDefined;
         fireEvent.click(buttons[0]);
         expect(mockCreate).toBeCalled;

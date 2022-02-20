@@ -62,31 +62,37 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
-    const connectButtonRef = useRef<ToolbarHandle>()
+    const connectButtonRef = useRef<ToolbarHandle>();
 
     // State for keeping track of node source handle sizes
-    const [connectState, setConnectState] = useState(false)
+    const [connectState, setConnectState] = useState(false);
 
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
-        if(newValue === true) {
+        if (newValue === true) {
             document.body.style.setProperty('--bottom-handle-size', '100%');
-            document.body.style.setProperty('--source-handle-border-radius', '0');
+            document.body.style.setProperty(
+                '--source-handle-border-radius',
+                '0'
+            );
             document.body.style.setProperty('--source-handle-opacity', '0');
-            if(connectButtonRef.current){
-                connectButtonRef.current.setConnectText('Connecting')
-            } 
+            if (connectButtonRef.current) {
+                connectButtonRef.current.setConnectText('Connecting');
+            }
         } else {
             document.body.style.setProperty('--bottom-handle-size', '6px');
-            document.body.style.setProperty('--source-handle-border-radius', '100%');
+            document.body.style.setProperty(
+                '--source-handle-border-radius',
+                '100%'
+            );
             document.body.style.setProperty('--source-handle-opacity', '0.5');
-            if(connectButtonRef.current){
-                connectButtonRef.current.setConnectText('Connect')
+            if (connectButtonRef.current) {
+                connectButtonRef.current.setConnectText('Connect');
             }
         }
         setConnectState(() => newValue);
-    }
-    const reverseConnectState = () => switchConnectState(!connectState)
+    };
+    const reverseConnectState = () => switchConnectState(!connectState);
 
     const DefaultNodeType = 'default';
 
@@ -285,16 +291,16 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     const handleKeyPress = (event: KeyboardEvent) => {
-        if(event.shiftKey) {
+        if (event.shiftKey) {
             switchConnectState(true);
         }
-    }
+    };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-        if(event.key === 'Shift') {
+        if (event.key === 'Shift') {
             switchConnectState(false);
         }
-    }
+    };
 
     useEffect(() => {
         // attach the event listener
@@ -321,14 +327,17 @@ export const Graph = (props: GraphProps): JSX.Element => {
         document.body.style.setProperty('--source-handle-visibility', 'none');
         document.body.style.setProperty('--target-handle-border-radius', '0');
         document.body.style.setProperty('--target-handle-opacity', '0');
-    }
+    };
 
     const onConnectEnd = () => {
         document.body.style.setProperty('--top-handle-size', '6px');
         document.body.style.setProperty('--source-handle-visibility', 'block');
-        document.body.style.setProperty('--target-handle-border-radius', '100%');
+        document.body.style.setProperty(
+            '--target-handle-border-radius',
+            '100%'
+        );
         document.body.style.setProperty('--target-handle-opacity', '0.5');
-    }
+    };
 
     /**
      * Ordering function for elements, puts edges first and nodes last. Used in

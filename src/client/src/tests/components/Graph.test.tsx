@@ -133,22 +133,24 @@ describe('<Graph>', () => {
     });
 
     test('changes the Connect button text when clicking it', () => {
-        const toolbarButtons = testGraph.container.querySelectorAll('#button-toolbar');
+        const toolbarButtons =
+            testGraph.container.querySelectorAll('#button-toolbar');
         const connectButton = toolbarButtons[1];
         expect(connectButton).toHaveTextContent('Connect');
         fireEvent.click(connectButton);
         expect(connectButton).toHaveTextContent('Connecting');
         fireEvent.click(connectButton);
         expect(connectButton).toHaveTextContent('Connect');
-    })
+    });
 
     test('changes the Connect button text when holding Shift', () => {
-        const toolbarButtons = testGraph.container.querySelectorAll('#button-toolbar');
+        const toolbarButtons =
+            testGraph.container.querySelectorAll('#button-toolbar');
         const connectButton = toolbarButtons[1];
         expect(connectButton).toHaveTextContent('Connect');
-        fireEvent.keyDown(connectButton, {shiftKey: true})
+        fireEvent.keyDown(connectButton, { shiftKey: true });
         expect(connectButton).toHaveTextContent('Connecting');
-        fireEvent.keyUp(connectButton, {shiftKey: true})
+        fireEvent.keyUp(connectButton, { shiftKey: true });
         expect(connectButton).toHaveTextContent('Connect');
-    })
+    });
 });

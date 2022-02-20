@@ -3,21 +3,21 @@ import { ToolbarProps } from '../../../../types';
 
 export type ToolbarHandle = {
     setConnectText: (newText: string) => void;
-}
+};
 
 // This looks very confusing because of Typescript
 export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
-    const [connectText, setConnectText] = useState('Connect')
+    const [connectText, setConnectText] = useState('Connect');
     const createNode = props.createNode;
     const reverseConnectState = props.reverseConnectState;
     const layoutWithDagre = props.layoutWithDagre;
 
     useImperativeHandle(ref, () => {
-        return{
-            setConnectText
-        }
-    })
+        return {
+            setConnectText,
+        };
+    });
     /**
      * Calls createNode from App.tsx and clears state
      */
@@ -42,10 +42,7 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
             >
                 Create
             </button>
-            <button
-                id="button-toolbar"
-                onClick={reverseConnectState}
-            >
+            <button id="button-toolbar" onClick={reverseConnectState}>
                 {connectText}
             </button>
             <button
