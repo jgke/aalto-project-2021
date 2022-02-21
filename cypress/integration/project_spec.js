@@ -67,6 +67,7 @@ describe('Project', () => {
     })
 
     it('should delete a project with the delete button', () => {
+        // Init by creating 4 projects (arbitratry number)
         for (let i = 0; i < 4; i++) {
             cy.get('#name-field>input').type('Project')
             cy.get('#description-field>textarea').type('Lorem Ipsum')
@@ -75,15 +76,11 @@ describe('Project', () => {
 
         cy.get('.project-card').then($elements => {
             const projectCount = $elements.length;
-
-            cy.get('#name-field>input').type('Project')
-            cy.get('#description-field>textarea').type('Lorem Ipsum')
-            cy.get('#project-button-row>button').click()
         
-            cy.get('.project-card').last().find('.dropdown button').click('center', { force: true })
-            cy.get('.project-card').last().find('a').contains('Delete').click('center', { force: true })
+            cy.get('.project-card').first().find('.dropdown button').click('center', { force: true })
+            cy.get('.project-card').first().find('a').contains('Delete').click('center', { force: true })
     
-            cy.get('.project-card').should('have.length', projectCount)
+            cy.get('.project-card').should('have.length', projectCount - 1)
         });
     })
 
