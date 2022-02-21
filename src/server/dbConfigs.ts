@@ -21,7 +21,13 @@ export class Database {
         const pool = await this.getPool();
         const res = await pool.query(text, params);
         const duration = Date.now() - start;
-        console.log('executed query', { text, duration, rows: res.rowCount });
+        if (process.env.NODE_ENV !== 'test') {
+            console.log('executed query', {
+                text,
+                duration,
+                rows: res.rowCount,
+            });
+        }
         return res;
     }
 
@@ -53,10 +59,12 @@ export class Database {
         const client = await pool.connect();
 
         this._waiting = new Promise((resolve) => {
-            console.log('running migrations');
+            if (process.env.NODE_ENV !== 'test') {
+                console.log('running migrations');
+            }
             migrate({ client }, './migrations')
-                .catch(async () => {
-                    console.log('migration failed, dropping all tables');
+                .catch(async (e: Error) => {
+                    console.log('migration failed, dropping all tables', e);
                     //migration failed, probably because of existing data
                     //therefore, during development, drop all tables and try again
                     await client.query(

@@ -8,7 +8,7 @@ const baseElements1: Elements = [
     {
         id: '8',
         data: {
-            id: '8',
+            id: 8,
             label: 'fsdgjd',
             status: 'ToDo',
             priority: 'Urgent',
@@ -20,7 +20,7 @@ const baseElements1: Elements = [
     {
         id: '7',
         data: {
-            id: '7',
+            id: 7,
             label: 'sdfgh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -32,7 +32,7 @@ const baseElements1: Elements = [
     {
         id: '2',
         data: {
-            id: '2',
+            id: 2,
             label: 'sdfg',
             status: 'ToDo',
             priority: 'Urgent',
@@ -44,7 +44,7 @@ const baseElements1: Elements = [
     {
         id: '4',
         data: {
-            id: '4',
+            id: 4,
             label: 'sfgh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -56,7 +56,7 @@ const baseElements1: Elements = [
     {
         id: '5',
         data: {
-            id: '5',
+            id: 5,
             label: 'sdfg',
             status: 'ToDo',
             priority: 'Urgent',
@@ -68,7 +68,7 @@ const baseElements1: Elements = [
     {
         id: '1',
         data: {
-            id: '1',
+            id: 1,
             label: 'dsfgs',
             status: 'ToDo',
             priority: 'Urgent',
@@ -80,7 +80,7 @@ const baseElements1: Elements = [
     {
         id: '3',
         data: {
-            id: '3',
+            id: 3,
             label: 'sdfh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -92,7 +92,7 @@ const baseElements1: Elements = [
     {
         id: '6',
         data: {
-            id: '6',
+            id: 6,
             label: 'sfdgjh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -163,7 +163,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '8',
         data: {
-            id: '8',
+            id: 8,
             label: 'fsdgjd',
             status: 'ToDo',
             priority: 'Urgent',
@@ -177,7 +177,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '7',
         data: {
-            id: '7',
+            id: 7,
             label: 'sdfgh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -191,7 +191,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '2',
         data: {
-            id: '2',
+            id: 2,
             label: 'sdfg',
             status: 'ToDo',
             priority: 'Urgent',
@@ -205,7 +205,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '4',
         data: {
-            id: '4',
+            id: 4,
             label: 'sfgh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -219,7 +219,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '5',
         data: {
-            id: '5',
+            id: 5,
             label: 'sdfg',
             status: 'ToDo',
             priority: 'Urgent',
@@ -233,7 +233,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '1',
         data: {
-            id: '1',
+            id: 1,
             label: 'dsfgs',
             status: 'ToDo',
             priority: 'Urgent',
@@ -247,7 +247,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '3',
         data: {
-            id: '3',
+            id: 3,
             label: 'sdfh',
             status: 'ToDo',
             priority: 'Urgent',
@@ -261,7 +261,7 @@ const dagreLayoutedElements1: Elements = [
     {
         id: '6',
         data: {
-            id: '6',
+            id: 6,
             label: 'sfdgjh',
             status: 'ToDo',
             priority: 'Urgent',

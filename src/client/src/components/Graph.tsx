@@ -314,8 +314,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
             //This does not mean params is an edge but rather a Connection
 
             const edge: IEdge = {
-                source_id: params.source,
-                target_id: params.target,
+                source_id: parseInt(params.source),
+                target_id: parseInt(params.target),
                 project_id: selectedProject.id,
             };
 

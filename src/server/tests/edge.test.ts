@@ -1,9 +1,9 @@
 import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
 import { db } from '../dbConfigs';
-import { IEdge, IProject } from '../../../types';
+import { IEdge } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
-import { addDummyNodes } from './testHelper';
+import { addDummyNodes, addDummyProject } from './testHelper';
 
 const baseUrl = '/api/edge';
 
@@ -12,29 +12,13 @@ const api = supertest(app);
 //This holds the possible dummy node's ID's
 
 //Helper functions for the tests
-let pId = 0;
-
-const addDummyProject = async () => {
-    const p: IProject = {
-        name: 'Test-1',
-        description: 'First-project',
-        owner_id: 'temp',
-        id: 0,
-    };
-
-    pId = (
-        await db.query(
-            'INSERT INTO project (name, owner_id, description) VALUES ($1, $2, $3) RETURNING id',
-            [p.name, p.owner_id, p.description]
-        )
-    ).rows[0].id;
-};
+let pId: number;
 
 //Helper functions end here
 
 beforeEach(async () => {
     await db.query('TRUNCATE project, node, edge CASCADE;', []);
-    await addDummyProject();
+    pId = await addDummyProject(db);
 });
 
 describe('GET request', () => {
@@ -53,8 +37,8 @@ describe('GET request', () => {
         const res = await api.get(`${baseUrl}/${pId}`).expect(200);
         expect(res.body).toHaveLength(1);
         const e: IEdge = res.body[0];
-        expect(e.source_id).toBe(parseInt(ids[0]));
-        expect(e.target_id).toBe(parseInt(ids[1]));
+        expect(e.source_id).toBe(ids[0]);
+        expect(e.target_id).toBe(ids[1]);
         expect(e.project_id).toBe(pId);
     });
 });
@@ -84,8 +68,8 @@ describe('POST request', () => {
 
         const res = await api.get(`${baseUrl}/${pId}`).expect(200);
         expect(res.body).toHaveLength(1);
-        expect(res.body[0].source_id).toBe(parseInt(ids[0]));
-        expect(res.body[0].target_id).toBe(parseInt(ids[1]));
+        expect(res.body[0].source_id).toBe(ids[0]);
+        expect(res.body[0].target_id).toBe(ids[1]);
         expect(res.body[0].project_id).toBe(pId);
     });
 
@@ -122,8 +106,8 @@ describe('POST request', () => {
 
         const res = await api.get(`${baseUrl}/${pId}`).expect(200);
         expect(res.body).toHaveLength(1);
-        expect(res.body[0].source_id).toBe(parseInt(ids[1]));
-        expect(res.body[0].target_id).toBe(parseInt(ids[0]));
+        expect(res.body[0].source_id).toBe(ids[1]);
+        expect(res.body[0].target_id).toBe(ids[0]);
     });
 });
 
@@ -155,8 +139,8 @@ describe('DELETE request', () => {
 
     test('should not crash the app if the edge to be deleted does not exist', async () => {
         const e: IEdge = {
-            source_id: '-1',
-            target_id: '-1',
+            source_id: 0,
+            target_id: 0,
             project_id: pId,
         };
         await api
