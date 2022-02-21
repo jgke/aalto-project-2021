@@ -107,6 +107,7 @@ const baseElements1: Elements = [
         target: '6',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '1', target_id: '6' },
     },
     {
         id: '5-4',
@@ -114,6 +115,7 @@ const baseElements1: Elements = [
         target: '4',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '5', target_id: '4' },
     },
     {
         id: '4-6',
@@ -121,6 +123,7 @@ const baseElements1: Elements = [
         target: '6',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '4', target_id: '6' },
     },
     {
         id: '6-8',
@@ -128,6 +131,7 @@ const baseElements1: Elements = [
         target: '8',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '6', target_id: '8' },
     },
     {
         id: '6-7',
@@ -135,6 +139,7 @@ const baseElements1: Elements = [
         target: '7',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '6', target_id: '7' },
     },
     {
         id: '1-3',
@@ -142,6 +147,7 @@ const baseElements1: Elements = [
         target: '3',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '1', target_id: '3' },
     },
     {
         id: '5-7',
@@ -149,6 +155,7 @@ const baseElements1: Elements = [
         target: '7',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '5', target_id: '7' },
     },
     {
         id: '7-2',
@@ -156,6 +163,7 @@ const baseElements1: Elements = [
         target: '2',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '7', target_id: '2' },
     },
 ];
 
@@ -278,6 +286,7 @@ const dagreLayoutedElements1: Elements = [
         target: '6',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '1', target_id: '6' },
     },
     {
         id: '5-4',
@@ -285,6 +294,7 @@ const dagreLayoutedElements1: Elements = [
         target: '4',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '5', target_id: '4' },
     },
     {
         id: '4-6',
@@ -292,6 +302,7 @@ const dagreLayoutedElements1: Elements = [
         target: '6',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '4', target_id: '6' },
     },
     {
         id: '6-8',
@@ -299,6 +310,7 @@ const dagreLayoutedElements1: Elements = [
         target: '8',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '6', target_id: '8' },
     },
     {
         id: '6-7',
@@ -306,6 +318,7 @@ const dagreLayoutedElements1: Elements = [
         target: '7',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '6', target_id: '7' },
     },
     {
         id: '1-3',
@@ -313,6 +326,7 @@ const dagreLayoutedElements1: Elements = [
         target: '3',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '1', target_id: '3' },
     },
     {
         id: '5-7',
@@ -320,6 +334,7 @@ const dagreLayoutedElements1: Elements = [
         target: '7',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '5', target_id: '7' },
     },
     {
         id: '7-2',
@@ -327,6 +342,7 @@ const dagreLayoutedElements1: Elements = [
         target: '2',
         type: 'straight',
         arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: { source_id: '7', target_id: '2' },
     },
 ];
 
