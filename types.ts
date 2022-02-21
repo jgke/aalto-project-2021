@@ -63,4 +63,5 @@ export interface RootState {
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
     layoutWithDagre: (direction: string) => Promise<void>;
+    forceDirected: () => Promise<void>;
 }

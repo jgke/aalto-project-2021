@@ -28,6 +28,7 @@ import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 
 const graphStyle = {
     height: '100%',
@@ -363,16 +364,18 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     //calls nodeService.updateNode for all nodes
-    const updateNodes = async (): Promise<void> => {
-        for (const el of elements) {
+    const updateNodes = async (els: Elements): Promise<void> => {
+        for (const el of els) {
             if (isNode(el)) {
                 const node: INode = el.data;
 
                 if (node) {
-                    node.x = Math.round(el.position.x);
-                    node.y = Math.round(el.position.y);
+                    node.x = el.position.x;
+                    node.y = el.position.y;
 
                     await nodeService.updateNode(node);
+                } else {
+                    toast('❌ What is going on?');
                 }
             }
         }
@@ -380,10 +383,21 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
-        setElements(layoutService.dagreLayout(elements, direction));
+        const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes();
+        await updateNodes(newElements);
+
+        setElements(newElements);
+    };
+
+    //does force direced iterations, without scrambling the nodes
+    const forceDirected = async () => {
+        const newElements = layoutService.forceDirectedLayout(elements, 5);
+
+        await updateNodes(newElements);
+
+        setElements(newElements);
     };
 
     if (!selectedProject) {
@@ -391,7 +405,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }
 
     return (
-        <div className="graph" style={{ height: '100%' }}>
+        <div style={{ height: '100%' }}>
             <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
@@ -437,6 +451,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
+                forceDirected={forceDirected}
             />
         </div>
     );
