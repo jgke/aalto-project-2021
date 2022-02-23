@@ -63,25 +63,19 @@ export class Database {
                 console.log('running migrations');
             }
             migrate({ client }, './migrations')
-                .catch(async (e: Error) => {
-                    console.log('migration failed, dropping all tables', e);
-                    //migration failed, probably because of existing data
-                    //therefore, during development, drop all tables and try again
-                    await client.query(
-                        `DROP SCHEMA public CASCADE;
-                        CREATE SCHEMA public;
-                        GRANT ALL ON SCHEMA public TO postgres;
-                        GRANT ALL ON SCHEMA public TO public;
-                        COMMENT ON SCHEMA public IS 'standard public schema';`
-                    );
-
-                    console.log('rerunning migrations');
-                    return migrate({ client }, './migrations');
-                })
                 .then(() => {
+                    if (process.env.NODE_ENV !== 'test') {
+                        console.log('migrations done');
+                    }
+                })
+                .catch(async (e: Error) => {
+                    console.error('Migrations failed, shutting down.\n', e);
+
+                    process.kill(process.pid, 'SIGTERM');
+                })
+                .finally(() => {
                     resolve();
                     this._waiting = null;
-                    console.log('migrations done');
                 });
         });
     }
