@@ -17,19 +17,19 @@ const dummyProjects: IProject[] = [
         id: 1,
         name: 'Name',
         description: 'g242h4h2',
-        owner_id: '1',
+        owner_id: 1,
     },
     {
         id: 2,
         name: 'Name2',
         description: '45j465jk4j5',
-        owner_id: '1',
+        owner_id: 1,
     },
     {
         id: 3,
         name: 'Name3',
         description: '341qWFVAV',
-        owner_id: '2',
+        owner_id: 2,
     },
 ];
 

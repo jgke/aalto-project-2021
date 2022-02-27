@@ -11,6 +11,7 @@ import { Elements } from 'react-flow-renderer';
 import { store } from '../../store';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { IProject } from '../../../../../types';
 
 describe('<Graph>', () => {
     beforeAll(() => {
@@ -82,11 +83,11 @@ describe('<Graph>', () => {
     let testGraph: RenderResult;
 
     const renderGraph = (elements: Elements) => {
-        const selectedProject = {
+        const selectedProject: IProject = {
             id: 1,
-            owner_id: '1',
+            owner_id: 1,
             name: 'project',
-            description: 'decp',
+            description: 'desc',
         };
 
         return render(

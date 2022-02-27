@@ -14,14 +14,14 @@ export interface INode {
 }
 
 export interface IEdge {
-    source_id: string;
-    target_id: string;
+    source_id: number;
+    target_id: number;
     project_id: number;
 }
 
 export interface IProject {
     id: number;
-    owner_id: string;
+    owner_id: number;
     name: string;
     description: string;
 }
@@ -46,14 +46,14 @@ export interface UserToken {
     username: string;
     email: string;
     token: string;
-    id: string;
+    id: number;
 }
 
 export interface User {
     username: string;
     password: string;
     email: string;
-    id: string;
+    id: number;
 }
 
 export interface RootState {
@@ -63,6 +63,10 @@ export interface RootState {
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
     layoutWithDagre: (direction: string) => Promise<void>;
+<<<<<<< HEAD
     setNodeHidden: (value: React.SetStateAction<boolean>) => void;
     nodeHidden: boolean;
+=======
+    forceDirected: () => Promise<void>;
+>>>>>>> 2a352a9026ea8621a1c26f7c2db5d10e0f26a096
 }
