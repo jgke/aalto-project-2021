@@ -71,7 +71,7 @@ export class Database {
                 .catch(async (e: Error) => {
                     console.error('Migrations failed, shutting down.\n', e);
 
-                    process.kill(process.pid, 'SIGTERM');
+                    process.exit(1);
                 })
                 .finally(() => {
                     resolve();

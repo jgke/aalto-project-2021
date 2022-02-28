@@ -30,12 +30,6 @@ app.get('/*', (req: Request, res: Response) => {
 // START THE SERVER
 // =============================================================================
 if (process.env.NODE_ENV !== 'test') {
-    const server = app.listen(port);
+    app.listen(port);
     console.log(`App listening on ${port}`);
-
-    process.on('SIGTERM', () => {
-        server.close(() => {
-            console.log('Process terminated');
-        });
-    });
 }
