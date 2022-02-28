@@ -28,11 +28,8 @@ import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
-<<<<<<< HEAD
 import { Tag } from './Tag';
-=======
 import toast from 'react-hot-toast';
->>>>>>> origin/main
 
 const graphStyle = {
     height: '100%',
