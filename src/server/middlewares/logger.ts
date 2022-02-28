@@ -12,13 +12,15 @@ export const logger = (
     }
 
     const date: Date = new Date();
-    console.table([
-        {
-            date: `${date.toLocaleDateString()} - ${date.toLocaleTimeString()}`,
-            method: req.method,
-            url: `${req.baseUrl}${req.url}`,
-            body: body,
-        },
-    ]);
+    if (process.env.NODE_ENV !== 'test') {
+        console.table([
+            {
+                date: `${date.toLocaleDateString()} - ${date.toLocaleTimeString()}`,
+                method: req.method,
+                url: `${req.baseUrl}${req.url}`,
+                body: body,
+            },
+        ]);
+    }
     next();
 };

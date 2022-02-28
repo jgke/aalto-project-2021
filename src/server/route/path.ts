@@ -39,8 +39,6 @@ function path(url: string): IPathRoute {
         return allRoutes['/node/:id'];
     } else if (url.includes('/project/')) {
         return allRoutes['/project/:id'];
-    } else {
-        console.log('Not it fam. It was', url);
     }
     if (!(url in allRoutes)) {
         console.log(`The path '${url}' was requested but not included in the list of allRoutes`);

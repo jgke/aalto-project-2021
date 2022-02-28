@@ -26,7 +26,6 @@ router.route('/edge/:id').get(async (req: Request, res: Response) => {
 router
     .route('/edge')
     .post(async (req: Request, res: Response) => {
-        console.log('Receiving edge...', req.body);
         const text: IEdge = req.body; //Might have to parse this
 
         try {

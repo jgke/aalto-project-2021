@@ -42,10 +42,14 @@ Cypress.Commands.add('registerLogin', () => {
 
 Cypress.Commands.add('deleteAllProjects', () => {
     cy.get('#home-link').click()
-    cy.get('.project-card').each(($el, index, $list) => {
-        cy.wrap($el).find('.dropdown button').click('center', { force: true })
-        cy.wrap($el).find('a').contains('Delete').click('center', { force: true })
-    })
+    cy.get("body").then($body => {
+        if ($body.find(".project-card").length > 0) {   
+            cy.get('.project-card').each(($el, index, $list) => {
+                cy.wrap($el).find('.dropdown button').click('center', { force: true })
+                cy.wrap($el).find('a').contains('Delete').click('center', { force: true })
+            })
+        }
+    });
 })
 
 // cypress is able to click the nodes even if they're outside the bounds as long as they are not covered by another node
