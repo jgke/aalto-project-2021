@@ -16,9 +16,9 @@ export const checkMethod = (
             status: 405,
             message: 'Method not allowed, YET!',
         };
-        //if (route !== undefined) {
+        if (route !== undefined) {
             res.setHeader('allow', route.methods);
-       // }
+        }
         res.status(405).json(error);
     }
 };
