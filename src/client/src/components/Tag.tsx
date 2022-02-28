@@ -74,6 +74,14 @@ export const Tag = (props: TagProps): JSX.Element => {
         }
     }
 
+    const clickTag = async (id: number): Promise<void> => {
+        try {
+            await onTagRemove(id);
+        } catch (e) {
+            console.log('Error in tagService.clickTag', e);
+        }
+    }
+
     const init = async() => {
         refreshTagList();
 
@@ -91,6 +99,7 @@ export const Tag = (props: TagProps): JSX.Element => {
                     autoFocus
                     style={{ width: '100%' }}
                     type="text"
+                    placeholder="Tag Name"
                     value={tagLabel}
                     onChange={(e) => {
                         settagLabel(e.target.value);
@@ -99,9 +108,18 @@ export const Tag = (props: TagProps): JSX.Element => {
             </form>
             <div className="tag-taglist">
                 {props.tags.map((tag) => (
-                    <p key={tag.id}>{tag.label}</p>
+                    <button
+                        className="tag-disptag"
+                        key={tag.id}
+                        onClick={async () => {
+                            await clickTag(tag.id);
+                        }}
+                    >
+                        {tag.label}
+                    </button>
                 ))}
             </div>
+            
         </div>
     );
 };
