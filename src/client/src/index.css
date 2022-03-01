@@ -71,7 +71,7 @@ code {
     top: 128px;
 }
 
-#button-toolbar {
+.button-toolbar {
     display: flex;
     padding: 0.55em 1.7em;
     border: 0.2em solid #21007a;

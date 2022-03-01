@@ -44,7 +44,7 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
             >
                 Create
             </button>
-            <button id="button-toolbar" onClick={reverseConnectState}>
+            <button id="connectBtn" className="button-toolbar" onClick={reverseConnectState}>
                 {connectText}
             </button>
             <button
