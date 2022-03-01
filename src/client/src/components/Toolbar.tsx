@@ -5,6 +5,7 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
     const createNode = props.createNode;
     const layoutWithDagre = props.layoutWithDagre;
+    const forceDirected = props.forceDirected;
 
     /**
      * Calls createNode from App.tsx and clears state
@@ -25,22 +26,32 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 onChange={({ target }) => setNodeText(target.value)}
             />
             <button
-                id="button-toolbar"
+                id="createBtn"
+                className="button-toolbar"
                 onClick={() => sendCreateNode(nodeText)}
             >
                 Create
             </button>
             <button
+                className="button-layout"
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}
             >
                 Vertical Layout
             </button>
             <button
+                className="button-layout"
                 id="dagreLR"
                 onClick={async () => await layoutWithDagre('LR')}
             >
                 Horizontal Layout
+            </button>
+            <button
+                className="button-layout"
+                id="forceDirected"
+                onClick={async () => await forceDirected()}
+            >
+                Force-directed
             </button>
         </div>
     );

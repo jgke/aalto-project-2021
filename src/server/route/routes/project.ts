@@ -12,6 +12,7 @@ router.route('/project/:id').delete(async (req: Request, res: Response) => {
     }
     const id = req.params.id;
     const ownerId = req.user.id;
+
     const q = await db.query(
         'DELETE FROM project WHERE id = $1 AND owner_id = $2',
         [id, ownerId]
@@ -51,7 +52,7 @@ router
         const project: IProject = req.body;
 
         const ownerId = req.user.id;
-        if (parseInt(project.owner_id) !== ownerId) {
+        if (project.owner_id !== ownerId) {
             return res.status(401).json({ error: 'invalid owner id' });
         }
 
@@ -76,7 +77,7 @@ router
         const p: IProject = req.body;
 
         const ownerId = req.user.id;
-        if (parseInt(p.owner_id) !== ownerId) {
+        if (p.owner_id !== ownerId) {
             return res.status(401).json({ error: 'invalid owner id' });
         }
 

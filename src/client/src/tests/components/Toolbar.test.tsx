@@ -13,8 +13,13 @@ describe('Toolbar', () => {
     beforeEach(() => {
         mockCreate.mockRestore();
         component = render(
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            <Toolbar createNode={mockCreate} layoutWithDagre={async () => {}} />
+            <Toolbar
+                createNode={mockCreate}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                layoutWithDagre={async () => {}}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                forceDirected={async () => {}}
+            />
         );
     });
 

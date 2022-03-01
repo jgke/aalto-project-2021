@@ -59,6 +59,8 @@ describe('Projects', () => {
     });
 
     beforeAll(async () => {
+        await db.initDatabase();
+
         const registration: Registration = {
             username: user.username,
             password: user.password,
@@ -70,7 +72,7 @@ describe('Projects', () => {
         const res = await api
             .post('/api/user/login')
             .send({ email: user.email, password: user.password });
-        user.id = String(res.body.id);
+        user.id = res.body.id;
         token = res.body.token;
     });
 
@@ -122,6 +124,7 @@ describe('Projects', () => {
             const project = res.body[0];
             expect(project.name).toBe('Test-1');
             expect(project.description).toBe('First-project');
+            console.log(project, user);
             expect(project.owner_id).toBe(user.id);
         });
 
@@ -187,8 +190,8 @@ describe('Projects', () => {
             const p: IProject = {
                 name: 'Not-exiting',
                 description: 'Not-existing-project',
-                owner_id: 'ghost',
-                id: -1,
+                owner_id: 0,
+                id: 0,
             };
             await api
                 .delete(`${baseUrl}/${p.id}`)
