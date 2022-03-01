@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, describe } from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
 import { db } from '../dbConfigs';
 import supertest from 'supertest';
 import { app } from '../index';
@@ -30,6 +30,10 @@ const addDummyUsers = async () => {
 
     await api.post(`${baseUrl}/register`).send(user);
 };
+
+beforeAll(async () => {
+    await db.initDatabase();
+});
 
 beforeEach(async () => {
     await db.query('TRUNCATE users', []);
