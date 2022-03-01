@@ -8,7 +8,7 @@ export const addDummyProject = async (
     const p: IProject = project || {
         name: 'Test-1',
         description: 'First-project',
-        owner_id: 'temp',
+        owner_id: 0,
         id: 0,
     };
 
@@ -24,7 +24,7 @@ export const addDummyNodes = async (
     db: Database,
     projectId: number,
     nodes?: INode[]
-): Promise<string[]> => {
+): Promise<number[]> => {
     const n = nodes || [
         {
             label: 'First-node',
@@ -44,7 +44,7 @@ export const addDummyNodes = async (
         },
     ];
 
-    const ids: string[] = [];
+    const ids: number[] = [];
     for (const node of n) {
         const res = await db.query(
             'INSERT INTO node (label, priority, status, x, y, project_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id;',
@@ -57,7 +57,7 @@ export const addDummyNodes = async (
                 node.project_id,
             ]
         );
-        ids.push(String(res.rows[0].id));
+        ids.push(res.rows[0].id);
     }
 
     return ids;

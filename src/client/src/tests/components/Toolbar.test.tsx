@@ -19,6 +19,8 @@ describe('Toolbar', () => {
                 createNode={mockCreate}
                 layoutWithDagre={mockLayout}
                 reverseConnectState={mockReverseConnectState}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                forceDirected={async () => {}}
             />
         );
     });
