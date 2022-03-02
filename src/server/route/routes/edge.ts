@@ -30,6 +30,13 @@ router
         const source = newEdge.source_id;
         const target = newEdge.target_id;
 
+        if (source === target) {
+            res.status(400)
+                .json({ message: 'Source and target were the same' })
+                .end();
+            return;
+        }
+
         const oldEdge = await db.query(
             'SELECT * FROM edge WHERE (source_id=$1 AND target_id=$2) OR (source_id=$2 AND target_id=$1)',
             [source, target]

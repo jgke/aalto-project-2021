@@ -227,7 +227,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             });
 
             position = { x: Math.floor(position.x), y: Math.floor(position.y) };
-            console.log(position);
 
             const tempExists =
                 elements.findIndex((el) => el.id === 'TEMP') >= 0;
@@ -310,6 +309,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }, [handleMousePress]);
 
     const onConnect = (params: Edge<IEdge> | Connection) => {
+        if (params.source === params.target) {
+            return;
+        }
         if (params.source && params.target && selectedProject) {
             //This does not mean params is an edge but rather a Connection
 

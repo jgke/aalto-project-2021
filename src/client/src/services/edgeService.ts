@@ -15,7 +15,6 @@ const sendEdge = async (edge: IEdge): Promise<boolean> => {
     return (await axiosWrapper(axios.post(baseUrl, edge))) !== undefined;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const deleteEdge = async (edge: Edge<IEdge>): Promise<void> => {
     await axiosWrapper(
         axios.delete(`${baseUrl}/${edge.source}/${edge.target}`)
