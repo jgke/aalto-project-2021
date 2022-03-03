@@ -81,7 +81,7 @@ code {
     color: #EEEFFF;
     background-color: #442072;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.1s;
     align-self: center;
     font-weight: bolder;
 }
