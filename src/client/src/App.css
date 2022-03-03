@@ -92,11 +92,3 @@
     align-items: center;
     justify-content: center;
 }
-
-.topbar {
-    display: flex;
-}
-
-.topbar > * {
-    margin: 2px 4px;
-}

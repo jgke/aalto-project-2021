@@ -70,34 +70,36 @@ code {
 .button-toolbar {
     display: flex;
     padding: 0.55em 1.7em;
-    border: 0.2em solid #21007a;
+    border: 0.2em solid #310062;
     margin: 0.1em 0.3em 0.1em;
     border-radius: 0.12em;
     box-sizing: border-box;
+    width: 50%;
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     color: #EEEFFF;
     background-color: #442072;
-    text-align: center;
+    justify-content: center;
     transition: all 0.2s;
     align-self: center;
     font-weight: bolder;
 }
 
 .button-toolbar:hover {
-    background-color: #00164F;
+    background-color: #310062;
+    border-color: #140027;
     color: #EEEFFF;
 }
 
 .button-layout {
     display: flex;
-    padding: 0.2em 0.4em;
+    padding: 0.2em;
     border: 0.2em solid #21007a;
     margin: 0.1em 0.3em 0.1em;
     border-radius: 0.12em;
     box-sizing: border-box;
-    width: 80%;
+    width: 70%;
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
@@ -116,6 +118,14 @@ code {
 
 .button-layout#dagreTB {
     margin-top: 30px;
+}
+
+.topbar {
+    display: flex;
+}
+
+.topbar > * {
+    margin: 2px 4px;
 }
 
 .react-flow__handle-bottom {
