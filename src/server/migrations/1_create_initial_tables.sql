@@ -1,13 +1,13 @@
 --sql commands here
 
+CREATE EXTENSION IF NOT EXISTS citext;
+
 CREATE TABLE project (
   id SERIAL PRIMARY KEY,
-  owner_id TEXT NOT NULL,  
+  owner_id INTEGER,  
   name TEXT NOT NULL,
   description TEXT
 );
-
-CREATE EXTENSION IF NOT EXISTS citext;
 
 CREATE TABLE node (
   id SERIAL PRIMARY KEY,

@@ -68,6 +68,7 @@ export const App: FC = () => {
                             cursor: 'pointer',
                             border: '1px solid black',
                             borderRadius: '10px',
+                            color: 'black',
                         }}
                         onClick={() => toast.dismiss(t.id)}
                     >

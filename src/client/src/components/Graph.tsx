@@ -26,6 +26,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
 import { Toolbar } from './Toolbar';
+import toast from 'react-hot-toast';
 
 const graphStyle = {
     height: '100%',
@@ -241,13 +242,13 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await nodeService.deleteNode(e.id);
+                    await nodeService.deleteNode(parseInt(e.id));
                 } catch (e) {
                     console.log('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
                 await edgeService
-                    .deleteEdge(e.source, e.target)
+                    .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
                     );
@@ -272,8 +273,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
             //This does not mean params is an edge but rather a Connection
 
             const edge: IEdge = {
-                source_id: params.source,
-                target_id: params.target,
+                source_id: parseInt(params.source),
+                target_id: parseInt(params.target),
                 project_id: selectedProject.id,
             };
 
@@ -322,16 +323,18 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     //calls nodeService.updateNode for all nodes
-    const updateNodes = async (): Promise<void> => {
-        for (const el of elements) {
+    const updateNodes = async (els: Elements): Promise<void> => {
+        for (const el of els) {
             if (isNode(el)) {
                 const node: INode = el.data;
 
                 if (node) {
-                    node.x = Math.round(el.position.x);
-                    node.y = Math.round(el.position.y);
+                    node.x = el.position.x;
+                    node.y = el.position.y;
 
                     await nodeService.updateNode(node);
+                } else {
+                    toast('❌ What is going on?');
                 }
             }
         }
@@ -339,10 +342,21 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
-        setElements(layoutService.dagreLayout(elements, direction));
+        const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes();
+        await updateNodes(newElements);
+
+        setElements(newElements);
+    };
+
+    //does force direced iterations, without scrambling the nodes
+    const forceDirected = async () => {
+        const newElements = layoutService.forceDirectedLayout(elements, 5);
+
+        await updateNodes(newElements);
+
+        setElements(newElements);
     };
 
     if (!selectedProject) {
@@ -350,12 +364,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }
 
     return (
-        <div className="graph" style={{ height: '100%' }}>
-            <h2
-                style={{ position: 'absolute', color: 'white', margin: '1rem' }}
-            >
-                Tasks
-            </h2>
+        <div style={{ height: '100%' }}>
+            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
                     className="flow-wrapper"
@@ -401,6 +411,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
+                forceDirected={forceDirected}
             />
         </div>
     );
