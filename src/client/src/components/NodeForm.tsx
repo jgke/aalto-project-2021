@@ -33,7 +33,7 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                 status,
                 priority,
             };
-    
+
             props.setElements((els) =>
                 els.map((el) => {
                     if (el.id === String(node.id) && isNode(el)) {
@@ -44,7 +44,7 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                     return el;
                 })
             );
-    
+
             await nodeService.updateNode(node);
         }
 

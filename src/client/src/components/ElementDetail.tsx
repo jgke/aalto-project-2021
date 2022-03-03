@@ -51,7 +51,10 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
             await nodeService.deleteNode(parseInt(data.id));
         } else if (props.type === 'Edge') {
             const data = props.element as Edge<IEdge>;
-            await edgeService.deleteEdge(parseInt(data.source), parseInt(data.target));
+            await edgeService.deleteEdge(
+                parseInt(data.source),
+                parseInt(data.target)
+            );
         }
 
         props.setElements((els) => removeElements([el, ...removeEdges], els));
