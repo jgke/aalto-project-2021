@@ -64,6 +64,7 @@ code {
     position: absolute;
     z-index: 5;
     right: 0;
+    top: 30%;
 }
 
 .button-toolbar {
@@ -76,17 +77,17 @@ code {
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    color: #ffffff;
-    background-color: #6600cc;
+    color: #EEEFFF;
+    background-color: #442072;
     text-align: center;
     transition: all 0.2s;
     align-self: center;
+    font-weight: bolder;
 }
 
 .button-toolbar:hover {
-    background-color: #442072;
-    border-color: #dcd9fd;
-    color: #ffffff;
+    background-color: #00164F;
+    color: #EEEFFF;
 }
 
 .button-layout {
@@ -100,8 +101,8 @@ code {
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    color: #ffffff;
-    background-color: #3c0077;
+    color: #EEEFFF;
+    background-color: #290066;
     text-align: center;
     justify-content: center;
     transition: all 0.2s;
@@ -109,8 +110,8 @@ code {
 }
 
 .button-layout:hover {
-    background-color: #2d0061;
-    color: #ffffff;
+    background-color: #00164F;
+    color: #EEEFFF;
 }
 
 .button-layout#dagreTB {
