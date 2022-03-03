@@ -63,10 +63,7 @@ export interface RootState {
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
     layoutWithDagre: (direction: string) => Promise<void>;
-<<<<<<< HEAD
     setNodeHidden: (value: React.SetStateAction<boolean>) => void;
     nodeHidden: boolean;
-=======
     forceDirected: () => Promise<void>;
->>>>>>> 2a352a9026ea8621a1c26f7c2db5d10e0f26a096
 }

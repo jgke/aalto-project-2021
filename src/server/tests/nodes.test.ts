@@ -1,4 +1,11 @@
-import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
+import {
+    beforeEach,
+    expect,
+    test,
+    afterAll,
+    describe,
+    beforeAll,
+} from '@jest/globals';
 import { db } from '../dbConfigs';
 import { INode } from '../../../types';
 import supertest from 'supertest';
@@ -8,6 +15,10 @@ import { addDummyNodes, addDummyProject } from './testHelper';
 const api = supertest(app);
 
 let pId: number;
+
+beforeAll(async () => {
+    await db.initDatabase();
+});
 
 beforeEach(async () => {
     // DATABASE RESET

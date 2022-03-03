@@ -98,12 +98,7 @@ export const forceDirectedLayout = (
 
     for (const el of elements) {
         if (isNode(el)) nodes.push(el.data);
-        else if (isEdge(el))
-            edges.push({
-                source_id: el.source,
-                target_id: el.target,
-                project_id: 0,
-            });
+        else if (isEdge(el)) edges.push(el.data);
     }
 
     const layoutedNodes = forceDirected(nodes, edges, iterations);
@@ -143,7 +138,7 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
 
     const positions = Array<coords>(N);
     const forces = Array<coords>(N); //not really forces but w/e
-    const id2idx = new Map<string, number>(); // node id -> index
+    const id2idx = new Map<number, number>(); // node id -> index
 
     //record node positions and calculate bounds
     for (let i = 0; i < N; i++) {
@@ -151,7 +146,7 @@ const forceDirected = (nodes: INode[], edges: IEdge[], iterations: number) => {
 
         if (node.id) {
             positions[i] = { x: node.x, y: node.y };
-            id2idx.set(String(node.id), i);
+            id2idx.set(node.id, i);
         }
 
         if (node.x < x_min) x_min = node.x;

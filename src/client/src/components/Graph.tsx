@@ -474,12 +474,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
             <Toolbar
                 createNode={createNode}
                 layoutWithDagre={layoutWithDagre}
-<<<<<<< HEAD
                 setNodeHidden={setNodeHidden}
                 nodeHidden={nodeHidden}
-=======
                 forceDirected={forceDirected}
->>>>>>> 2a352a9026ea8621a1c26f7c2db5d10e0f26a096
             />
         </div>
     );
