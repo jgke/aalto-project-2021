@@ -120,6 +120,19 @@ describe('POST request', () => {
         expect(res.body[0].source_id).toBe(ids[1]);
         expect(res.body[0].target_id).toBe(ids[0]);
     });
+
+    test('should not allow an target and source nodes to be the same', async () => {
+        const ids = await addDummyNodes(db, pId);
+
+        const e1: IEdge = {
+            source_id: ids[0],
+            target_id: ids[0],
+            project_id: pId,
+        };
+
+        const res = await api.post(baseUrl).send(e1).expect(400);
+        expect(res.body.message).toBe('Source and target were the same');
+    });
 });
 
 describe('DELETE request', () => {
