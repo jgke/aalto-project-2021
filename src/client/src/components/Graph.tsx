@@ -29,6 +29,8 @@ import { Toolbar } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
+import { Button } from 'react-bootstrap';
+import { InviteModal } from './InviteModal';
 
 const graphStyle = {
     height: '100%',
@@ -61,6 +63,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [elements, setElements] = useState<Elements>([]);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
+    const [show, setShow] = useState(false);
+    
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -453,6 +457,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 layoutWithDagre={layoutWithDagre}
                 forceDirected={forceDirected}
             />
+            <>
+                <Button onClick={() => setShow(true)}>
+                    Invite
+                </Button>
+                <InviteModal projectId={selectedProject.id} show={show} handleClose={() => setShow(false)}/>
+            </>
         </div>
     );
 };

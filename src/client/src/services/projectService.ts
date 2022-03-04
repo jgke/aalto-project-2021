@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IProject } from '../../../../types';
+import { IProject, ProjectInvite } from '../../../../types';
 import { axiosWrapper } from './axiosWrapper';
 import { getAuthHeader } from './userService';
 export const baseUrl = '/api/project';
@@ -30,4 +30,9 @@ const updateProject = async (project: IProject): Promise<void> => {
     return await axiosWrapper(axios.put(baseUrl, project, getConfig()));
 };
 
-export { getAll, sendProject, deleteProject, updateProject };
+const inviteUsers = async (projectId: number, invited: string[]): Promise<void> => {
+    const request: ProjectInvite = { projectId, invited }
+    return await axiosWrapper(axios.post(`${baseUrl}/members`, request, getConfig()));
+}
+
+export { getAll, sendProject, deleteProject, updateProject, inviteUsers };

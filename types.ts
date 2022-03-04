@@ -60,6 +60,11 @@ export interface RootState {
     project: IProject[];
 }
 
+export interface ProjectInvite {
+    invited: string[];
+    projectId: number;
+}
+
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
     layoutWithDagre: (direction: string) => Promise<void>;
