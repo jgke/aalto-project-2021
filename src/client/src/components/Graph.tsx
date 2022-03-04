@@ -469,7 +469,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     return (
         <div style={{ height: '100%' }}>
-            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
                     className="flow-wrapper"

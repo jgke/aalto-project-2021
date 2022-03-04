@@ -112,7 +112,7 @@ code {
 }
 
 .button-layout:hover {
-    background-color: #00164F;
+    background: none;
     color: #EEEFFF;
 }
 
@@ -121,11 +121,42 @@ code {
 }
 
 .topbar {
-    display: flex;
+    flex-flow: column wrap;
+    position: absolute;
+    width: 100%;
+    background-color: #44207249;
 }
 
 .topbar > * {
-    margin: 2px 4px;
+    margin: 4px 6px;
+    padding: 0.2em;
+    z-index: 5;
+}
+
+.link-topbar {
+    display: inline-flex;
+    position: relative;
+    background-color: #686559;
+    color: #EEEFFF;
+    padding: 0.2em 0.4em;
+    border: 2px solid #34332D;
+    border-radius: 0.12em;
+    text-decoration: none;
+    font-weight: bolder;
+    float: inline-start;
+}
+
+.link-topbar:hover {
+    background-color: #49473f;
+    border-color: rgb(36, 35, 31);
+    color: #EEEFFF;
+}
+
+#whoamiText {
+    float: inline-end;
+}
+#logout-link {
+    float: inline-end;
 }
 
 .react-flow__handle-bottom {
