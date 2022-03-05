@@ -34,13 +34,5 @@ CREATE TABLE users (
   UNIQUE (email)
 );
 
-CREATE TABLE userBelongProject (
-  users_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  project_id INTEGER REFERENCES project(id) ON DELETE CASCADE
-);
-
 ALTER TABLE edge
 ADD CONSTRAINT PK_edge PRIMARY KEY (source_id, target_id);
-
-ALTER TABLE userBelongProject
-ADD CONSTRAINT PK_userBelongProject PRIMARY KEY (users_id, project_id);
