@@ -98,6 +98,7 @@ describe('<Graph>', () => {
                         selectedProject={selectedProject}
                         setElements={jest.fn()}
                         onElementClick={jest.fn()}
+                        DefaultNodeType={'default'}
                     />
                 </Provider>
             </BrowserRouter>
