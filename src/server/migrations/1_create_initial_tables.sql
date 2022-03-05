@@ -20,8 +20,8 @@ CREATE TABLE node (
 );
 
 CREATE TABLE edge (
-  source_id INTEGER REFERENCES node(id) ON DELETE CASCADE,
-  target_id INTEGER REFERENCES node(id) ON DELETE CASCADE,
+  source_id INTEGER REFERENCES node(id),
+  target_id INTEGER REFERENCES node(id),
   project_id INTEGER NOT NULL REFERENCES project(id) ON DELETE CASCADE
 );
 

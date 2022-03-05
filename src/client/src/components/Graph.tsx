@@ -26,13 +26,7 @@ import ReactFlow, {
     ConnectionLineType,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
-<<<<<<< HEAD
-import { Toolbar } from './Toolbar';
-=======
 import { Toolbar, ToolbarHandle } from './Toolbar';
-import { useParams } from 'react-router';
-import { useSelector } from 'react-redux';
->>>>>>> main
 import toast from 'react-hot-toast';
 
 const graphStyle = {
@@ -47,6 +41,7 @@ const graphStyle = {
 export interface GraphProps {
     selectedProject: IProject;
     elements: Elements;
+    DefaultNodeType: string;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
@@ -98,57 +93,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
     const reverseConnectState = () => switchConnectState(!connectState);
 
-    const DefaultNodeType = 'default';
-
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
         setReactFlowInstance(_reactFlowInstance);
     };
 
     /**
-<<<<<<< HEAD
-=======
-     * Fetches the elements from a database
-     */
-    useEffect(() => {
-        if (props.elements) {
-            setElements(props.elements);
-        } else if (selectedProject) {
-            const getElementsHook = async () => {
-                let nodes: INode[];
-                let edges: IEdge[];
-                try {
-                    [nodes, edges] = await Promise.all([
-                        nodeService.getAll(selectedProject.id),
-                        edgeService.getAll(selectedProject.id),
-                    ]);
-                } catch (e) {
-                    return;
-                }
-
-                const nodeElements: Elements = nodes.map((n) => ({
-                    id: String(n.id),
-                    type: DefaultNodeType,
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                }));
-                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                const edgeElements: Elements = edges.map((e) => ({
-                    id: String(e.source_id) + '-' + String(e.target_id),
-                    source: String(e.source_id),
-                    target: String(e.target_id),
-                    type: 'straight',
-                    arrowHeadType: ArrowHeadType.ArrowClosed,
-                    data: e,
-                }));
-                setElements(nodeElements.concat(edgeElements));
-            };
-            getElementsHook();
-        }
-    }, [selectedProject]);
-
-    /**
->>>>>>> main
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
     const createNode = async (nodeText: string): Promise<void> => {
@@ -249,7 +199,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                                     ...{
                                         id: String(returnId),
                                         data: n,
-                                        type: DefaultNodeType,
+                                        type: props.DefaultNodeType,
                                         position: { x: pos.x, y: pos.y },
                                         draggable: true,
                                     },
@@ -278,7 +228,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             const b: Node = {
                 id: 'TEMP',
                 data: {},
-                type: DefaultNodeType,
+                type: props.DefaultNodeType,
                 position,
                 draggable: false,
             };
@@ -531,11 +481,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onLoad={onLoad}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
-<<<<<<< HEAD
                         onElementClick={props.onElementClick}
-=======
                         selectionKeyCode={'e'}
->>>>>>> main
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
