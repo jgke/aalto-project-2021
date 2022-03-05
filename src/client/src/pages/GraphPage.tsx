@@ -27,6 +27,8 @@ export const GraphPage = (): JSX.Element => {
         'Node' | 'Edge' | null
     >(null);
 
+    const DefaultNodeType = 'default';
+
     const [elements, setElements] = useState<Elements>([]);
 
     const projects = useSelector((state: RootState) => state.project);
@@ -48,6 +50,7 @@ export const GraphPage = (): JSX.Element => {
 
                 const nodeElements: Elements = nodes.map((n) => ({
                     id: String(n.id),
+                    type: DefaultNodeType,
                     data: n,
                     position: { x: n.x, y: n.y },
                 }));
@@ -101,6 +104,7 @@ export const GraphPage = (): JSX.Element => {
                 setElements={setElements}
                 selectedProject={selectedProject}
                 onElementClick={onElementClick}
+                DefaultNodeType={DefaultNodeType}
             />
             <ElementDetail
                 element={selectedElement}
