@@ -17,6 +17,19 @@ npm install
 npm run start
 ```
 
+Documentation:
+
+```bash
+# Go inside the directory
+cd src/docs
+
+# Install dependencies (No need after first time)
+npm install
+
+# Start development server
+npm start
+```
+
 Back-end:
 
 ```bash
