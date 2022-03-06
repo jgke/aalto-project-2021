@@ -24,9 +24,9 @@ router
     .get(async (req: Request, res: Response) => {
         const project_id = parseInt(req.params.id);
 
-        const permissions = await checkProjectPermission(req, project_id)
+        const permissions = await checkProjectPermission(req, project_id);
 
-        console.log(permissions)
+        console.log(permissions);
         if (!permissions.view) {
             return res.status(401).json({ message: 'No permission' });
         }
@@ -38,13 +38,19 @@ router
     .delete(async (req: Request, res: Response) => {
         const id = req.params.id;
 
-        const nodeQuery = await db.query('SELECT project_id FROM node WHERE id = $1', [id]);
+        const nodeQuery = await db.query(
+            'SELECT project_id FROM node WHERE id = $1',
+            [id]
+        );
 
         if (nodeQuery.rowCount === 0) {
             return res.status(403).json({ message: 'Node does not exist' });
         }
 
-        const permissions = await checkProjectPermission(req, nodeQuery.rows[0].project_id)
+        const permissions = await checkProjectPermission(
+            req,
+            nodeQuery.rows[0].project_id
+        );
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
         }
@@ -59,7 +65,10 @@ router
         const text: INode = req.body; //Might have to parse this
 
         if (nodeCheck(text)) {
-            const permissions = await checkProjectPermission(req, text.project_id)
+            const permissions = await checkProjectPermission(
+                req,
+                text.project_id
+            );
             if (!permissions.edit) {
                 return res.status(401).json({ message: 'No permission' });
             }
@@ -84,7 +93,7 @@ router
         const n: INode = req.body;
 
         if (nodeCheck(n) && n.id) {
-            const permissions = await checkProjectPermission(req, n.project_id)
+            const permissions = await checkProjectPermission(req, n.project_id);
 
             if (!permissions.edit) {
                 return res.status(401).json({ message: 'No permission' });

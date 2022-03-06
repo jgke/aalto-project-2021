@@ -29,7 +29,7 @@ export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
     return (
         <div>
             <h3>Create a new project</h3>
-            <div style={{margin: '0px 16px'}}>
+            <div style={{ margin: '0px 16px' }}>
                 <ProjectForm
                     handleSubmit={handleSubmit}
                     saveMessage="New Project"

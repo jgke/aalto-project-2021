@@ -57,9 +57,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const projects = useSelector((state: RootState) => state.project);
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
-    const [selectedProject, setSelectedProject] = useState<IProject | undefined>(undefined);
+    const [selectedProject, setSelectedProject] = useState<
+        IProject | undefined
+    >(undefined);
     const [elements, setElements] = useState<Elements>([]);
-    const [permissions, setPermissions] = useState<{view: boolean, edit: boolean}>({view: false, edit: false});
+    const [permissions, setPermissions] = useState<{
+        view: boolean;
+        edit: boolean;
+    }>({ view: false, edit: false });
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
@@ -103,21 +108,27 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     useEffect(() => {
-        const project = props.selectedProject || projects.find((p) => p.id === parseInt(id || ''));
+        const project =
+            props.selectedProject ||
+            projects.find((p) => p.id === parseInt(id || ''));
         if (project) {
-            setSelectedProject(project)
+            setSelectedProject(project);
         } else if (id !== undefined) {
-            projectService.getProject(parseInt(id)).then((project) => setSelectedProject(project));
+            projectService
+                .getProject(parseInt(id))
+                .then((project) => setSelectedProject(project));
         } else {
-            setSelectedProject(undefined)
+            setSelectedProject(undefined);
         }
     }, [props.selectedProject, id]);
 
     useEffect(() => {
         if (selectedProject) {
-            projectService.getProjectPermissions(parseInt(id || '')).then((permissions) => setPermissions(permissions));
+            projectService
+                .getProjectPermissions(parseInt(id || ''))
+                .then((permissions) => setPermissions(permissions));
         } else {
-            setPermissions({view: false, edit: false})
+            setPermissions({ view: false, edit: false });
         }
     }, [selectedProject]);
 
@@ -274,7 +285,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        if (event.ctrlKey && reactFlowInstance && reactFlowWrapper?.current && permissions.edit) {
+        if (
+            event.ctrlKey &&
+            reactFlowInstance &&
+            reactFlowWrapper?.current &&
+            permissions.edit
+        ) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -382,7 +398,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
      */
     const onElementsRemove = async (elementsToRemove: Elements) => {
         if (!permissions.edit) {
-            return
+            return;
         }
 
         // Must remove edges first to prevent referencing issues in database
@@ -575,13 +591,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     </ReactFlow>
                 </div>
             </ReactFlowProvider>
-            {permissions.edit && <Toolbar
-                createNode={createNode}
-                reverseConnectState={reverseConnectState}
-                layoutWithDagre={layoutWithDagre}
-                ref={connectButtonRef}
-                forceDirected={forceDirected}
-            />}
+            {permissions.edit && (
+                <Toolbar
+                    createNode={createNode}
+                    reverseConnectState={reverseConnectState}
+                    layoutWithDagre={layoutWithDagre}
+                    ref={connectButtonRef}
+                    forceDirected={forceDirected}
+                />
+            )}
         </div>
     );
 };

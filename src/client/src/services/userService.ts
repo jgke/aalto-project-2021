@@ -35,4 +35,11 @@ const logoutUser = (): void => {
     setToken('');
 };
 
-export { createUser, loginUser, logoutUser, getAuthHeader, getAuthConfig, setToken };
+export {
+    createUser,
+    loginUser,
+    logoutUser,
+    getAuthHeader,
+    getAuthConfig,
+    setToken,
+};

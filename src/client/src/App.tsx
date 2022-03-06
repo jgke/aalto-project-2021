@@ -76,7 +76,16 @@ export const App: FC = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route path="/" element={user ? <Projects user={user} /> : <Navigate to="/user/login" />}></Route>
+                <Route
+                    path="/"
+                    element={
+                        user ? (
+                            <Projects user={user} />
+                        ) : (
+                            <Navigate to="/user/login" />
+                        )
+                    }
+                ></Route>
                 <Route path="/project/:id" element={<Graph />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route

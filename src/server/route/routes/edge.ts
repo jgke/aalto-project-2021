@@ -10,7 +10,6 @@ router
         const source = req.params.source;
         const target = req.params.target;
 
-
         const edgeQuery = await db.query(
             'SELECT project_id FROM edge WHERE source_id = $1 AND target_id = $2',
             [source, target]
@@ -20,7 +19,10 @@ router
             return res.status(403).json({ message: 'Edge does not exist' });
         }
 
-        const permissions = await checkProjectPermission(req, edgeQuery.rows[0].project_id)
+        const permissions = await checkProjectPermission(
+            req,
+            edgeQuery.rows[0].project_id
+        );
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
         }
@@ -35,7 +37,7 @@ router
 router.route('/edge/:id').get(async (req: Request, res: Response) => {
     const project_id = parseInt(req.params.id);
 
-    const permissions = await checkProjectPermission(req, project_id)
+    const permissions = await checkProjectPermission(req, project_id);
     if (!permissions.view) {
         return res.status(401).json({ message: 'No permission' });
     }
@@ -53,7 +55,10 @@ router
         const source = newEdge.source_id;
         const target = newEdge.target_id;
 
-        const permissions = await checkProjectPermission(req, newEdge.project_id)
+        const permissions = await checkProjectPermission(
+            req,
+            newEdge.project_id
+        );
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
         }

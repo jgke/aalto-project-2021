@@ -7,11 +7,12 @@ import { checkProjectPermission } from '../../helper/permissionHelper';
 
 /* let projects: Array<IProject> = [{id: '1', name: 'test'}]; */
 
-router.route('/project/:id')
+router
+    .route('/project/:id')
     .get(async (req: Request, res: Response) => {
         const project_id = parseInt(req.params.id);
 
-        const permissions = await checkProjectPermission(req, project_id)
+        const permissions = await checkProjectPermission(req, project_id);
 
         if (!permissions.view) {
             return res.status(401).json({ message: 'No permission' });
@@ -44,13 +45,14 @@ router.route('/project/:id')
         } */
     });
 
+router
+    .route('/project/:id/permission')
+    .get(async (req: Request, res: Response) => {
+        const project_id = parseInt(req.params.id);
 
-router.route('/project/:id/permission').get(async (req: Request, res: Response) => {
-    const project_id = parseInt(req.params.id);
-
-    const permissions = await checkProjectPermission(req, project_id)
-    res.json(permissions);
-})
+        const permissions = await checkProjectPermission(req, project_id);
+        res.json(permissions);
+    });
 
 router
     .route('/project')
@@ -82,7 +84,13 @@ router
         try {
             const q = await db.query(
                 'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                [project.name, project.owner_id, project.description, project.public_view, project.public_edit]
+                [
+                    project.name,
+                    project.owner_id,
+                    project.description,
+                    project.public_view,
+                    project.public_edit,
+                ]
             );
             res.status(200).json(q.rows[0]);
             /* console.log('adding project: ', project);
@@ -106,7 +114,14 @@ router
 
         const q = await db.query(
             'UPDATE project SET name = $1, description = $2, public_view = $3, public_edit = $4 WHERE id = $5 AND owner_id = $6',
-            [p.name, p.description, p.public_view, p.public_edit, p.id, p.owner_id]
+            [
+                p.name,
+                p.description,
+                p.public_view,
+                p.public_edit,
+                p.id,
+                p.owner_id,
+            ]
         );
         res.status(200).json(q);
         /* const idx = projects.findIndex( pr => pr.id === p.id );

@@ -18,13 +18,17 @@ const getProject = async (projectId: number): Promise<IProject | undefined> => {
     return project;
 };
 
-const getProjectPermissions = async (projectId: number): Promise<{view: boolean, edit:boolean}> => {
+const getProjectPermissions = async (
+    projectId: number
+): Promise<{ view: boolean; edit: boolean }> => {
     const project = await axiosWrapper(
-        axios.get<{view: boolean, edit:boolean}>(`${baseUrl}/${projectId}/permission`, getAuthConfig())
+        axios.get<{ view: boolean; edit: boolean }>(
+            `${baseUrl}/${projectId}/permission`,
+            getAuthConfig()
+        )
     );
-    return project || {view: false, edit: false};
+    return project || { view: false, edit: false };
 };
-
 
 const sendProject = async (project: IProject): Promise<number | undefined> => {
     const response = await axiosWrapper(
@@ -43,4 +47,11 @@ const updateProject = async (project: IProject): Promise<void> => {
     return await axiosWrapper(axios.put(baseUrl, project, getAuthConfig()));
 };
 
-export { getAll, getProject, getProjectPermissions, sendProject, deleteProject, updateProject };
+export {
+    getAll,
+    getProject,
+    getProjectPermissions,
+    sendProject,
+    deleteProject,
+    updateProject,
+};

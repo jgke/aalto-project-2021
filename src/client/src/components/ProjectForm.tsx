@@ -15,8 +15,12 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     const [description, setDescription] = useState<string>(
         props.defaultProject?.description || ''
     );
-    const [public_view, setPublicView] = useState<boolean>(props.defaultProject?.public_view || false);
-    const [public_edit, setPublicEdit] = useState<boolean>(props.defaultProject?.public_edit || false);
+    const [public_view, setPublicView] = useState<boolean>(
+        props.defaultProject?.public_view || false
+    );
+    const [public_edit, setPublicEdit] = useState<boolean>(
+        props.defaultProject?.public_edit || false
+    );
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -27,13 +31,13 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 owner_id: props.user.id,
                 id: props.defaultProject?.id || 0,
                 public_view,
-                public_edit
+                public_edit,
             };
             setName('');
             setDescription('');
             setPublicView(false);
             setPublicEdit(false);
-            console.log(project)
+            console.log(project);
             props.handleSubmit(project);
         }
     };
@@ -69,7 +73,7 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     className="mb-3"
                     controlId="publicViewId"
                 >
-                    <Form.Check 
+                    <Form.Check
                         type="switch"
                         label="Enable public viewing"
                         defaultChecked={public_view}
@@ -81,7 +85,7 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     className="mb-3"
                     controlId="publicViewId"
                 >
-                    <Form.Check 
+                    <Form.Check
                         type="switch"
                         label="Enable public editing"
                         defaultChecked={public_edit}
