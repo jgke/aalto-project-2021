@@ -2,47 +2,35 @@ import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { ToolbarProps } from '../../../../types';
 
 export type ToolbarHandle = {
+    setCreateText: (newText: string) => void;
     setConnectText: (newText: string) => void;
 };
 
 // This looks very confusing because of Typescript
 export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
-    const [nodeText, setNodeText] = useState('');
+    const [createText,  setCreateText]  = useState('Create');
     const [connectText, setConnectText] = useState('Connect');
-    const createNode = props.createNode;
+    // The following two change Graph.tsx's states
     const reverseConnectState = props.reverseConnectState;
+    const reverseCreateState = props.reverseCreateState;
     const layoutWithDagre = props.layoutWithDagre;
     const forceDirected = props.forceDirected;
 
     useImperativeHandle(ref, () => {
         return {
-            setConnectText,
+            setCreateText, setConnectText
         };
     });
-    /**
-     * Calls createNode from App.tsx and clears state
-     */
-    const sendCreateNode = (nodeText: string) => {
-        setNodeText('');
-        return createNode(nodeText);
-    };
 
     /* The following input field will be removed or re-positioned at some point */
     return (
         <div className="toolbar">
-            <input
-                id="nodetext"
-                type="text"
-                placeholder="Text"
-                value={nodeText}
-                onChange={({ target }) => setNodeText(target.value)}
-            />
             <button
                 id="createBtn"
                 className="button-toolbar"
-                onClick={() => sendCreateNode(nodeText)}
+                onClick={reverseCreateState}
             >
-                Create
+                {createText}
             </button>
             <button
                 id="connectBtn"

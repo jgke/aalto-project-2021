@@ -61,10 +61,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
-    const connectButtonRef = useRef<ToolbarHandle>();
+    const ToolbarRef = useRef<ToolbarHandle>();
 
-    // State for keeping track of node source handle sizes
+    // State for toggling shift + drag
     const [connectState, setConnectState] = useState(false);
+    // State for toggling ctrl + click
+    const [createState, setCreateState] = useState(false)
 
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
@@ -75,8 +77,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 '0'
             );
             document.body.style.setProperty('--source-handle-opacity', '0');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connecting');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connecting');
             }
         } else {
             document.body.style.setProperty('--bottom-handle-size', '6px');
@@ -85,8 +87,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 '100%'
             );
             document.body.style.setProperty('--source-handle-opacity', '0.5');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connect');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connect');
             }
         }
         setConnectState(() => newValue);
@@ -99,30 +101,44 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     /**
-     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
+     * Fetches the elements from a database
      */
-    const createNode = async (nodeText: string): Promise<void> => {
-        if (selectedProject) {
-            const n: INode = {
-                status: 'ToDo',
-                label: nodeText,
-                priority: 'Urgent',
-                x: 5 + elements.length * 10,
-                y: 5 + elements.length * 10,
-                project_id: selectedProject.id,
-            };
-            const returnId = await nodeService.sendNode(n);
-            if (returnId !== undefined) {
-                n.id = returnId;
-                const b: Node<INode> = {
-                    id: String(returnId),
+    useEffect(() => {
+        if (props.elements) {
+            setElements(props.elements);
+        } else if (selectedProject) {
+            const getElementsHook = async () => {
+                let nodes: INode[];
+                let edges: IEdge[];
+                try {
+                    [nodes, edges] = await Promise.all([
+                        nodeService.getAll(selectedProject.id),
+                        edgeService.getAll(selectedProject.id),
+                    ]);
+                } catch (e) {
+                    return;
+                }
+
+                const nodeElements: Elements = nodes.map((n) => ({
+                    id: String(n.id),
+                    type: DefaultNodeType,
                     data: n,
                     position: { x: n.x, y: n.y },
-                };
-                setElements(elements.concat(b));
-            }
+                }));
+                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+                const edgeElements: Elements = edges.map((e) => ({
+                    id: String(e.source_id) + '-' + String(e.target_id),
+                    source: String(e.source_id),
+                    target: String(e.target_id),
+                    type: 'straight',
+                    arrowHeadType: ArrowHeadType.ArrowClosed,
+                    data: e,
+                }));
+                setElements(nodeElements.concat(edgeElements));
+            };
+            getElementsHook();
         }
-    };
+    }, [selectedProject]);
 
     const onNodeDragStop = async (
         x: React.MouseEvent,
@@ -220,7 +236,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        if (event.ctrlKey && reactFlowInstance && reactFlowWrapper?.current) {
+        let tempExists = false;
+
+        if (createState && !tempExists && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -230,7 +248,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
             position = { x: Math.floor(position.x), y: Math.floor(position.y) };
 
-            const tempExists =
+            tempExists =
                 elements.findIndex((el) => el.id === 'TEMP') >= 0;
 
             const b: Node = {
@@ -259,11 +277,18 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (event.shiftKey) {
             switchConnectState(true);
         }
+        if(event.ctrlKey) {
+            switchCreateState(true)
+        }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
+        
         if (event.key === 'Shift') {
             switchConnectState(false);
+        }
+        if(event.key === 'Control') {
+            switchCreateState(false);
         }
     };
 
@@ -517,10 +542,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 </div>
             </ReactFlowProvider>
             <Toolbar
-                createNode={createNode}
+                reverseCreateState={reverseCreateState}
                 reverseConnectState={reverseConnectState}
                 layoutWithDagre={layoutWithDagre}
-                ref={connectButtonRef}
+                ref={ToolbarRef}
                 forceDirected={forceDirected}
             />
         </div>
