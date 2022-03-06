@@ -24,6 +24,8 @@ export interface IProject {
     owner_id: number;
     name: string;
     description: string;
+    public_view: boolean;
+    public_edit: boolean;
 }
 
 export interface Registration {

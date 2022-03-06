@@ -30,6 +30,8 @@ const addDummyProjects = async (): Promise<void> => {
         description: 'First-project',
         owner_id: user.id,
         id: 0,
+        public_view: true,
+        public_edit: true,
     };
 
     const p2: IProject = {
@@ -37,6 +39,8 @@ const addDummyProjects = async (): Promise<void> => {
         description: 'Second-project',
         owner_id: user.id,
         id: 0,
+        public_view: true,
+        public_edit: true,
     };
 
     ids = [];
@@ -93,6 +97,8 @@ describe('Projects', () => {
                 description: 'First-project',
                 owner_id: user.id,
                 id: 0,
+                public_view: true,
+                public_edit: true,
             };
 
             await api
@@ -108,6 +114,8 @@ describe('Projects', () => {
                 description: 'First-project',
                 owner_id: user.id,
                 id: 0,
+                public_view: true,
+                public_edit: true,
             };
 
             await api
@@ -192,6 +200,8 @@ describe('Projects', () => {
                 description: 'Not-existing-project',
                 owner_id: 0,
                 id: 0,
+                public_view: true,
+                public_edit: true,
             };
             await api
                 .delete(`${baseUrl}/${p.id}`)

@@ -2,12 +2,29 @@ import { router } from '../router';
 import { Request, Response } from 'express';
 import { IEdge } from '../../../../types';
 import { db } from '../../dbConfigs';
+import { checkProjectPermission } from '../../helper/permissionHelper';
 
 router
     .route('/edge/:source/:target')
     .delete(async (req: Request, res: Response) => {
         const source = req.params.source;
         const target = req.params.target;
+
+
+        const edgeQuery = await db.query(
+            'SELECT project_id FROM edge WHERE source_id = $1 AND target_id = $2',
+            [source, target]
+        );
+
+        if (edgeQuery.rowCount === 0) {
+            return res.status(403).json({ message: 'Edge does not exist' });
+        }
+
+        const permissions = await checkProjectPermission(req, edgeQuery.rows[0].project_id)
+        if (!permissions.edit) {
+            return res.status(401).json({ message: 'No permission' });
+        }
+
         await db.query(
             'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
             [source, target]
@@ -16,7 +33,13 @@ router
     });
 
 router.route('/edge/:id').get(async (req: Request, res: Response) => {
-    const project_id = req.params.id;
+    const project_id = parseInt(req.params.id);
+
+    const permissions = await checkProjectPermission(req, project_id)
+    if (!permissions.view) {
+        return res.status(401).json({ message: 'No permission' });
+    }
+
     const q = await db.query('SELECT * FROM edge WHERE project_id = $1', [
         project_id,
     ]);
@@ -29,6 +52,11 @@ router
         const newEdge: IEdge = req.body;
         const source = newEdge.source_id;
         const target = newEdge.target_id;
+
+        const permissions = await checkProjectPermission(req, newEdge.project_id)
+        if (!permissions.edit) {
+            return res.status(401).json({ message: 'No permission' });
+        }
 
         if (source === target) {
             res.status(400)

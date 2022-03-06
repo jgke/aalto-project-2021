@@ -14,6 +14,8 @@ const getAuthHeader = (): { Authorization: string } => {
     return { Authorization: token };
 };
 
+const getAuthConfig = () => ({ headers: getAuthHeader() });
+
 const createUser = async (user: Registration): Promise<boolean> => {
     return (
         (await axiosWrapper(axios.post(`${baseUrl}/register`, user))) !==
@@ -33,4 +35,4 @@ const logoutUser = (): void => {
     setToken('');
 };
 
-export { createUser, loginUser, logoutUser, getAuthHeader, setToken };
+export { createUser, loginUser, logoutUser, getAuthHeader, getAuthConfig, setToken };

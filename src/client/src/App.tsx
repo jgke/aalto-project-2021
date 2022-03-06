@@ -52,10 +52,6 @@ export const App: FC = () => {
         return <></>;
     }
 
-    if (!user && !location.pathname.startsWith('/user')) {
-        return <Navigate to="/user/login" />;
-    }
-
     return (
         <div className="app">
             <Toaster toastOptions={{ duration: 30000 }}>
@@ -80,7 +76,7 @@ export const App: FC = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route path="/" element={<Projects user={user} />}></Route>
+                <Route path="/" element={user ? <Projects user={user} /> : <Navigate to="/user/login" />}></Route>
                 <Route path="/project/:id" element={<Graph />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route
