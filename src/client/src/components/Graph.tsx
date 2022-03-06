@@ -470,7 +470,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
     return (
         <div style={{ height: '100%' }}>
             <ReactFlowProvider>
-                <div id='project-name-display'>Project: {selectedProject.name}</div>
                 <div
                     className="flow-wrapper"
                     style={graphStyle}
