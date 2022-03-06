@@ -155,8 +155,15 @@ code {
 #whoamiText {
     float: inline-end;
 }
+
 #logout-link {
     float: inline-end;
+}
+
+.project-container {
+    height: 100%;
+    padding: 10% 5%;
+    background-image: linear-gradient(to bottom right, #34332D, #00164F,  #34332D);
 }
 
 .react-flow__handle-bottom {

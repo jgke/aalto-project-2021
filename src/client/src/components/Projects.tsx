@@ -27,7 +27,7 @@ export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
     };
 
     return (
-        <div>
+        <div className="project-container">
             <h3>Create a new project</h3>
             <ProjectForm
                 handleSubmit={handleSubmit}
