@@ -160,6 +160,13 @@ code {
     float: inline-end;
 }
 
+#project-name-display {
+    position: absolute;
+    top: 8px;
+    width: 100%;
+    text-align:center;
+}
+
 .project-container {
     height: 100%;
     padding: 10% 5%;
