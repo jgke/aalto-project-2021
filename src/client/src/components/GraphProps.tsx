@@ -1,0 +1,142 @@
+import React from 'react';
+import { INode, IEdge, IProject } from '../../../../types';
+import {
+    Node,
+    Edge,
+    Elements,
+    ArrowHeadType,
+    isNode,
+} from 'react-flow-renderer';
+import toast from 'react-hot-toast';
+
+import * as nodeService from '../services/nodeService';
+import * as edgeService from '../services/edgeService';
+
+//const [elements, setElements] = useState<Elements>([]);
+
+const sendCreatedNode = async (
+    node: INode,
+    elements: Elements,
+    setElements: React.Dispatch<React.SetStateAction<Elements>>
+): Promise<void> => {
+    const returnId = await nodeService.sendNode(node);
+    if (returnId) {
+        const b: Node<INode> = {
+            id: String(returnId),
+            data: node,
+            position: { x: node.x, y: node.y },
+        };
+        setElements(elements.concat(b));
+    }
+};
+
+const sendNode = async (
+    data: INode,
+    node: Node,
+    setElements: React.Dispatch<React.SetStateAction<Elements>>
+): Promise<void> => {
+    const returnId = await nodeService.sendNode(data);
+
+    if (returnId) {
+        data.id = returnId;
+        setElements((els) =>
+            els.map((el) => {
+                if (el.id === node.id) {
+                    const pos = (el as Node).position;
+                    el = {
+                        ...el,
+                        ...{
+                            id: String(returnId),
+                            data: data,
+                            type: 'default',
+                            position: { x: pos.x, y: pos.y },
+                            draggable: true,
+                        },
+                    };
+                }
+                return el;
+            })
+        );
+    }
+};
+
+const deleteNode = async (node: Node<INode>): Promise<void> => {
+    await nodeService.deleteNode(node);
+};
+
+const deleteEdge = async (edge: Edge<IEdge>): Promise<void> => {
+    await edgeService.deleteEdge(edge);
+};
+
+const updateNode = async (node: INode): Promise<void> => {
+    await nodeService.updateNode(node);
+};
+
+const updateNodes = async (
+    elements: Elements,
+    setElements: React.Dispatch<React.SetStateAction<Elements>>
+): Promise<void> => {
+    for (const el of elements) {
+        if (isNode(el)) {
+            const node: INode = el.data;
+
+            if (node) {
+                node.x = el.position.x;
+                node.y = el.position.y;
+
+                await updateNode(node);
+            } else {
+                toast('❌ What is going on?');
+            }
+        }
+    }
+    setElements(elements);
+};
+
+const getElements = async (
+    selectedProject: IProject,
+    setElements: React.Dispatch<React.SetStateAction<Elements>>
+): Promise<void> => {
+    let nodes: INode[];
+    let edges: IEdge[];
+    try {
+        [nodes, edges] = await Promise.all([
+            nodeService.getAll(selectedProject.id),
+            edgeService.getAll(selectedProject.id),
+        ]);
+    } catch (e) {
+        return;
+    }
+
+    const nodeElements: Elements = nodes.map((n) => ({
+        id: String(n.id),
+        type: 'default',
+        data: n,
+        position: { x: n.x, y: n.y },
+    }));
+    // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
+    const edgeElements: Elements = edges.map((e) => ({
+        id: String(e.source_id) + '-' + String(e.target_id),
+        source: String(e.source_id),
+        target: String(e.target_id),
+        type: 'straight',
+        arrowHeadType: ArrowHeadType.ArrowClosed,
+        data: e,
+    }));
+    setElements(nodeElements.concat(edgeElements));
+};
+
+const sendEdge = async (edge: IEdge): Promise<void> => {
+    await edgeService.sendEdge(edge);
+};
+
+export {
+    sendNode,
+    deleteNode,
+    deleteEdge,
+    updateNode,
+    getElements,
+    sendCreatedNode,
+    sendEdge,
+    updateNodes,
+};

@@ -3,7 +3,7 @@ import { Graph } from './components/Graph';
 import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as projectReducer from './reducers/projectReducer';
 import './App.css';
 import { Route, Routes } from 'react-router';
@@ -12,6 +12,9 @@ import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
 import { Navigate } from 'react-router-dom';
 import toast, { resolveValue, Toaster } from 'react-hot-toast';
+import { RootState } from '../../../types';
+
+import * as graphProps from './components/GraphProps';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -24,6 +27,8 @@ export const basicNode: INode = {
 
 export const App: FC = () => {
     const dispatch = useDispatch();
+    const projects = useSelector((state: RootState) => state.project);
+
 
     const [user, setUser] = useState<UserToken | null>(null);
     const [userParsed, setUserParsed] = useState<boolean>(false);
@@ -81,7 +86,10 @@ export const App: FC = () => {
             </div>
             <Routes>
                 <Route path="/" element={<Projects user={user} />}></Route>
-                <Route path="/project/:id" element={<Graph />}></Route>
+                <Route
+                    path="/project/:id"
+                    element={<Graph {...graphProps} projects={projects} />}
+                ></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route
                     path="/user/login"

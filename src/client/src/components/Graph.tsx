@@ -4,9 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, IProject, RootState } from '../../../../types';
-import * as nodeService from '../services/nodeService';
-import * as edgeService from '../services/edgeService';
+import { IEdge, INode, IProject } from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -28,8 +26,6 @@ import ReactFlow, {
 import { NodeEdit } from './NodeEdit';
 import { Toolbar, ToolbarHandle } from './Toolbar';
 import { useParams } from 'react-router';
-import { useSelector } from 'react-redux';
-import toast from 'react-hot-toast';
 
 const graphStyle = {
     height: '100%',
@@ -43,6 +39,29 @@ const graphStyle = {
 export interface GraphProps {
     elements?: Elements;
     selectedProject?: IProject;
+    projects: IProject[];
+    sendNode: (
+        data: INode,
+        node: Node,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    deleteNode: (node: Node<INode>) => Promise<void>;
+    deleteEdge: (edge: Edge<IEdge>) => Promise<void>;
+    updateNode: (node: INode) => Promise<void>;
+    getElements: (
+        project: IProject,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendCreatedNode: (
+        node: INode,
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendEdge: (edge: IEdge) => Promise<void>;
+    updateNodes: (
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
 }
 
 interface FlowInstance {
@@ -53,7 +72,7 @@ interface FlowInstance {
 export const Graph = (props: GraphProps): JSX.Element => {
     const { id } = useParams();
 
-    const projects = useSelector((state: RootState) => state.project);
+    const projects = props.projects;
     const selectedProject =
         props.selectedProject ||
         projects.find((p) => p.id === parseInt(id || ''));
@@ -109,36 +128,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (props.elements) {
             setElements(props.elements);
         } else if (selectedProject) {
-            const getElementsHook = async () => {
-                let nodes: INode[];
-                let edges: IEdge[];
-                try {
-                    [nodes, edges] = await Promise.all([
-                        nodeService.getAll(selectedProject.id),
-                        edgeService.getAll(selectedProject.id),
-                    ]);
-                } catch (e) {
-                    return;
-                }
-
-                const nodeElements: Elements = nodes.map((n) => ({
-                    id: String(n.id),
-                    type: DefaultNodeType,
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                }));
-                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                const edgeElements: Elements = edges.map((e) => ({
-                    id: String(e.source_id) + '-' + String(e.target_id),
-                    source: String(e.source_id),
-                    target: String(e.target_id),
-                    type: 'straight',
-                    arrowHeadType: ArrowHeadType.ArrowClosed,
-                    data: e,
-                }));
-                setElements(nodeElements.concat(edgeElements));
-            };
-            getElementsHook();
+            props.getElements(selectedProject, setElements);
         }
     }, [selectedProject]);
 
@@ -155,15 +145,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 y: 5 + elements.length * 10,
                 project_id: selectedProject.id,
             };
-            const returnId = await nodeService.sendNode(n);
-            if (returnId) {
-                const b: Node<INode> = {
-                    id: String(returnId),
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                };
-                setElements(elements.concat(b));
-            }
+
+            props.sendCreatedNode(n, elements, setElements);
         }
     };
 
@@ -189,7 +172,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     return el;
                 })
             );
-            await nodeService.updateNode(n);
+            props.updateNode(n);
         } else {
             console.log('INode data not found');
         }
@@ -229,29 +212,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
-                const returnId = await nodeService.sendNode(n);
-
-                if (returnId) {
-                    n.id = returnId;
-                    setElements((els) =>
-                        els.map((el) => {
-                            if (el.id === node.id) {
-                                const pos = (el as Node).position;
-                                el = {
-                                    ...el,
-                                    ...{
-                                        id: String(returnId),
-                                        data: n,
-                                        type: DefaultNodeType,
-                                        position: { x: pos.x, y: pos.y },
-                                        draggable: true,
-                                    },
-                                };
-                            }
-                            return el;
-                        })
-                    );
-                }
+                props.sendNode(n, node, setElements);
             }
         };
 
@@ -278,7 +239,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             b.data.label = (
                 <NodeEdit
                     node={b}
-                    onNodeEdit={async (_, data) => await onEditDone(data, b)}
+                    onNodeEdit={async (_, data) => onEditDone(data, b)}
                 />
             );
 
@@ -369,12 +330,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await nodeService.deleteNode(e);
+                    await props.deleteNode(e);
                 } catch (e) {
                     console.log('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
-                await edgeService
+                await props
                     .deleteEdge(e)
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
@@ -431,7 +392,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 )
             );
 
-            edgeService.sendEdge(edge);
+            props.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
@@ -458,25 +419,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             })
         );
 
-        await nodeService.updateNode(data);
-    };
-
-    //calls nodeService.updateNode for all nodes
-    const updateNodes = async (els: Elements): Promise<void> => {
-        for (const el of els) {
-            if (isNode(el)) {
-                const node: INode = el.data;
-
-                if (node) {
-                    node.x = el.position.x;
-                    node.y = el.position.y;
-
-                    await nodeService.updateNode(node);
-                } else {
-                    toast('❌ What is going on?');
-                }
-            }
-        }
+        await props.updateNode(data);
     };
 
     const layoutWithDagre = async (direction: string) => {
@@ -484,18 +427,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
         const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
 
     //does force direced iterations, without scrambling the nodes
     const forceDirected = async () => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
 
     if (!selectedProject) {

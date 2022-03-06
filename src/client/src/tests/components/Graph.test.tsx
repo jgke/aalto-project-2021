@@ -6,7 +6,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { RenderResult } from '@testing-library/react';
 
-import { Graph } from '../../components/Graph';
+import { Graph, GraphProps } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
 import { store } from '../../store';
 import { Provider } from 'react-redux';
@@ -82,6 +82,7 @@ describe('<Graph>', () => {
 
     let testGraph: RenderResult;
 
+
     const renderGraph = (elements: Elements) => {
         const selectedProject: IProject = {
             id: 1,
@@ -90,12 +91,26 @@ describe('<Graph>', () => {
             description: 'desc',
         };
 
+        const graphProps: GraphProps = {
+            deleteEdge: jest.fn(),
+            deleteNode: jest.fn(),
+            getElements: jest.fn(),
+            sendCreatedNode: jest.fn(),
+            sendEdge: jest.fn(),
+            sendNode: jest.fn(),
+            updateNode: jest.fn(),
+            updateNodes: jest.fn(),
+            projects: [selectedProject]
+        }
+
         return render(
             <BrowserRouter>
                 <Provider store={store}>
                     <Graph
                         elements={elements}
                         selectedProject={selectedProject}
+                        {...graphProps}
+
                     />
                 </Provider>
             </BrowserRouter>
