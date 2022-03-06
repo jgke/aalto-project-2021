@@ -259,7 +259,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         // Don't do anything if clicking on Toolbar area
         if(ToolbarRef.current) {
             const toolbarBounds = ToolbarRef.current.getBounds();
-            console.log('Toolbar bounds:', toolbarBounds);
             // "If clicking on Toolbar"
             if(
                 event.clientX >= toolbarBounds.left &&
@@ -484,6 +483,11 @@ export const Graph = (props: GraphProps): JSX.Element => {
         await nodeService.updateNode(data);
     };
 
+    const onNodeDragStart = () => {
+        setCreateState(false);
+        setConnectState(false);
+    }
+
     //calls nodeService.updateNode for all nodes
     const updateNodes = async (els: Elements): Promise<void> => {
         for (const el of els) {
@@ -545,7 +549,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // so it works as a hitbox detector
                         onEdgeUpdate={() => null}
                         onLoad={onLoad}
-                        onNodeDragStart={() => switchCreateState(false)}
+                        onNodeDragStart={onNodeDragStart}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}

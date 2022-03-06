@@ -28,13 +28,15 @@ export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
 
     return (
         <div className="project-container">
-            <h3>Create a new project</h3>
-            <ProjectForm
-                handleSubmit={handleSubmit}
-                saveMessage="New Project"
-                user={props.user}
-            />
-            <div style={projectListStyle}>
+            <div className='project-form-container'>
+                <h3>Create a new project</h3>
+                <ProjectForm
+                    handleSubmit={handleSubmit}
+                    saveMessage="New Project"
+                    user={props.user}
+                />
+            </div>
+            <div style={projectListStyle} className="project-list">
                 {projects.map((project) => (
                     <ProjectCard
                         key={project.id}

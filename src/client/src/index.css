@@ -39,6 +39,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
         'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
         'Helvetica Neue', sans-serif;
+    background-image: linear-gradient(to bottom right, #34332D, #00164F,  #34332D);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
@@ -98,10 +99,6 @@ code {
 }
 
 .button-toolbar:hover {
-    /*
-    background-color: #310062;
-    border-color: #140027;
-    */
     background-color: #49473f;
 }
 
@@ -177,9 +174,29 @@ code {
 }
 
 .project-container {
-    height: 100%;
-    padding: 10% 5%;
-    background-image: linear-gradient(to bottom right, #34332D, #00164F,  #34332D);
+    margin: 10% 5%;
+    padding: 0;
+    border-radius: 0.12em;
+    color: #eeefff;
+}
+
+.project-form-container {
+    /* ohut granite gray border vois olla kova*/
+    background: #34332d73;
+    padding: 10px;
+}
+
+.project-list {
+    margin-top: 12px;
+    border-radius: 0.12em;
+}
+
+.form-box-login,
+.form-box-reg {
+    display: block;
+    margin-top: 200px !important;
+    margin-left: 40%;
+    margin-right: auto !important;
 }
 
 .react-flow__handle-bottom {
