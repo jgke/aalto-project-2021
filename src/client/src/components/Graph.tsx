@@ -71,6 +71,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
         if (newValue === true) {
+            switchCreateState(false);
+            document.body.style.setProperty('--connect-btn-bckg-color', '#310062');
             document.body.style.setProperty('--bottom-handle-size', '100%');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
@@ -81,6 +83,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 ToolbarRef.current.setConnectText('Connecting');
             }
         } else {
+            document.body.style.setProperty('--connect-btn-bckg-color', '#686559');
             document.body.style.setProperty('--bottom-handle-size', '6px');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
@@ -94,6 +97,23 @@ export const Graph = (props: GraphProps): JSX.Element => {
         setConnectState(() => newValue);
     };
     const reverseConnectState = () => switchConnectState(!connectState);
+
+    const switchCreateState = (newValue: boolean): void => {
+        if(ToolbarRef.current) {
+            if(newValue === true) {
+                switchConnectState(false);
+                document.body.style.setProperty('--create-btn-bckg-color', '#310062');
+                ToolbarRef.current.setCreateText('Creating');
+            } else {
+                ToolbarRef.current.setCreateText('Create');
+                document.body.style.setProperty('--create-btn-bckg-color', '#686559');
+            }
+        }
+        setCreateState(() => newValue);
+    }
+    const reverseCreateState = () => switchCreateState(!createState);
+
+    const DefaultNodeType = 'default';
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -236,9 +256,22 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        let tempExists = false;
+        // Don't do anything if clicking on Toolbar area
+        if(ToolbarRef.current) {
+            const toolbarBounds = ToolbarRef.current.getBounds();
+            console.log('Toolbar bounds:', toolbarBounds);
+            // "If clicking on Toolbar"
+            if(
+                event.clientX >= toolbarBounds.left &&
+                event.clientY >= toolbarBounds.top  &&
+                event.clientY <= toolbarBounds.bottom &&
+                event.clientX <= toolbarBounds.right
+            ){
+                return
+            }
+        }
 
-        if (createState && !tempExists && reactFlowInstance && reactFlowWrapper?.current) {
+        if (createState && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -248,7 +281,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
             position = { x: Math.floor(position.x), y: Math.floor(position.y) };
 
-            tempExists =
+            const tempExists =
                 elements.findIndex((el) => el.id === 'TEMP') >= 0;
 
             const b: Node = {
@@ -512,6 +545,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // so it works as a hitbox detector
                         onEdgeUpdate={() => null}
                         onLoad={onLoad}
+                        onNodeDragStart={() => switchCreateState(false)}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}

@@ -1,12 +1,13 @@
-import React, { useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useImperativeHandle, forwardRef, useRef } from 'react';
 import { ToolbarProps } from '../../../../types';
 
 export type ToolbarHandle = {
     setCreateText: (newText: string) => void;
     setConnectText: (newText: string) => void;
+    getBounds: () => DOMRect;
 };
 
-// This looks very confusing because of Typescript
+// This slightly very confusing because of Typescript
 export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
     const [createText,  setCreateText]  = useState('Create');
     const [connectText, setConnectText] = useState('Connect');
@@ -16,15 +17,25 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
     const layoutWithDagre = props.layoutWithDagre;
     const forceDirected = props.forceDirected;
 
+    const toolbarDivRef = useRef<HTMLDivElement>(null)
+
+    const getBounds = (): DOMRect | null => {
+        if(toolbarDivRef.current){
+            return toolbarDivRef.current.getBoundingClientRect()
+        } else {
+            return null
+        }
+    }
+
     useImperativeHandle(ref, () => {
         return {
-            setCreateText, setConnectText
+            setCreateText, setConnectText, getBounds
         };
     });
 
     /* The following input field will be removed or re-positioned at some point */
     return (
-        <div className="toolbar">
+        <div className="toolbar" ref={toolbarDivRef}>
             <button
                 id="createBtn"
                 className="button-toolbar"
