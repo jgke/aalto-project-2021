@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Graph } from './components/Graph';
+import { GraphPage } from './pages/GraphPage';
 import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
@@ -81,7 +81,7 @@ export const App: FC = () => {
             </div>
             <Routes>
                 <Route path="/" element={<Projects user={user} />}></Route>
-                <Route path="/project/:id" element={<Graph />}></Route>
+                <Route path="/project/:id" element={<GraphPage />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route
                     path="/user/login"
