@@ -1,4 +1,11 @@
-import { beforeEach, expect, test, afterAll, describe } from '@jest/globals';
+import {
+    beforeEach,
+    expect,
+    test,
+    afterAll,
+    describe,
+    beforeAll,
+} from '@jest/globals';
 import { db } from '../dbConfigs';
 import { IEdge } from '../../../types';
 import supertest from 'supertest';
@@ -15,6 +22,10 @@ const api = supertest(app);
 let pId: number;
 
 //Helper functions end here
+
+beforeAll(async () => {
+    await db.initDatabase();
+});
 
 beforeEach(async () => {
     await db.query('TRUNCATE project, node, edge CASCADE;', []);

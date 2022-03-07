@@ -59,6 +59,8 @@ describe('Projects', () => {
     });
 
     beforeAll(async () => {
+        await db.initDatabase();
+
         const registration: Registration = {
             username: user.username,
             password: user.password,
