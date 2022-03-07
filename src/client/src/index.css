@@ -8,10 +8,6 @@
     margin: 0;
 }
 
-h2 {
-    margin: 1rem;
-}
-
 input,
 button,
 textarea,
@@ -46,6 +42,13 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
+    --top-handle-size: 6px;
+    --bottom-handle-size: 6px;
+    --source-handle-visibility: block;
+    --target-handle-border-radius: 100%;
+    --source-handle-border-radius: 100%;
+    --target-handle-opacity: 0.5;
+    --source-handle-opacity: 0.5;
 }
 
 code {
@@ -64,7 +67,7 @@ code {
     top: 128px;
 }
 
-#button-toolbar {
+.button-toolbar {
     display: flex;
     padding: 0.55em 1.7em;
     border: 0.2em solid #21007a;
@@ -85,4 +88,19 @@ code {
     background-color: #442072;
     border-color: #dcd9fd;
     color: #ffffff;
+}
+
+.react-flow__handle-bottom {
+    width: var(--bottom-handle-size) !important;
+    height: var(--bottom-handle-size) !important;
+    display: var(--source-handle-visibility) !important;
+    border-radius: var(--source-handle-border-radius) !important;
+    opacity: var(--source-handle-opacity) !important;
+}
+
+.react-flow__handle-top {
+    width: var(--top-handle-size) !important;
+    height: var(--top-handle-size) !important;
+    border-radius: var(--target-handle-border-radius) !important;
+    opacity: var(--target-handle-opacity) !important;
 }

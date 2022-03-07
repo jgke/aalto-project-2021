@@ -120,6 +120,19 @@ describe('POST request', () => {
         expect(res.body[0].source_id).toBe(ids[1]);
         expect(res.body[0].target_id).toBe(ids[0]);
     });
+
+    test('should not allow an target and source nodes to be the same', async () => {
+        const ids = await addDummyNodes(db, pId);
+
+        const e1: IEdge = {
+            source_id: ids[0],
+            target_id: ids[0],
+            project_id: pId,
+        };
+
+        const res = await api.post(baseUrl).send(e1).expect(400);
+        expect(res.body.message).toBe('Source and target were the same');
+    });
 });
 
 describe('DELETE request', () => {
@@ -148,7 +161,7 @@ describe('DELETE request', () => {
         expect(res.body).toHaveLength(0);
     });
 
-    test('should not crash the app if the edge to be deleted does not exist', async () => {
+    test('should not crash the app if the id does not exist', async () => {
         const e: IEdge = {
             source_id: 0,
             target_id: 0,
