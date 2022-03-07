@@ -63,7 +63,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
-    const [tags, setTags] = useState<ITag[]>([])
+    const [tags, setTags] = useState<ITag[]>([]);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -456,10 +456,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 layoutWithDagre={layoutWithDagre}
                 forceDirected={forceDirected}
             />
-            <Tag
-                tags={tags}
-                setTags={setTags}
-            />
+            <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
         </div>
     );
 };

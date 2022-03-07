@@ -6,19 +6,15 @@ import { db } from '../../dbConfigs';
 
 /* let tags: Array<ITag> = [{id: 1, label: 'test', color: 'red'}]; */
 
-router.route('/tag/:id').delete(async (req: Request, res: Response) => {
-    const id = req.params.id;
-    const q = await db.query('DELETE FROM tag WHERE id = $1', [id]);
-    res.status(200).json(q);
-    //the latter part is only for testing with array
-    /* const idx = tags.findIndex( t => t.id === id );
-    if(idx >= 0){
-        console.log('deleting tag: ', tags[idx]);
-        tags.splice(idx, 1);
-        res.status(200).json({ message: 'deleted tag'})
-    } else {
-        console.log('could not find tag with id: ', id);
-    } */
+router.route('/tag/proj/:proj').get(async (req: Request, res: Response) => {
+    const proj_id = req.params.proj;
+
+    const q = await db.query('SELECT * FROM tag WHERE project_id = $1', [
+        proj_id,
+    ]);
+    res.json(q.rows);
+    /* console.log('tags: ', tags);
+    res.json(tags); */
 });
 
 router
@@ -35,8 +31,8 @@ router
         try {
             const q = await db.query(
                 // ignores tag.id when inserting into table
-                'INSERT INTO tag (id, label, color) VALUES (DEFAULT, $1, $2) RETURNING id',
-                [tag.label, tag.color]
+                'INSERT INTO tag (id, label, color, project_id) VALUES (DEFAULT, $1, $2, $3) RETURNING id',
+                [tag.label, tag.color, tag.project_id]
             );
             res.status(200).json(q);
             /* console.log('adding tag: ', tag);
@@ -49,8 +45,8 @@ router
     .put(async (req: Request, res: Response) => {
         const t: ITag = req.body;
         const q = await db.query(
-            'UPDATE tag SET label = $1, color = $2 WHERE id = $3',
-            [t.label, t.color, t.id]
+            'UPDATE tag SET label = $1, color = $2 WHERE id = $3 AND project_id = $4',
+            [t.label, t.color, t.id, t.project_id]
         );
         res.status(200).json(q);
         /* const idx = tags.findIndex( tg => tg.id === t.id );
@@ -58,7 +54,21 @@ router
         res.status(200).json({ message: 'tag updated'}); */
     })
     .delete(async (req: Request, res: Response) => {
-        res.status(404).json({ message: 'Not implemented' });
+        const t: ITag = req.body;
+        const q = await db.query(
+            'DELETE FROM tag WHERE id = $1 AND project_id = $2',
+            [t.id, t.project_id]
+        );
+        res.status(200).json(q);
+        //the latter part is only for testing with array
+        /* const idx = tags.findIndex( t => t.id === id );
+        if(idx >= 0){
+            console.log('deleting tag: ', tags[idx]);
+            tags.splice(idx, 1);
+            res.status(200).json({ message: 'deleted tag'})
+        } else {
+            console.log('could not find tag with id: ', id);
+        } */
     });
 
 export { router as tag };

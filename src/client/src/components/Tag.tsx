@@ -1,16 +1,11 @@
 import React, { FormEvent, useState } from 'react';
-import { Node } from 'react-flow-renderer';
 import { ITag, ITaggedNode } from '../../../../types';
-import { basicNode } from '../App';
 import * as tagService from '../services/tagService';
-
-import ReactFlow, {
-    ReactFlowProps,
-} from 'react-flow-renderer';
 
 interface TagProps {
     tags: ITag[];
-    setTags: React.Dispatch<React.SetStateAction<ITag[]>>
+    setTags: React.Dispatch<React.SetStateAction<ITag[]>>;
+    projId: number;
 }
 
 export const Tag = (props: TagProps): JSX.Element => {
@@ -20,6 +15,7 @@ export const Tag = (props: TagProps): JSX.Element => {
 
     const handleSubmit = (event: FormEvent) => {
         createTag(tagLabel);
+        settagLabel('');
         event.preventDefault();
     };
 
@@ -28,12 +24,13 @@ export const Tag = (props: TagProps): JSX.Element => {
             id: 0,
             label: tagLabel,
             color: 'red',
+            project_id: props.projId,
         };
         const returnId: number | undefined = await tagService.sendTag(t);
         if (returnId) {
             t.id = returnId;
             //setTags(tags.concat(t));
-            await refreshTagList();
+            await refreshTagList(props.projId);
         }
     };
 
@@ -48,31 +45,31 @@ export const Tag = (props: TagProps): JSX.Element => {
         );
 
         await tagService.updateTag(data);
-    }
+    };
 
     const onTagRemove = async (id: number) => {
-        const idx = props.tags.findIndex( t => t.id === id );
-        if(idx >= 0){
+        const idx = props.tags.findIndex((t) => t.id === id);
+        if (idx >= 0) {
             console.log('deleting tag: ', props.tags[idx]);
-            await tagService.deleteTag(id);
+            await tagService.deleteTag(props.tags[idx]);
             //setTags(tags.splice(idx, 1));
-            await refreshTagList();
+            await refreshTagList(props.projId);
         } else {
             console.log('could not find tag with id: ', id);
         }
-    }
+    };
 
-    const refreshTagList = async (): Promise<void> => {
+    const refreshTagList = async (projId: number): Promise<void> => {
         try {
             //console.log('refreshing tag list');
-            const tagList = await tagService.getAll();
+            const tagList = await tagService.getAllForProj(projId);
             // TODO: limit the number of tags returned from tagService
             //console.log(tagList[0].label)
             props.setTags(tagList.slice(0, 49));
         } catch (e) {
             console.log('Error in tagService.getAll', e);
         }
-    }
+    };
 
     const clickTag = async (id: number): Promise<void> => {
         try {
@@ -80,13 +77,13 @@ export const Tag = (props: TagProps): JSX.Element => {
         } catch (e) {
             console.log('Error in tagService.clickTag', e);
         }
-    }
+    };
 
-    const init = async() => {
-        refreshTagList();
+    const init = async () => {
+        refreshTagList(props.projId);
 
         setInited(true);
-    }
+    };
 
     if (!hasInited) {
         init();
@@ -119,7 +116,6 @@ export const Tag = (props: TagProps): JSX.Element => {
                     </button>
                 ))}
             </div>
-            
         </div>
     );
 };
