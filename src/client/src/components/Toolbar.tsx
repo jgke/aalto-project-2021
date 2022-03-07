@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { ToolbarProps } from '../../../../types';
 
-export const Toolbar = (props: ToolbarProps): JSX.Element => {
+export type ToolbarHandle = {
+    setConnectText: (newText: string) => void;
+};
+
+// This looks very confusing because of Typescript
+export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
+    const [connectText, setConnectText] = useState('Connect');
     const createNode = props.createNode;
+    const reverseConnectState = props.reverseConnectState;
     const layoutWithDagre = props.layoutWithDagre;
     const forceDirected = props.forceDirected;
 
+    useImperativeHandle(ref, () => {
+        return {
+            setConnectText,
+        };
+    });
     /**
      * Calls createNode from App.tsx and clears state
      */
@@ -33,6 +45,13 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
                 Create
             </button>
             <button
+                id="connectBtn"
+                className="button-toolbar"
+                onClick={reverseConnectState}
+            >
+                {connectText}
+            </button>
+            <button
                 className="button-layout"
                 id="dagreTB"
                 onClick={async () => await layoutWithDagre('TB')}
@@ -55,4 +74,4 @@ export const Toolbar = (props: ToolbarProps): JSX.Element => {
             </button>
         </div>
     );
-};
+});

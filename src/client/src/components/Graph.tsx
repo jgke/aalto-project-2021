@@ -23,9 +23,10 @@ import ReactFlow, {
     isNode,
     isEdge,
     removeElements,
+    ConnectionLineType,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
-import { Toolbar } from './Toolbar';
+import { Toolbar, ToolbarHandle } from './Toolbar';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { Tag } from './Tag';
@@ -64,6 +65,39 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
 
     const [tags, setTags] = useState<ITag[]>([]);
+    const connectButtonRef = useRef<ToolbarHandle>();
+
+    // State for keeping track of node source handle sizes
+    const [connectState, setConnectState] = useState(false);
+
+    // CSS magic to style the node handles when pressing shift or clicking button
+    const switchConnectState = (newValue: boolean): void => {
+        if (newValue === true) {
+            document.body.style.setProperty('--bottom-handle-size', '100%');
+            document.body.style.setProperty(
+                '--source-handle-border-radius',
+                '0'
+            );
+            document.body.style.setProperty('--source-handle-opacity', '0');
+            if (connectButtonRef.current) {
+                connectButtonRef.current.setConnectText('Connecting');
+            }
+        } else {
+            document.body.style.setProperty('--bottom-handle-size', '6px');
+            document.body.style.setProperty(
+                '--source-handle-border-radius',
+                '100%'
+            );
+            document.body.style.setProperty('--source-handle-opacity', '0.5');
+            if (connectButtonRef.current) {
+                connectButtonRef.current.setConnectText('Connect');
+            }
+        }
+        setConnectState(() => newValue);
+    };
+    const reverseConnectState = () => switchConnectState(!connectState);
+
+    const DefaultNodeType = 'default';
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -91,6 +125,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
                 const nodeElements: Elements = nodes.map((n) => ({
                     id: String(n.id),
+                    type: DefaultNodeType,
                     data: n,
                     position: { x: n.x, y: n.y },
                 }));
@@ -209,6 +244,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                                     ...{
                                         id: String(returnId),
                                         data: n,
+                                        type: DefaultNodeType,
                                         position: { x: pos.x, y: pos.y },
                                         draggable: true,
                                     },
@@ -230,7 +266,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             });
 
             position = { x: Math.floor(position.x), y: Math.floor(position.y) };
-            console.log(position);
 
             const tempExists =
                 elements.findIndex((el) => el.id === 'TEMP') >= 0;
@@ -238,6 +273,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             const b: Node = {
                 id: 'TEMP',
                 data: {},
+                type: DefaultNodeType,
                 position,
                 draggable: false,
             };
@@ -254,6 +290,55 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     : els.concat(b)
             );
         }
+    };
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+        if (event.shiftKey) {
+            switchConnectState(true);
+        }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+        if (event.key === 'Shift') {
+            switchConnectState(false);
+        }
+    };
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keyup', handleKeyUp);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [handleKeyUp]);
+
+    const onConnectStart = () => {
+        document.body.style.setProperty('--top-handle-size', '100%');
+        document.body.style.setProperty('--source-handle-visibility', 'none');
+        document.body.style.setProperty('--target-handle-border-radius', '0');
+        document.body.style.setProperty('--target-handle-opacity', '0');
+    };
+
+    const onConnectEnd = () => {
+        document.body.style.setProperty('--top-handle-size', '6px');
+        document.body.style.setProperty('--source-handle-visibility', 'block');
+        document.body.style.setProperty(
+            '--target-handle-border-radius',
+            '100%'
+        );
+        document.body.style.setProperty('--target-handle-opacity', '0.5');
     };
 
     /**
@@ -313,6 +398,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }, [handleMousePress]);
 
     const onConnect = (params: Edge<IEdge> | Connection) => {
+        if (params.source === params.target) {
+            return;
+        }
         if (params.source && params.target && selectedProject) {
             //This does not mean params is an edge but rather a Connection
 
@@ -352,6 +440,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
         }
     };
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
 
     const onNodeEdit = async (id: string, data: INode) => {
         setElements((els) =>
@@ -419,6 +516,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     <ReactFlow
                         elements={elements}
                         onConnect={onConnect}
+                        connectionLineType={ConnectionLineType.Straight}
+                        onConnectStart={onConnectStart}
+                        onConnectEnd={onConnectEnd}
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
                         // so it works as a hitbox detector
@@ -426,6 +526,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onLoad={onLoad}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
+                        selectionKeyCode={'e'}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -453,7 +554,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             <Toolbar
                 createNode={createNode}
+                reverseConnectState={reverseConnectState}
                 layoutWithDagre={layoutWithDagre}
+                ref={connectButtonRef}
                 forceDirected={forceDirected}
             />
             <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
