@@ -1,5 +1,6 @@
 import React, { FormEvent, useState } from 'react';
-import { ITag, ITaggedNode } from '../../../../types';
+// import { ITag, ITaggedNode } from '../../../../types';
+import { ITag } from '../../../../types';
 import * as tagService from '../services/tagService';
 
 interface TagProps {
@@ -34,6 +35,7 @@ export const Tag = (props: TagProps): JSX.Element => {
         }
     };
 
+    /*
     const onTagEdit = async (data: ITag) => {
         props.setTags((tgs) =>
             tgs.map((tg) => {
@@ -46,6 +48,7 @@ export const Tag = (props: TagProps): JSX.Element => {
 
         await tagService.updateTag(data);
     };
+    */
 
     const onTagRemove = async (id: number) => {
         const idx = props.tags.findIndex((t) => t.id === id);

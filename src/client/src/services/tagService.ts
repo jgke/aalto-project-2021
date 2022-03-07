@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ITag, ITaggedNode } from '../../../../types';
+import { ITag } from '../../../../types';
+// import { ITag, ITaggedNode } from '../../../../types';
 export const baseUrl = '/api/tag';
 
 const getAll = async (): Promise<ITag[]> => {
