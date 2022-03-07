@@ -186,6 +186,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
+                if (!data.label) {
+                    setElements((els) => {
+                        return els.filter((e) => e.id !== 'TEMP');
+                    });
+
+                    return;
+                }
+
                 const returnId = await nodeService.sendNode(n);
 
                 if (returnId) {
