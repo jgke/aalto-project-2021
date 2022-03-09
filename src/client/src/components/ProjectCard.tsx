@@ -41,7 +41,7 @@ export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
     if (!editMode) {
         body = (
             <>
-                <h5 className="card-title">{props.project.name}</h5>
+                <h2 className="card-title">{props.project.name}</h2>
                 <p className="card-text">{props.project.description}</p>
             </>
         );
@@ -71,7 +71,7 @@ export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
                     className="icon-button no-dropdown-arrow"
                     style={dropdownButtonStyle}
                 >
-                    <BsThreeDotsVertical />
+                    <BsThreeDotsVertical className="threedots-icon"/>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item

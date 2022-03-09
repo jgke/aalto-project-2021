@@ -6,8 +6,8 @@
 }
 
 .icon-button {
-    color: white;
-    background-color: rgb(13 110 253 / 25%);
+    color: #eeefff;
+    background-color: #eeefff31;
     border: none;
     width: 32px;
     padding: 0;
@@ -20,7 +20,21 @@
 }
 
 .icon-button:hover {
-    background-color: rgb(13 110 253 / 50%);
+    color: #000614;
+    background-color: #eeefffc0;
+}
+
+.dropdown > .btn-primary:focus {
+    color: #000614;
+    background-color: #eeefffc0;
+    border-color: #eeefff;
+    box-shadow: none;
+}
+
+
+.show > .btn-primary.dropdown-toggle {
+    color: #000614;
+    background-color: #eeefff !important;
 }
 
 .detail-sidebar {
@@ -69,15 +83,18 @@
     cursor: pointer;
 }
 
+.card-body {
+    background: #eeefff31;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    color: #eeefff;
+}
+
 .fallback-card-image {
-    height: 100px;
+    height: 100%;
     background: rgb(164, 195, 215);
-    background: linear-gradient(
-        0deg,
-        rgba(164, 195, 215, 1) 0%,
-        rgba(173, 216, 230, 1) 30%,
-        rgba(118, 254, 243, 1) 100%
-    );
+    background: linear-gradient(to bottom right, #00164f, #4e009c, #290066);
 }
 
 .flex-space-between {
