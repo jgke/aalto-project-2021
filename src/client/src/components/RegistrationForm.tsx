@@ -83,7 +83,6 @@ export const RegistrationForm: ({
                 <div>
                     <label htmlFor="email"></label>
                     <input
-                        type="text"
                         placeholder="Enter Email"
                         name="email"
                         id="email"
@@ -94,7 +93,6 @@ export const RegistrationForm: ({
                 <div>
                     <label htmlFor="username"></label>
                     <input
-                        type="text"
                         placeholder="Enter Username"
                         name="username"
                         id="username"
@@ -130,7 +128,7 @@ export const RegistrationForm: ({
                 <button
                     id="register-button"
                     type="submit"
-                    className="registerbutton"
+                    className="button-action-one"
                 >
                     Register
                 </button>

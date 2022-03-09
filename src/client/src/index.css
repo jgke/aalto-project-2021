@@ -39,7 +39,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
         'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
         'Helvetica Neue', sans-serif;
-    background-image: linear-gradient(to bottom right, #34332D, #00164F,  #34332D);
+    background-image: linear-gradient(to bottom right, #34332D 30%, #310062 70%,  #34332D);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
@@ -181,7 +181,7 @@ code {
 }
 
 .project-form-container {
-    /* ohut granite gray border vois olla kova*/
+    /* ohut granite gray border vois olla ehkä kova*/
     background: #34332d73;
     padding: 10px;
 }
@@ -195,8 +195,43 @@ code {
 .form-box-reg {
     display: block;
     margin-top: 200px !important;
-    margin-left: 40%;
+    margin-left: auto !important;
     margin-right: auto !important;
+}
+
+.form-box-login > input,
+.form-box-reg > input {
+    border-radius: 0.12em;
+}
+
+.form-box-login > form > div,
+.form-box-reg > form > div {
+    margin-top: 0.2em;
+}
+
+.button-action-one {
+    display: flex;
+    padding: 0.55em 1.7em;
+    border: 0.2em solid #34332D;
+    margin: 0.3em 0;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    width: auto;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    color: #EEEFFF;
+    background-color: #686559;
+    justify-content: center;
+    transition: all 0.1s;
+    align-self: center;
+    font-weight: bolder;
+}
+
+.button-action-one:hover {
+    background-color: #49473f;
+    border-color: #eeefff;
+    color: #EEEFFF;
 }
 
 .react-flow__handle-bottom {

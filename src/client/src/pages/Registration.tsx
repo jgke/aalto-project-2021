@@ -4,8 +4,6 @@ import { createUser } from '../services/userService';
 
 export const Registration: React.FC = () => {
     return (
-        <div>
-            <RegistrationForm createUser={createUser} />
-        </div>
+        <RegistrationForm createUser={createUser} />
     );
 };
