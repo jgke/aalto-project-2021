@@ -73,8 +73,8 @@
     color: black;
 }
 
-.project-card.view {
-    height: 200px;
+.project-card.edit {
+    height: 283px !important;
 }
 
 .project-card.view:hover {

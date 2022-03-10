@@ -192,10 +192,6 @@ code {
     border-radius: 0.2em;
 }
 
-.card.project-card.edit {
-    height: 200px;
-}
-
 .form-control {
     border-radius: 0.12em;
 }
