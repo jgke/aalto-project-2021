@@ -112,10 +112,10 @@ describe('Graph', () => {
 
     describe('test add node', () => {
 
-        const node_name_1 = '__test__1';
-        const node_name_2 = '__test__2';
+        const node_name_1 = 'TEST-NODE1';
+        const node_name_2 = 'TEST-NODE2';
 
-        it('Can create nodes', () => {
+        it('Can create and remove nodes', () => {
 
             cy.get('#createBtn').click(); // Toggle on
             cy.get('.react-flow__renderer').click('center')
@@ -123,12 +123,14 @@ describe('Graph', () => {
             
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
 
-            cy.get('.react-flow__renderer').click('center', {ctrlKey: true})
+            cy.get('.react-flow__renderer').click('left')
             cy.get('.react-flow input').type(node_name_2 + '{enter}')
-            
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist');
 
             cy.get('#createBtn').click(); // Toggle off
+
+            cy.get(`.react-flow__node-default:contains('${node_name_2}')`).should('exist').click().trigger('keydown', {keyCode: 8});
+            cy.get(`.react-flow__node-default:contains('${node_name_1}')`).should('exist').click().trigger('keydown', {keyCode: 8});
+
 
             if (!myConsts.global_clean) {
                 cy.removeAllTestNodes();
@@ -136,57 +138,6 @@ describe('Graph', () => {
                 cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
             }
         });
-
-        /*it('Can add and remove nodes', () => {
-            const n_nodes_to_add = 3;
-
-            if (!myConsts.global_clean) {
-                // remove nodes prefixed with __test__
-                cy.removeAllTestNodes();
-
-                cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
-                cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
-            }
-            
-            cy.insertNode(node_name_1);
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-
-            for (let i = 0; i < n_nodes_to_add; i++) {
-                cy.insertNode(node_name_1);
-            }
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
-
-            cy.insertNode(node_name_2);
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist');
-
-            cy.removeAllTestNodes();
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
-
-        });*/
-
-        /*it('Can rename nodes with double click', () => {
-            cy.get('#createBtn').click();   // Toggle on
-            cy.get('.react-flow__renderer').click('center')
-            cy.get('.react-flow__renderer').trigger('keyup', { keyCode: 17 });
-            cy.get('.react-flow input').type(node_name_1 + '{enter}')
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
-            cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
-
-            cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
-
-            if (!myConsts.global_clean) {
-                cy.removeAllTestNodes();
-                cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('not.exist');
-            }
-        });*/
 
     });
 
@@ -201,8 +152,8 @@ describe('Graph', () => {
                 cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
             }
             
-            cy.insertNode(node_name_1);
-            cy.insertNode(node_name_2);
+            cy.insertNode(node_name_1, 'center');
+            cy.insertNode(node_name_2, 'left');
 
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist');
@@ -259,8 +210,8 @@ describe('Graph', () => {
             let node_name_1 = '__test__1';
             let node_name_2 = '__test__2';
 
-            cy.insertNode(node_name_1);
-            cy.insertNode(node_name_2);
+            cy.insertNode(node_name_1, 'center');
+            cy.insertNode(node_name_2, 'left');
 
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
 

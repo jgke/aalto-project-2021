@@ -60,18 +60,18 @@ Cypress.Commands.add('removeNodeDiv', (index, $div, _$list) => {
         .trigger('keyup', { key: 'Backspace', charCode: 0, keyCode: 8 });
 });
 
-Cypress.Commands.add('insertNode', (nodeName) => {
+Cypress.Commands.add('insertNode', (nodeName, location) => {
     var b_NodeNamePrefixed = true;
 
-    cy.get('input#nodetext').invoke('attr', 'value').should('eq', '');
-    cy.get('input#nodetext').type(nodeName);
-    cy.get('input#nodetext').invoke('attr', 'value').should('eq', nodeName);
+    cy.get('#createBtn').click(); // Toggle on
+    cy.get('.react-flow__renderer').click(location)
+    cy.get('.react-flow input').type(nodeName + '{enter}')
+    cy.get('#createBtn').click(); // Toggle off
 
     if (b_NodeNamePrefixed) {
         // nodeName should be prefixed by '__test__'
         expect(nodeName).match(/^__test__/);
     }
-    cy.get('input#nodetext').parent().contains('Create').click();
 });
 
 // remove nodes prefixed with __test__
