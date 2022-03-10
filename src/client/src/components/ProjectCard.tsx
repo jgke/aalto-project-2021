@@ -59,7 +59,7 @@ export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
     return (
         <div
             className={'card project-card' + (editMode ? ' edit' : ' view')}
-            style={{ width: '20%', margin: 16 }}
+            style={{ width: '218px', height: '198px', margin: 16 }}
             onClick={() =>
                 props.project &&
                 !editMode &&
