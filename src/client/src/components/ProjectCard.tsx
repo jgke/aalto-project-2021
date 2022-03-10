@@ -71,7 +71,7 @@ export const ProjectCard: FC<ProjectCardProps> = (props: ProjectCardProps) => {
                     className="icon-button no-dropdown-arrow"
                     style={dropdownButtonStyle}
                 >
-                    <BsThreeDotsVertical className="threedots-icon"/>
+                    <BsThreeDotsVertical className="threedots-icon" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item

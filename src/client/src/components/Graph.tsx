@@ -66,13 +66,16 @@ export const Graph = (props: GraphProps): JSX.Element => {
     // State for toggling shift + drag
     const [connectState, setConnectState] = useState(false);
     // State for toggling ctrl + click
-    const [createState, setCreateState] = useState(false)
+    const [createState, setCreateState] = useState(false);
 
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
         if (newValue === true) {
             switchCreateState(false);
-            document.body.style.setProperty('--connect-btn-bckg-color', '#310062');
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#310062'
+            );
             document.body.style.setProperty('--bottom-handle-size', '100%');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
@@ -83,7 +86,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 ToolbarRef.current.setConnectText('Connecting');
             }
         } else {
-            document.body.style.setProperty('--connect-btn-bckg-color', '#686559');
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#686559'
+            );
             document.body.style.setProperty('--bottom-handle-size', '6px');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
@@ -99,18 +105,24 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const reverseConnectState = () => switchConnectState(!connectState);
 
     const switchCreateState = (newValue: boolean): void => {
-        if(ToolbarRef.current) {
-            if(newValue === true) {
+        if (ToolbarRef.current) {
+            if (newValue === true) {
                 switchConnectState(false);
-                document.body.style.setProperty('--create-btn-bckg-color', '#310062');
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#310062'
+                );
                 ToolbarRef.current.setCreateText('Creating');
             } else {
                 ToolbarRef.current.setCreateText('Create');
-                document.body.style.setProperty('--create-btn-bckg-color', '#686559');
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#686559'
+                );
             }
         }
         setCreateState(() => newValue);
-    }
+    };
     const reverseCreateState = () => switchCreateState(!createState);
 
     const DefaultNodeType = 'default';
@@ -257,16 +269,16 @@ export const Graph = (props: GraphProps): JSX.Element => {
         };
 
         // Don't do anything if clicking on Toolbar area
-        if(ToolbarRef.current) {
+        if (ToolbarRef.current) {
             const toolbarBounds = ToolbarRef.current.getBounds();
             // "If clicking on Toolbar"
-            if(
+            if (
                 event.clientX >= toolbarBounds.left &&
-                event.clientY >= toolbarBounds.top  &&
+                event.clientY >= toolbarBounds.top &&
                 event.clientY <= toolbarBounds.bottom &&
                 event.clientX <= toolbarBounds.right
-            ){
-                return
+            ) {
+                return;
             }
         }
 
@@ -309,17 +321,16 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (event.shiftKey) {
             switchConnectState(true);
         }
-        if(event.ctrlKey) {
-            switchCreateState(true)
+        if (event.ctrlKey) {
+            switchCreateState(true);
         }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-        
         if (event.key === 'Shift') {
             switchConnectState(false);
         }
-        if(event.key === 'Control') {
+        if (event.key === 'Control') {
             switchCreateState(false);
         }
     };
@@ -486,7 +497,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const onNodeDragStart = () => {
         setCreateState(false);
         setConnectState(false);
-    }
+    };
 
     //calls nodeService.updateNode for all nodes
     const updateNodes = async (els: Elements): Promise<void> => {

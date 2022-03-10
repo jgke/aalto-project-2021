@@ -87,7 +87,11 @@ export const LoginForm = (props: LoginFormProps): JSX.Element => {
                         onChange={({ target }) => setPassword(target.value)}
                     />
                 </div>
-                <button id="login-button" type="submit" className="button-action-one">
+                <button
+                    id="login-button"
+                    type="submit"
+                    className="button-action-one"
+                >
                     Login
                 </button>
             </form>

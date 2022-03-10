@@ -1,4 +1,9 @@
-import React, { useState, useImperativeHandle, forwardRef, useRef } from 'react';
+import React, {
+    useState,
+    useImperativeHandle,
+    forwardRef,
+    useRef,
+} from 'react';
 import { ToolbarProps } from '../../../../types';
 
 export type ToolbarHandle = {
@@ -9,7 +14,7 @@ export type ToolbarHandle = {
 
 // This slightly very confusing because of Typescript
 export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
-    const [createText,  setCreateText]  = useState('Create');
+    const [createText, setCreateText] = useState('Create');
     const [connectText, setConnectText] = useState('Connect');
     // The following two change Graph.tsx's states
     const reverseConnectState = props.reverseConnectState;
@@ -17,19 +22,21 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
     const layoutWithDagre = props.layoutWithDagre;
     const forceDirected = props.forceDirected;
 
-    const toolbarDivRef = useRef<HTMLDivElement>(null)
+    const toolbarDivRef = useRef<HTMLDivElement>(null);
 
     const getBounds = (): DOMRect | null => {
-        if(toolbarDivRef.current){
-            return toolbarDivRef.current.getBoundingClientRect()
+        if (toolbarDivRef.current) {
+            return toolbarDivRef.current.getBoundingClientRect();
         } else {
-            return null
+            return null;
         }
-    }
+    };
 
     useImperativeHandle(ref, () => {
         return {
-            setCreateText, setConnectText, getBounds
+            setCreateText,
+            setConnectText,
+            getBounds,
         };
     });
 

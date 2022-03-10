@@ -22,26 +22,35 @@ export const Topbar = (props: TopbarProps): JSX.Element => {
     return (
         <div className="topbar">
             {user && (
-                <Link className='link-topbar' id="home-link" to="/">
+                <Link className="link-topbar" id="home-link" to="/">
                     Home
                 </Link>
             )}
             {!user && (
-                <Link className='link-topbar' id="login-link" to="/user/login">
+                <Link className="link-topbar" id="login-link" to="/user/login">
                     Login
                 </Link>
             )}
             {!user && (
-                <Link className='link-topbar' id="register-link" to="/user/register">
+                <Link
+                    className="link-topbar"
+                    id="register-link"
+                    to="/user/register"
+                >
                     Register
                 </Link>
             )}
             {user && (
-                <a className='link-topbar' id="logout-link" href="#" onClick={logOut}>
+                <a
+                    className="link-topbar"
+                    id="logout-link"
+                    href="#"
+                    onClick={logOut}
+                >
                     Logout
                 </a>
             )}
-            {user && <div id='whoamiText'>Logged in as {user.username}</div>}
+            {user && <div id="whoamiText">Logged in as {user.username}</div>}
         </div>
     );
 };
