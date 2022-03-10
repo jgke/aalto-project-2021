@@ -8,17 +8,16 @@ import { Toolbar } from '../../components/Toolbar';
 
 describe('Toolbar', () => {
     let component: RenderResult;
-    const mockCreate = jest.fn();
     const mockReverseConnectState = jest.fn();
+    const mockReverseCreateState = jest.fn();
     const mockLayout = jest.fn();
 
     beforeEach(() => {
-        mockCreate.mockRestore();
         component = render(
             <Toolbar
-                createNode={mockCreate}
                 layoutWithDagre={mockLayout}
                 reverseConnectState={mockReverseConnectState}
+                reverseCreateState={mockReverseCreateState}
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
                 forceDirected={async () => {}}
             />
@@ -29,7 +28,7 @@ describe('Toolbar', () => {
         const buttons = component.container.querySelectorAll('button');
         expect(buttons[0]).toBeDefined;
         fireEvent.click(buttons[0]);
-        expect(mockCreate).toBeCalled;
+        expect(mockReverseCreateState).toBeCalled;
 
         expect(buttons[1]).toBeDefined;
         fireEvent.click(buttons[1]);
@@ -42,16 +41,8 @@ describe('Toolbar', () => {
         expect(button).toHaveTextContent('Create');
     });
 
-    test('has an empty textbox by default', () => {
+    test('does not contain a text field', () => {
         const input = component.container.querySelector('input');
-        expect(input).toHaveValue('');
-    });
-
-    test('can change the text box value', () => {
-        const input = component.container.querySelector('input')!;
-        fireEvent.change(input, {
-            target: { value: 'Add physics' },
-        });
-        expect(input).toHaveValue('Add physics');
+        expect(input).toBeNull;
     });
 });

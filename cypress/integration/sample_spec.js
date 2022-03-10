@@ -110,24 +110,34 @@ describe('Graph', () => {
         cy.get('#logout-link').click()
     });
 
-    describe('Has nodetext', () => {
-        it('Has an input to enter node name', () => {
-            cy.get('input#nodetext');
-        });
-    });
-
-    describe('nodetext has add button', () => {
-        it('Has button to add node', () => {
-            cy.get('input#nodetext').parent().contains('Create')
-        });
-    });
-
     describe('test add node', () => {
 
         const node_name_1 = '__test__1';
         const node_name_2 = '__test__2';
 
-        it('Can add and remove nodes', () => {
+        it('Can create nodes', () => {
+
+            cy.get('#createBtn').click(); // Toggle on
+            cy.get('.react-flow__renderer').click('center')
+            cy.get('.react-flow input').type(node_name_1 + '{enter}')
+            
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
+
+            cy.get('.react-flow__renderer').click('center', {ctrlKey: true})
+            cy.get('.react-flow input').type(node_name_2 + '{enter}')
+            
+            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist');
+
+            cy.get('#createBtn').click(); // Toggle off
+
+            if (!myConsts.global_clean) {
+                cy.removeAllTestNodes();
+                cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
+                cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
+            }
+        });
+
+        /*it('Can add and remove nodes', () => {
             const n_nodes_to_add = 3;
 
             if (!myConsts.global_clean) {
@@ -159,12 +169,13 @@ describe('Graph', () => {
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
 
-        });
+        });*/
 
-        it('Can rename nodes with double click', () => {
-            const new_node_name = '__test__NEW_NODE';
-            cy.get('input#nodetext').type(node_name_1)
-            cy.get('input#nodetext').parent().contains('Create').click()
+        /*it('Can rename nodes with double click', () => {
+            cy.get('#createBtn').click();   // Toggle on
+            cy.get('.react-flow__renderer').click('center')
+            cy.get('.react-flow__renderer').trigger('keyup', { keyCode: 17 });
+            cy.get('.react-flow input').type(node_name_1 + '{enter}')
 
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
             cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
@@ -175,23 +186,8 @@ describe('Graph', () => {
                 cy.removeAllTestNodes();
                 cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('not.exist');
             }
-        });
+        });*/
 
-        it('Can create nodes with ctrl click', () => {
-            const new_node_name1 = '__test__NEW_NODE_1'
-
-            cy.get('.react-flow__renderer').click('center', {ctrlKey: true})
-            cy.get('.react-flow input').type(new_node_name1 + '{enter}')
-
-            
-            cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('exist');
-
-            if (!myConsts.global_clean) {
-                cy.removeAllTestNodes();
-                cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('not.exist');
-            }
-
-        });
     });
 
     describe('test add edge', () => {
