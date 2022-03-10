@@ -161,21 +161,7 @@ describe('Graph', () => {
 
         });
 
-        it('Can rename nodes with double click', () => {
-            const new_node_name = '__test__NEW_NODE';
-            cy.get('input#nodetext').type(node_name_1)
-            cy.get('input#nodetext').parent().contains('Create').click()
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
-            cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
-
-            cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
-
-            if (!myConsts.global_clean) {
-                cy.removeAllTestNodes();
-                cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('not.exist');
-            }
-        });
+       
 
         it('Can create nodes with ctrl click', () => {
             const new_node_name1 = '__test__NEW_NODE_1'
@@ -321,6 +307,23 @@ describe('Graph', () => {
             cy.get(`.detail-sidebar-topbar .icon-button`).first().click();
 
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
+        });
+
+        it('Can rename nodes on the sidebar', () => {
+            const new_node_name = '__test__NEW_NODE';
+            cy.get('input#nodetext').type(node_name_1)
+            cy.get('input#nodetext').parent().contains('Create').click()
+
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
+            cy.get('#edit-button').click();
+            cy.get('#label-field').click().type('{selectall}{backspace}' + new_node_name + '{enter}')
+
+            cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
+
+            if (!myConsts.global_clean) {
+                cy.removeAllTestNodes();
+                cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('not.exist');
+            }
         });
     });
 });
