@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { INode } from '../../../../types';
-import { Node } from 'react-flow-renderer';
 import { axiosWrapper } from './axiosWrapper';
 import { getAuthConfig } from './userService';
 export const baseUrl = '/api/node';
@@ -23,8 +22,8 @@ const sendNode = async (node: INode): Promise<number | undefined> => {
     ).id;
 };
 
-const deleteNode = async (node: Node<INode>): Promise<void> => {
-    await axiosWrapper(axios.delete(`${baseUrl}/${node.id}`, getAuthConfig()));
+const deleteNode = async (id: number): Promise<void> => {
+    await axiosWrapper(axios.delete(`${baseUrl}/${id}`, getAuthConfig()));
 };
 
 const updateNode = async (node: INode): Promise<void> => {

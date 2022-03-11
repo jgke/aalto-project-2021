@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IProject } from '../../../../types';
+import { IProject, ProjectPermissions } from '../../../../types';
 import { axiosWrapper } from './axiosWrapper';
 import { getAuthConfig } from './userService';
 export const baseUrl = '/api/project';
@@ -20,9 +20,9 @@ const getProject = async (projectId: number): Promise<IProject | undefined> => {
 
 const getProjectPermissions = async (
     projectId: number
-): Promise<{ view: boolean; edit: boolean }> => {
+): Promise<ProjectPermissions> => {
     const project = await axiosWrapper(
-        axios.get<{ view: boolean; edit: boolean }>(
+        axios.get<ProjectPermissions>(
             `${baseUrl}/${projectId}/permission`,
             getAuthConfig()
         )

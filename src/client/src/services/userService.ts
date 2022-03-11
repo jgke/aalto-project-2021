@@ -35,6 +35,21 @@ const logoutUser = (): void => {
     setToken('');
 };
 
+const checkLogin = async (token: UserToken): Promise<boolean> => {
+    const response = await axiosWrapper(
+        axios.post<{ valid: boolean }>(`${baseUrl}/validity`, token)
+    );
+
+    console.log('What is response?');
+    console.log(response);
+
+    if (response) {
+        return response.valid;
+    }
+
+    return false;
+};
+
 export {
     createUser,
     loginUser,
@@ -42,4 +57,5 @@ export {
     getAuthHeader,
     getAuthConfig,
     setToken,
+    checkLogin,
 };

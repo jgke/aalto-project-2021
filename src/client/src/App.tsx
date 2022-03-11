@@ -1,17 +1,18 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Graph } from './components/Graph';
+import { GraphPage } from './pages/GraphPage';
 import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
 import { useDispatch } from 'react-redux';
 import * as projectReducer from './reducers/projectReducer';
 import './App.css';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
 import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
-import { Navigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import toast, { resolveValue, Toaster } from 'react-hot-toast';
+import { checkLogin } from './services/userService';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -32,10 +33,23 @@ export const App: FC = () => {
         const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
         if (loggedUserJson) {
             const user = JSON.parse(loggedUserJson);
-            setUser(user);
-            setToken(user.token);
+            checkLogin(user).then((x) => {
+                if (x) {
+                    console.log('User is valid!');
+                    setUser(user);
+                    setToken(user.token);
+                } else {
+                    console.log('OLD USER!');
+                    setUser(null);
+                    setToken('');
+                    window.localStorage.removeItem('loggedGraphUser');
+                }
+
+                setUserParsed(true);
+            });
+        } else {
+            setUserParsed(true);
         }
-        setUserParsed(true);
     }, []);
 
     /**
@@ -76,7 +90,7 @@ export const App: FC = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route
+                <Route 
                     path="/"
                     element={
                         user ? (
@@ -84,9 +98,8 @@ export const App: FC = () => {
                         ) : (
                             <Navigate to="/user/login" />
                         )
-                    }
-                ></Route>
-                <Route path="/project/:id" element={<Graph />}></Route>
+                    }></Route>
+                <Route path="/project/:id" element={<GraphPage />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route
                     path="/user/login"

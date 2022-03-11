@@ -1,10 +1,11 @@
 import { db } from '../dbConfigs';
 import { Request } from 'express';
+import { ProjectPermissions } from '../../../types';
 
 export const checkProjectPermission = async (
     req: Request,
     project_id: number
-): Promise<{ view: boolean; edit: boolean }> => {
+): Promise<ProjectPermissions> => {
     const q = await db.query('SELECT * FROM project WHERE id = $1', [
         project_id,
     ]);

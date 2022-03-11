@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Edge } from 'react-flow-renderer';
 import { IEdge } from '../../../../types';
 import { axiosWrapper } from './axiosWrapper';
 import { getAuthConfig } from './userService';
@@ -20,13 +19,8 @@ const sendEdge = async (edge: IEdge): Promise<boolean> => {
     );
 };
 
-const deleteEdge = async (edge: Edge<IEdge>): Promise<void> => {
-    await axiosWrapper(
-        axios.delete(
-            `${baseUrl}/${edge.source}/${edge.target}`,
-            getAuthConfig()
-        )
-    );
+const deleteEdge = async (source: number, target: number): Promise<void> => {
+    await axiosWrapper(axios.delete(`${baseUrl}/${source}/${target}`, getAuthConfig()));
 };
 
 export { getAll, sendEdge, deleteEdge };
