@@ -71,7 +71,7 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
             >
                 <BsFillTrashFill />
             </button>
-        )
+        );
 
         if (props.type === 'Node') {
             buttonRow.push(
@@ -81,23 +81,18 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
                 >
                     <BsPencilFill />
                 </button>
-            )
+            );
         }
     }
     buttonRow.push(
-        <button
-            className="icon-button"
-            onClick={() => props.closeSidebar()}
-        >
+        <button className="icon-button" onClick={() => props.closeSidebar()}>
             <BsXLg />
         </button>
-    )
+    );
 
     return (
         <div className="detail-sidebar">
-            <div className="detail-sidebar-topbar">
-                { buttonRow }
-            </div>
+            <div className="detail-sidebar-topbar">{buttonRow}</div>
             <div className="detail-sidebar-content">
                 {element && isNode(element) && (
                     <NodeDetail

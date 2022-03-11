@@ -11,7 +11,7 @@ import { Elements } from 'react-flow-renderer';
 import { store } from '../../store';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { IProject } from '../../../../../types';
+import { IProject, ProjectPermissions } from '../../../../../types';
 
 describe('<Graph>', () => {
     beforeAll(() => {
@@ -88,6 +88,13 @@ describe('<Graph>', () => {
             owner_id: 1,
             name: 'project',
             description: 'desc',
+            public_view: true,
+            public_edit: true,
+        };
+
+        const permissions: ProjectPermissions = {
+            view: selectedProject.public_view,
+            edit: selectedProject.public_edit,
         };
 
         return render(
@@ -99,6 +106,7 @@ describe('<Graph>', () => {
                         setElements={jest.fn()}
                         onElementClick={jest.fn()}
                         DefaultNodeType={'default'}
+                        permissions={permissions}
                     />
                 </Provider>
             </BrowserRouter>

@@ -14,7 +14,9 @@ const getAuthHeader = (): { Authorization: string } => {
     return { Authorization: token };
 };
 
-const getAuthConfig = () => ({ headers: getAuthHeader() });
+const getAuthConfig = (): { headers: { Authorization: string } } => ({
+    headers: getAuthHeader(),
+});
 
 const createUser = async (user: Registration): Promise<boolean> => {
     return (

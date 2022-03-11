@@ -20,7 +20,9 @@ const sendEdge = async (edge: IEdge): Promise<boolean> => {
 };
 
 const deleteEdge = async (source: number, target: number): Promise<void> => {
-    await axiosWrapper(axios.delete(`${baseUrl}/${source}/${target}`, getAuthConfig()));
+    await axiosWrapper(
+        axios.delete(`${baseUrl}/${source}/${target}`, getAuthConfig())
+    );
 };
 
 export { getAll, sendEdge, deleteEdge };

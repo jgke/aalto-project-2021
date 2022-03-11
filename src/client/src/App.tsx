@@ -90,7 +90,7 @@ export const App: FC = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route 
+                <Route
                     path="/"
                     element={
                         user ? (
@@ -98,7 +98,8 @@ export const App: FC = () => {
                         ) : (
                             <Navigate to="/user/login" />
                         )
-                    }></Route>
+                    }
+                ></Route>
                 <Route path="/project/:id" element={<GraphPage />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route

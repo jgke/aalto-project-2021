@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from '../components/Graph';
 import { ElementDetail } from '../components/ElementDetail';
-import { IEdge, INode, IProject, ProjectPermissions, RootState } from '../../../../types';
+import {
+    IEdge,
+    INode,
+    IProject,
+    ProjectPermissions,
+    RootState,
+} from '../../../../types';
 import {
     ArrowHeadType,
     Edge,
@@ -21,21 +27,26 @@ export const GraphPage = (): JSX.Element => {
     const { id } = useParams();
 
     // Sidebar related data
-    const [selectedElement, setSelectedElement] =
-        useState<Node<INode> | Edge<IEdge> | null>(null);
-    const [selectedDataType, setSelectedDataType] =
-        useState<'Node' | 'Edge' | null>(null);
-    const [selectedProject, setSelectedProject] =
-        useState<IProject | undefined>(undefined);
-    const [permissions, setPermissions] =
-        useState<ProjectPermissions>({ view: false, edit: false });
+    const [selectedElement, setSelectedElement] = useState<
+        Node<INode> | Edge<IEdge> | null
+    >(null);
+    const [selectedDataType, setSelectedDataType] = useState<
+        'Node' | 'Edge' | null
+    >(null);
+    const [selectedProject, setSelectedProject] = useState<
+        IProject | undefined
+    >(undefined);
+    const [permissions, setPermissions] = useState<ProjectPermissions>({
+        view: false,
+        edit: false,
+    });
 
     const DefaultNodeType = 'default';
 
     const [elements, setElements] = useState<Elements>([]);
 
     const projects = useSelector((state: RootState) => state.project);
-    
+
     useEffect(() => {
         const project = projects.find((p) => p.id === parseInt(id || ''));
         if (project) {
