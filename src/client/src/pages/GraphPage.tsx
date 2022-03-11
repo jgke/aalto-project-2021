@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from '../components/Graph';
 import { ElementDetail } from '../components/ElementDetail';
-import { Button } from 'react-bootstrap';
-import { InviteModal } from '../components/InviteModal';
+import { MemberModal } from '../components/MemberModal';
 import {
     IEdge,
     INode,
     IProject,
     ProjectPermissions,
     RootState,
+    UserData,
 } from '../../../../types';
 import {
     ArrowHeadType,
@@ -21,12 +21,24 @@ import {
 } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
+import { BsFillPeopleFill } from 'react-icons/bs';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as projectService from '../services/projectService';
+import CSS from 'csstype';
+
+const buttonStyle: CSS.Properties = {
+    position: 'absolute',
+    right: '12px',
+    top: '40px',
+    height: '40px',
+    width: '40px',
+    zIndex: '4'
+}
 
 export const GraphPage = (): JSX.Element => {
     const { id } = useParams();
+    const projectId = parseInt(id || '');
 
     // Sidebar related data
     const [selectedElement, setSelectedElement] = useState<
@@ -42,6 +54,7 @@ export const GraphPage = (): JSX.Element => {
         view: false,
         edit: false,
     });
+    const [members, setMembers] = useState<UserData[]>([]);
     const [show, setShow] = useState(false);
 
     const DefaultNodeType = 'default';
@@ -51,26 +64,36 @@ export const GraphPage = (): JSX.Element => {
     const projects = useSelector((state: RootState) => state.project);
 
     useEffect(() => {
-        const project = projects.find((p) => p.id === parseInt(id || ''));
+        const project = projects.find((p) => p.id === projectId);
         if (project) {
             setSelectedProject(project);
-        } else if (id !== undefined) {
+        } else if (projectId) {
             projectService
-                .getProject(parseInt(id))
+                .getProject(projectId)
                 .then((project) => setSelectedProject(project))
                 .catch(() => setSelectedProject(undefined));
         } else {
             setSelectedProject(undefined);
         }
-    }, [id]);
+    }, [projectId]);
 
     useEffect(() => {
         if (selectedProject) {
             projectService
-                .getProjectPermissions(parseInt(id || ''))
+                .getProjectPermissions(projectId)
                 .then((permissions) => setPermissions(permissions));
         } else {
             setPermissions({ view: false, edit: false });
+        }
+    }, [selectedProject]);
+
+    useEffect(() => {
+        if (selectedProject) {
+            projectService
+                .getMembers(projectId)
+                .then((members) => setMembers(members));
+        } else {
+            setMembers([]);
         }
     }, [selectedProject]);
 
@@ -128,6 +151,18 @@ export const GraphPage = (): JSX.Element => {
         }
     };
 
+    const addProjectMembers = async (member: string) => {
+        const newMember = await projectService.addMember(projectId, member);
+        if (newMember) {
+            setMembers([...members, newMember])
+        }
+    }
+
+    const deleteProjectMembers = async (userId: number) => {
+        setMembers(members.filter(member => member.id !== userId))
+        await projectService.deleteMember(projectId, userId);
+    }
+
     const closeSidebar = () => {
         setSelectedElement(null);
         setSelectedDataType(null);
@@ -152,10 +187,18 @@ export const GraphPage = (): JSX.Element => {
                 permissions={permissions}
             />
             {selectedProject && <>
-                <Button onClick={() => setShow(true)}>
-                    Invite
-                </Button>
-                <InviteModal projectId={selectedProject.id} show={show} handleClose={() => setShow(false)}/>
+                <button
+                    style={buttonStyle}
+                    className="icon-button"
+                    onClick={() => setShow(true)}
+                >
+                    <BsFillPeopleFill />
+                </button>
+                <MemberModal project={selectedProject} members={members} show={show}
+                    handleClose={() => setShow(false)}
+                    addMember={addProjectMembers}
+                    deleteMembers={deleteProjectMembers}
+                    allowInvite={permissions.edit}/>
             </> }
         </>
     );

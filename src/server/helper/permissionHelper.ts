@@ -10,8 +10,6 @@ export const checkProjectPermission = async (
         project_id,
     ]);
 
-    console.log(q.rows, project_id);
-
     if (!q.rowCount) {
         throw Error('invalid project');
     }
@@ -20,7 +18,9 @@ export const checkProjectPermission = async (
 
     if (req.token && req.user) {
         const userId = req.user.id;
-        const belongsToProject = project.owner_id === userId;
+
+        const belongsToProject = await userMemberOfProject(userId, project_id) 
+
         if (!project.public_view) {
             return { view: belongsToProject, edit: belongsToProject };
         } else if (!project.public_edit) {

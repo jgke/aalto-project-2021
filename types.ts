@@ -58,13 +58,14 @@ export interface User {
     id: number;
 }
 
-export interface RootState {
-    project: IProject[];
+export interface UserData {
+    username: string;
+    email: string;
+    id: number;
 }
 
-export interface ProjectInvite {
-    invited: string[];
-    projectId: number;
+export interface RootState {
+    project: IProject[];
 }
 
 export interface ToolbarProps {

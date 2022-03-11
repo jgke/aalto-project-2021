@@ -20,11 +20,14 @@ function path(url: string): IPathRoute {
         '/project': {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],
         },
-        '/project/members': {
-            methods: ['POST'],
-        },
         '/project/:id': {
             methods: ['GET', 'DELETE'],
+        },
+        '/project/:id/members': {
+            methods: ['GET', 'POST', 'DELETE'],
+        },
+        '/project/:id/permission': {
+            methods: ['GET'],
         },
         '/user/register': {
             methods: ['POST'],
@@ -42,6 +45,12 @@ function path(url: string): IPathRoute {
         } else if (url.includes('/node/')) {
             return allRoutes['/node/:id'];
         } else if (url.includes('/project/')) {
+            if (url.includes('permission')) {
+                return allRoutes['/project/:id/permission'];
+            } else if (url.includes('members')) {
+                return allRoutes['/project/:id/members'];
+            }
+
             return allRoutes['/project/:id'];
         }
     }

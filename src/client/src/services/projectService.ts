@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IProject, ProjectInvite, ProjectPermissions } from '../../../../types';
+import { IProject, ProjectPermissions, UserData } from '../../../../types';
 import { axiosWrapper } from './axiosWrapper';
 import { getAuthConfig } from './userService';
 export const baseUrl = '/api/project';
@@ -34,7 +34,6 @@ const sendProject = async (project: IProject): Promise<number | undefined> => {
     const response = await axiosWrapper(
         axios.post<{ id: number }>(baseUrl, project, getAuthConfig())
     );
-    console.log(response);
     return response?.id;
 };
 
@@ -47,10 +46,17 @@ const updateProject = async (project: IProject): Promise<void> => {
     return await axiosWrapper(axios.put(baseUrl, project, getAuthConfig()));
 };
 
-const inviteUsers = async (projectId: number, invited: string[]): Promise<void> => {
-    const request: ProjectInvite = { projectId, invited }
-    return await axiosWrapper(axios.post(`${baseUrl}/members`, request, getAuthConfig()));
-}
+const getMembers = async (projectId: number): Promise<UserData[]> => {
+    return (await axiosWrapper(axios.get<UserData[]>(`${baseUrl}/${projectId}/members`, getAuthConfig()))) || [];
+};
+
+const addMember = async (projectId: number, member: string): Promise<UserData | undefined> => {
+    return await axiosWrapper(axios.post<UserData>(`${baseUrl}/${projectId}/members`, {member}, getAuthConfig()));
+};
+
+const deleteMember = async (projectId: number, userId: number): Promise<void> => {
+    return await axiosWrapper(axios.delete(`${baseUrl}/${projectId}/members/${userId}`, getAuthConfig()));
+};
 
 export {
     getAll,
@@ -59,5 +65,7 @@ export {
     sendProject,
     deleteProject,
     updateProject,
-    inviteUsers
+    getMembers,
+    addMember,
+    deleteMember
 };

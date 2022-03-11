@@ -1,6 +1,6 @@
 import { router } from '../router';
 import { Request, Response } from 'express';
-import { IProject, ProjectInvite, User } from '../../../../types';
+import { IProject, User, UserData } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
 import { checkProjectPermission, userMemberOfProject } from '../../helper/permissionHelper';
@@ -127,9 +127,10 @@ router
 
         const p: IProject = req.body;
 
-        const ownerId = req.user.id;
-        if (p.owner_id !== ownerId) {
-            return res.status(401).json({ error: 'invalid owner id' });
+        const permissions = await checkProjectPermission(req, p.id);
+
+        if (!permissions.view) {
+            return res.status(401).json({ message: 'No permission' });
         }
 
         const q = await db.query(
@@ -153,39 +154,80 @@ router
     });
 
 router
-    .route('/project/members')
-    .post(async (req: Request, res: Response) => {
-        if (!req.token || !req.user) {
-            return res.status(401).json({ error: 'token missing or invalid' });
+    .route('/project/:id/members')
+    .get(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.id);
+        const permissions = await checkProjectPermission(req, projectId);
+
+        if (!permissions.view) {
+            return res.status(401).json({ message: 'No permission' });
         }
 
-        const invite: ProjectInvite = req.body;
+        const query = await db.query(
+            `SELECT username, email, id FROM users
+            WHERE id IN (
+                SELECT users_id FROM userBelongProject
+                WHERE project_id = $1
+            )`,
+            [ projectId ]
+        );
+
+        return res.status(200).json(query.rows);
+    })
+    .post(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.id);
+        const permissions = await checkProjectPermission(req, projectId);
+
+        const invite: string = req.body.member;
 
         // Test whether inviter belongs in project
-        if (!(await userMemberOfProject(req.user.id, invite.projectId))) {
-            return res.status(401).json({ error: 'Inviter does not belong in project' });
+        if (!permissions.edit) {
+            return res.status(401).json({ message: 'No permission' });
         }
 
         // Invite users
-        for (const name of invite.invited) {
-            try {
-                const user: User = (await db.query('SELECT * FROM users WHERE username = $1 OR email = $1', [
-                    name,
-                ])).rows[0];
+        try {
+            const user: UserData = (await db.query('SELECT username, email, id FROM users WHERE username = $1 OR email = $1', [
+                invite,
+            ])).rows[0];
 
-                await db.query(
-                    'INSERT INTO userBelongProject (users_id, project_id) VALUES ($1, $2)',
-                    [user.id, invite.projectId]
-                );
+            await db.query(
+                'INSERT INTO userBelongProject (users_id, project_id) VALUES ($1, $2)',
+                [user.id, projectId]
+            );
 
-                res.status(200);
-            } catch (e) {
-                console.log('Could not invite ' + name, e);
-                res.status(403).json();
-            }
+            res.status(200).json(user);
+        } catch (e) {
+            console.log('Could not invite ', e);
+            res.status(403).json();
         }
     })
 
+router.route('/project/:pid/members/:uid').delete(async (req: Request, res: Response) => {
+    const projectId = parseInt(req.params.pid);
+    const userId = parseInt(req.params.uid);
+    const permissions = await checkProjectPermission(req, projectId);
+
+    // Test whether inviter belongs in project
+    if (!permissions.edit) {
+        return res.status(401).json({ message: 'No permission' });
+    }
+
+    // Test that the person being deleted is not a owner
+    const q = await db.query('SELECT * FROM project WHERE id = $1 AND owner_id = $2', [
+        projectId, userId,
+    ]);
+
+    if (q.rowCount > 0) {
+        return res.status(403).json({ message: 'Cannot delete owner' });
+    }
+
+    await db.query(
+        'DELETE FROM userBelongProject WHERE project_id = $1 AND users_id = $2',
+        [projectId, userId]
+    );
+    res.status(200);
+});
 
 export { router as project };
         
