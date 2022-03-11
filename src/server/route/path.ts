@@ -32,6 +32,9 @@ function path(url: string): IPathRoute {
         '/user/login': {
             methods: ['POST', 'GET'],
         },
+        '/user/validity': {
+            methods: ['POST'],
+        },
     };
     if (!allRoutes[url]) {
         if (url.includes('/edge/')) {
