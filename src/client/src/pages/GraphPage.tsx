@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Graph } from '../components/Graph';
 import { ElementDetail } from '../components/ElementDetail';
-import { IEdge, INode, RootState } from '../../../../types';
+import { Button } from 'react-bootstrap';
+import { InviteModal } from '../components/InviteModal';
+import {
+    IEdge,
+    INode,
+    IProject,
+    ProjectPermissions,
+    RootState,
+} from '../../../../types';
 import {
     ArrowHeadType,
     Edge,
@@ -15,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
+import * as projectService from '../services/projectService';
 
 export const GraphPage = (): JSX.Element => {
     const { id } = useParams();
@@ -26,13 +35,44 @@ export const GraphPage = (): JSX.Element => {
     const [selectedDataType, setSelectedDataType] = useState<
         'Node' | 'Edge' | null
     >(null);
+    const [selectedProject, setSelectedProject] = useState<
+        IProject | undefined
+    >(undefined);
+    const [permissions, setPermissions] = useState<ProjectPermissions>({
+        view: false,
+        edit: false,
+    });
+    const [show, setShow] = useState(false);
 
     const DefaultNodeType = 'default';
 
     const [elements, setElements] = useState<Elements>([]);
 
     const projects = useSelector((state: RootState) => state.project);
-    const selectedProject = projects.find((p) => p.id === parseInt(id || ''));
+
+    useEffect(() => {
+        const project = projects.find((p) => p.id === parseInt(id || ''));
+        if (project) {
+            setSelectedProject(project);
+        } else if (id !== undefined) {
+            projectService
+                .getProject(parseInt(id))
+                .then((project) => setSelectedProject(project))
+                .catch(() => setSelectedProject(undefined));
+        } else {
+            setSelectedProject(undefined);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (selectedProject) {
+            projectService
+                .getProjectPermissions(parseInt(id || ''))
+                .then((permissions) => setPermissions(permissions));
+        } else {
+            setPermissions({ view: false, edit: false });
+        }
+    }, [selectedProject]);
 
     useEffect(() => {
         if (selectedProject) {
@@ -93,10 +133,6 @@ export const GraphPage = (): JSX.Element => {
         setSelectedDataType(null);
     };
 
-    if (!selectedProject) {
-        return <></>;
-    }
-
     return (
         <>
             <Graph
@@ -105,6 +141,7 @@ export const GraphPage = (): JSX.Element => {
                 selectedProject={selectedProject}
                 onElementClick={onElementClick}
                 DefaultNodeType={DefaultNodeType}
+                permissions={permissions}
             />
             <ElementDetail
                 element={selectedElement}
@@ -112,7 +149,14 @@ export const GraphPage = (): JSX.Element => {
                 elements={elements}
                 setElements={setElements}
                 closeSidebar={closeSidebar}
+                permissions={permissions}
             />
+            {selectedProject && <>
+                <Button onClick={() => setShow(true)}>
+                    Invite
+                </Button>
+                <InviteModal projectId={selectedProject.id} show={show} handleClose={() => setShow(false)}/>
+            </> }
         </>
     );
 };

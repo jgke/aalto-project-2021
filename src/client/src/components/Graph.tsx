@@ -4,7 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, IProject } from '../../../../types';
+import { IEdge, INode, IProject, ProjectPermissions } from '../../../../types';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as layoutService from '../services/layoutService';
@@ -28,8 +28,6 @@ import ReactFlow, {
 import { NodeEdit } from './NodeEdit';
 import { Toolbar, ToolbarHandle } from './Toolbar';
 import toast from 'react-hot-toast';
-import { Button } from 'react-bootstrap';
-import { InviteModal } from './InviteModal';
 
 const graphStyle = {
     height: '100%',
@@ -41,7 +39,8 @@ const graphStyle = {
 };
 
 export interface GraphProps {
-    selectedProject: IProject;
+    selectedProject: IProject | undefined;
+    permissions: ProjectPermissions;
     elements: Elements;
     DefaultNodeType: string;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
@@ -55,6 +54,7 @@ interface FlowInstance {
 
 export const Graph = (props: GraphProps): JSX.Element => {
     const selectedProject = props.selectedProject;
+    const permissions = props.permissions;
 
     const elements = props.elements;
     const setElements = props.setElements;
@@ -62,7 +62,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
-    const [show, setShow] = useState(false);
     
 
     const connectButtonRef = useRef<ToolbarHandle>();
@@ -106,7 +105,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
     const createNode = async (nodeText: string): Promise<void> => {
-        if (selectedProject) {
+        if (selectedProject && permissions.edit) {
             const n: INode = {
                 status: 'ToDo',
                 label: nodeText,
@@ -160,7 +159,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         event: ReactMouseEvent<Element, MouseEvent>,
         node: Node<INode>
     ) => {
-        if (node.data && node.id !== 'TEMP') {
+        if (node.data && node.id !== 'TEMP' && permissions.edit) {
             const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
 
             setElements((els) =>
@@ -224,7 +223,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        if (event.ctrlKey && reactFlowInstance && reactFlowWrapper?.current) {
+        if (
+            event.ctrlKey &&
+            reactFlowInstance &&
+            reactFlowWrapper?.current &&
+            permissions.edit
+        ) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -331,6 +335,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * for adjacent edges when a node is removed.
      */
     const onElementsRemove = async (elementsToRemove: Elements) => {
+        if (!permissions.edit) {
+            return;
+        }
+
         // Must remove edges first to prevent referencing issues in database
         const sortedElementsToRemove = elementsToRemove.sort(
             compareElementsEdgesFirst
@@ -467,8 +475,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
         setElements(newElements);
     };
 
-    if (!selectedProject) {
-        return <></>;
+    if (!selectedProject || !permissions || !permissions.view) {
+        return <h2>No permissions or project doesn't exist</h2>;
     }
 
     return (
@@ -496,6 +504,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
+                        nodesDraggable={permissions.edit}
+                        nodesConnectable={permissions.edit}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -521,19 +531,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     </ReactFlow>
                 </div>
             </ReactFlowProvider>
-            <Toolbar
-                createNode={createNode}
-                reverseConnectState={reverseConnectState}
-                layoutWithDagre={layoutWithDagre}
-                ref={connectButtonRef}
-                forceDirected={forceDirected}
-            />
-            <>
-                <Button onClick={() => setShow(true)}>
-                    Invite
-                </Button>
-                <InviteModal projectId={selectedProject.id} show={show} handleClose={() => setShow(false)}/>
-            </>
+            {permissions.edit && (
+                <Toolbar
+                    createNode={createNode}
+                    reverseConnectState={reverseConnectState}
+                    layoutWithDagre={layoutWithDagre}
+                    ref={connectButtonRef}
+                    forceDirected={forceDirected}
+                />
+            )}
         </div>
     );
 };

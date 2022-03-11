@@ -14,6 +14,10 @@ const getAuthHeader = (): { Authorization: string } => {
     return { Authorization: token };
 };
 
+const getAuthConfig = (): { headers: { Authorization: string } } => ({
+    headers: getAuthHeader(),
+});
+
 const createUser = async (user: Registration): Promise<boolean> => {
     return (
         (await axiosWrapper(axios.post(`${baseUrl}/register`, user))) !==
@@ -53,6 +57,7 @@ export {
     loginUser,
     logoutUser,
     getAuthHeader,
+    getAuthConfig,
     setToken,
     checkLogin,
 };

@@ -24,7 +24,7 @@ function path(url: string): IPathRoute {
             methods: ['POST'],
         },
         '/project/:id': {
-            methods: ['DELETE'],
+            methods: ['GET', 'DELETE'],
         },
         '/user/register': {
             methods: ['POST'],
