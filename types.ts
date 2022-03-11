@@ -73,3 +73,14 @@ export interface ProjectPermissions {
     view: boolean;
     edit: boolean;
 }
+
+export interface ITag {
+    id: number;
+    label: string;
+    color: string;
+}
+
+export interface ITaggedNode {
+    node_id: string;
+    tag_id: number;
+}
