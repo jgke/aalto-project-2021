@@ -66,3 +66,14 @@ export interface ToolbarProps {
     layoutWithDagre: (direction: string) => Promise<void>;
     forceDirected: () => Promise<void>;
 }
+
+export interface ITag {
+    id: number;
+    label: string;
+    color: string;
+}
+
+export interface ITaggedNode {
+    node_id: string;
+    tag_id: number;
+}
