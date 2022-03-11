@@ -74,6 +74,7 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
                     <button
                         className="icon-button"
                         onClick={() => setEditMode(!editMode)}
+                        id="edit-button"
                     >
                         <BsPencilFill />
                     </button>
