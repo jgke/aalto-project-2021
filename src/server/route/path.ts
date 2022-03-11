@@ -6,27 +6,39 @@ function path(url: string): IPathRoute {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],
         },
         '/node': {
-            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+            methods: ['POST', 'PUT'],
         },
         '/node/:id': {
-            methods: ['DELETE'],
+            methods: ['GET', 'DELETE'],
         },
         '/edge': {
-            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+            methods: ['POST', 'PUT'],
         },
         '/edge/:source/:target': {
+            methods: ['GET', 'DELETE'],
+        },
+        '/project': {
+            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+        },
+        '/project/:id': {
             methods: ['DELETE'],
+        },
+        '/user/register': {
+            methods: ['POST'],
+        },
+        '/user/login': {
+            methods: ['POST', 'GET'],
+        },
+        '/user/validity': {
+            methods: ['POST'],
         },
     };
     if (url.includes('/edge/')) {
-        console.log('Returning weird edge url');
         return allRoutes['/edge/:source/:target'];
-    }
-    if (url.includes('/node/')) {
-        console.log('route found, url: ', url);
+    } else if (url.includes('/node/')) {
         return allRoutes['/node/:id'];
-    } else {
-        console.log('Not it fam. It was', url);
+    } else if (url.includes('/project/')) {
+        return allRoutes['/project/:id'];
     }
 
     return allRoutes[url];

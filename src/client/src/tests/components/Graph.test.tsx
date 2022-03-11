@@ -3,11 +3,15 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { RenderResult } from '@testing-library/react';
 
 import { Graph } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
+import { store } from '../../store';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import { IProject } from '../../../../../types';
 
 describe('<Graph>', () => {
     beforeAll(() => {
@@ -79,20 +83,36 @@ describe('<Graph>', () => {
     let testGraph: RenderResult;
 
     const renderGraph = (elements: Elements) => {
+        const selectedProject: IProject = {
+            id: 1,
+            owner_id: 1,
+            name: 'project',
+            description: 'desc',
+        };
+
         return render(
-            <Graph
-                elements={elements}
-                onLoad={(reactFlowInstance) => {
-                    reactFlowInstance.fitView();
-                }}
-                setElements={jest.fn()}
-                onNodeEdit={jest.fn()}
-            />
+            <BrowserRouter>
+                <Provider store={store}>
+                    <Graph
+                        elements={elements}
+                        selectedProject={selectedProject}
+                        setElements={jest.fn()}
+                        onElementClick={jest.fn()}
+                        DefaultNodeType={'default'}
+                    />
+                </Provider>
+            </BrowserRouter>
         );
     };
 
     beforeEach(() => {
         testGraph = renderGraph(testElements);
+    });
+
+    test('should include Toolbar', () => {
+        const toolbar = testGraph.container.querySelector('Toolbar');
+        expect(toolbar).toBeVisible;
+        expect(toolbar).toBeInTheDocument;
     });
 
     test('is visible for users', () => {
@@ -114,5 +134,27 @@ describe('<Graph>', () => {
     test('displays the right amount of edges', () => {
         const c = testGraph.container.querySelectorAll('.react-flow__edge');
         expect(c).toHaveLength(3);
+    });
+
+    test('changes the Connect button text when clicking it', () => {
+        const toolbarButtons =
+            testGraph.container.querySelectorAll('.button-toolbar');
+        const connectButton = toolbarButtons[1];
+        expect(connectButton).toHaveTextContent('Connect');
+        fireEvent.click(connectButton);
+        expect(connectButton).toHaveTextContent('Connecting');
+        fireEvent.click(connectButton);
+        expect(connectButton).toHaveTextContent('Connect');
+    });
+
+    test('changes the Connect button text when holding Shift', () => {
+        const toolbarButtons =
+            testGraph.container.querySelectorAll('.button-toolbar');
+        const connectButton = toolbarButtons[1];
+        expect(connectButton).toHaveTextContent('Connect');
+        fireEvent.keyDown(connectButton, { shiftKey: true });
+        expect(connectButton).toHaveTextContent('Connecting');
+        fireEvent.keyUp(connectButton, { shiftKey: true });
+        expect(connectButton).toHaveTextContent('Connect');
     });
 });

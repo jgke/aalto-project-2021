@@ -9,25 +9,31 @@ import { Toolbar } from '../../components/Toolbar';
 describe('Toolbar', () => {
     let component: RenderResult;
     const mockCreate = jest.fn();
+    const mockReverseConnectState = jest.fn();
+    const mockLayout = jest.fn();
 
     beforeEach(() => {
         mockCreate.mockRestore();
         component = render(
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            <Toolbar createNode={mockCreate} layoutWithDagre={async () => {}} />
+            <Toolbar
+                createNode={mockCreate}
+                layoutWithDagre={mockLayout}
+                reverseConnectState={mockReverseConnectState}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                forceDirected={async () => {}}
+            />
         );
     });
 
-    test('calls a function when button is clicked', () => {
-        const button = component.container.querySelector('button');
-        expect(button).toBeDefined;
-        if (button) {
-            fireEvent.click(button);
-        } else {
-            fail('No button found, should never enter this line');
-        }
-
+    test('calls an appropriate function when a button is clicked', () => {
+        const buttons = component.container.querySelectorAll('button');
+        expect(buttons[0]).toBeDefined;
+        fireEvent.click(buttons[0]);
         expect(mockCreate).toBeCalled;
+
+        expect(buttons[1]).toBeDefined;
+        fireEvent.click(buttons[1]);
+        expect(mockReverseConnectState).toBeCalled;
     });
 
     test('renders the button with proper text', () => {
@@ -42,12 +48,10 @@ describe('Toolbar', () => {
     });
 
     test('can change the text box value', () => {
-        const input = component.container.querySelector('input');
-        if (input) {
-            fireEvent.change(input, {
-                target: { value: 'Add physics' },
-            });
-            expect(input).toHaveValue('Add physics');
-        }
+        const input = component.container.querySelector('input')!;
+        fireEvent.change(input, {
+            target: { value: 'Add physics' },
+        });
+        expect(input).toHaveValue('Add physics');
     });
 });
