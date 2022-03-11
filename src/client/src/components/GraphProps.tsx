@@ -2,7 +2,6 @@ import React from 'react';
 import { INode, IEdge, IProject } from '../../../../types';
 import {
     Node,
-    Edge,
     Elements,
     ArrowHeadType,
     isNode,
@@ -36,12 +35,15 @@ const sendNode = async (
     setElements: React.Dispatch<React.SetStateAction<Elements>>
 ): Promise<void> => {
     const returnId = await nodeService.sendNode(data);
+    console.log('What did it return?')
+    console.log(returnId)
 
     if (returnId) {
         data.id = returnId;
         setElements((els) =>
             els.map((el) => {
                 if (el.id === node.id) {
+                    console.log('Success!')
                     const pos = (el as Node).position;
                     el = {
                         ...el,
@@ -60,12 +62,12 @@ const sendNode = async (
     }
 };
 
-const deleteNode = async (node: Node<INode>): Promise<void> => {
-    await nodeService.deleteNode(node);
+const deleteNode = async (id: number): Promise<void> => {
+    await nodeService.deleteNode(id);
 };
 
-const deleteEdge = async (edge: Edge<IEdge>): Promise<void> => {
-    await edgeService.deleteEdge(edge);
+const deleteEdge = async (source: number, target: number): Promise<void> => {
+    await edgeService.deleteEdge(source, target);
 };
 
 const updateNode = async (node: INode): Promise<void> => {

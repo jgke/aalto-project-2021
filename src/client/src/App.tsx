@@ -1,20 +1,18 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Graph } from './components/Graph';
+import { GraphPage } from './pages/GraphPage';
 import { INode, UserToken } from '../../../types';
 import { Projects } from './components/Projects';
 import { Topbar } from './components/TopBar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as projectReducer from './reducers/projectReducer';
 import './App.css';
 import { Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
 import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
-import { Navigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import toast, { resolveValue, Toaster } from 'react-hot-toast';
-import { RootState } from '../../../types';
-
-import * as graphProps from './components/GraphProps';
+import { checkLogin } from './services/userService';
 
 export const basicNode: INode = {
     status: 'ToDo',
@@ -27,7 +25,6 @@ export const basicNode: INode = {
 
 export const App: FC = () => {
     const dispatch = useDispatch();
-    const projects = useSelector((state: RootState) => state.project);
 
 
     const [user, setUser] = useState<UserToken | null>(null);
@@ -37,10 +34,23 @@ export const App: FC = () => {
         const loggedUserJson = window.localStorage.getItem('loggedGraphUser');
         if (loggedUserJson) {
             const user = JSON.parse(loggedUserJson);
-            setUser(user);
-            setToken(user.token);
+            checkLogin(user).then((x) => {
+                if (x) {
+                    console.log('User is valid!');
+                    setUser(user);
+                    setToken(user.token);
+                } else {
+                    console.log('OLD USER!');
+                    setUser(null);
+                    setToken('');
+                    window.localStorage.removeItem('loggedGraphUser');
+                }
+
+                setUserParsed(true);
+            });
+        } else {
+            setUserParsed(true);
         }
-        setUserParsed(true);
     }, []);
 
     /**
@@ -58,7 +68,11 @@ export const App: FC = () => {
     }
 
     if (!user && !location.pathname.startsWith('/user')) {
-        return <Navigate to="/user/login" />;
+        //useNavigate causes a warning when used here for some reason, but works!
+        //navigate('/user/login');
+
+        // This solution shows the home page for a moment if not logged in, but does not cause an error
+        window.location.href = '/user/login';
     }
 
     return (
@@ -86,10 +100,7 @@ export const App: FC = () => {
             </div>
             <Routes>
                 <Route path="/" element={<Projects user={user} />}></Route>
-                <Route
-                    path="/project/:id"
-                    element={<Graph {...graphProps} projects={projects} />}
-                ></Route>
+                <Route path="/project/:id" element={<GraphPage />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route
                     path="/user/login"

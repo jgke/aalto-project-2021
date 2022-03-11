@@ -25,7 +25,6 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
 import { Toolbar, ToolbarHandle } from './Toolbar';
-import { useParams } from 'react-router';
 
 const graphStyle = {
     height: '100%',
@@ -37,16 +36,16 @@ const graphStyle = {
 };
 
 export interface GraphProps {
-    elements?: Elements;
-    selectedProject?: IProject;
-    projects: IProject[];
+    elements: Elements;
+    selectedProject: IProject;
+    DefaultNodeType: string;
     sendNode: (
         data: INode,
         node: Node,
         setElements: React.Dispatch<React.SetStateAction<Elements>>
     ) => Promise<void>;
-    deleteNode: (node: Node<INode>) => Promise<void>;
-    deleteEdge: (edge: Edge<IEdge>) => Promise<void>;
+    deleteNode: (node: number) => Promise<void>;
+    deleteEdge: (source: number, target: number) => Promise<void>;
     updateNode: (node: INode) => Promise<void>;
     getElements: (
         project: IProject,
@@ -62,6 +61,8 @@ export interface GraphProps {
         elements: Elements,
         setElements: React.Dispatch<React.SetStateAction<Elements>>
     ) => Promise<void>;
+    setElements: React.Dispatch<React.SetStateAction<Elements>>;
+    onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
 
 interface FlowInstance {
@@ -70,15 +71,12 @@ interface FlowInstance {
 }
 
 export const Graph = (props: GraphProps): JSX.Element => {
-    const { id } = useParams();
+    const selectedProject = props.selectedProject;
 
-    const projects = props.projects;
-    const selectedProject =
-        props.selectedProject ||
-        projects.find((p) => p.id === parseInt(id || ''));
+    const elements = props.elements;
+    const setElements = props.setElements;
 
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
-    const [elements, setElements] = useState<Elements>([]);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
 
@@ -114,23 +112,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
     const reverseConnectState = () => switchConnectState(!connectState);
 
-    const DefaultNodeType = 'default';
-
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
         setReactFlowInstance(_reactFlowInstance);
     };
-
-    /**
-     * Fetches the elements from a database
-     */
-    useEffect(() => {
-        if (props.elements) {
-            setElements(props.elements);
-        } else if (selectedProject) {
-            props.getElements(selectedProject, setElements);
-        }
-    }, [selectedProject]);
 
     /**
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
@@ -163,10 +148,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
             setElements((els) =>
                 els.map((el) => {
                     const node = el as Node<INode>;
-                    if (node.position && el.id === node.id) {
+                    if (node.position && node.id === String(n.id)) {
                         node.position = {
-                            x: node.position.x,
-                            y: node.position.y,
+                            x: n.x,
+                            y: n.y,
                         };
                     }
                     return el;
@@ -212,6 +197,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
+                if (!data.label) {
+                    setElements((els) => {
+                        return els.filter((e) => e.id !== 'TEMP');
+                    });
+
+                    return;
+                }
+
                 props.sendNode(n, node, setElements);
             }
         };
@@ -232,7 +225,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             const b: Node = {
                 id: 'TEMP',
                 data: {},
-                type: DefaultNodeType,
+                type: props.DefaultNodeType,
                 position,
                 draggable: false,
             };
@@ -330,13 +323,13 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await props.deleteNode(e);
+                    await props.deleteNode(parseInt(e.id));
                 } catch (e) {
                     console.log('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
                 await props
-                    .deleteEdge(e)
+                    .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
                     );
@@ -451,6 +444,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     ref={reactFlowWrapper}
                 >
                     <ReactFlow
+                        id="graph"
                         elements={elements}
                         onConnect={onConnect}
                         connectionLineType={ConnectionLineType.Straight}
@@ -463,6 +457,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onLoad={onLoad}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
+                        onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
                     >
                         <Controls />

@@ -100,17 +100,18 @@ describe('<Graph>', () => {
             sendNode: jest.fn(),
             updateNode: jest.fn(),
             updateNodes: jest.fn(),
-            projects: [selectedProject]
+            elements: elements,
+            selectedProject: selectedProject,
+            DefaultNodeType: 'default',
+            setElements: jest.fn(),
+            onElementClick: jest.fn()
         }
 
         return render(
             <BrowserRouter>
                 <Provider store={store}>
                     <Graph
-                        elements={elements}
-                        selectedProject={selectedProject}
                         {...graphProps}
-
                     />
                 </Provider>
             </BrowserRouter>
