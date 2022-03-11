@@ -75,5 +75,5 @@ export interface ITag {
 
 export interface ITaggedNode {
     node_id: string;
-    tag_id: number
+    tag_id: number;
 }
