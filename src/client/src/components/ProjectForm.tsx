@@ -37,7 +37,7 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
             setDescription('');
             setPublicView(false);
             setPublicEdit(false);
-            console.log(project);
+
             props.handleSubmit(project);
         }
     };
