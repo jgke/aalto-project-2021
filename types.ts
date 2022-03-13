@@ -62,8 +62,20 @@ export interface RootState {
 
 export interface ToolbarProps {
     createNode: (nodeText: string) => Promise<void>;
+    reverseConnectState: () => void;
     layoutWithDagre: (direction: string) => Promise<void>;
     setNodeHidden: (value: React.SetStateAction<boolean>) => void;
     nodeHidden: boolean;
     forceDirected: () => Promise<void>;
+}
+
+export interface ITag {
+    id: number;
+    label: string;
+    color: string;
+}
+
+export interface ITaggedNode {
+    node_id: string;
+    tag_id: number;
 }

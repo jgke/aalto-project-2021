@@ -20,29 +20,36 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
     const [label, setLabel] = useState<string>(data.label);
     const [status, setStatus] = useState<Status>(data.status);
     const [priority, setPriority] = useState<string>(data.priority);
+    const [validated, setValidated] = useState<boolean>(false);
 
     const handleSubmit = async (event: FormEvent) => {
+        const form = event.currentTarget as HTMLFormElement;
+        if (form.checkValidity()) {
+            setValidated(true);
+            props.setEditMode(false);
+            const node: INode = {
+                ...data,
+                label,
+                status,
+                priority,
+            };
+
+            props.setElements((els) =>
+                els.map((el) => {
+                    if (el.id === String(node.id) && isNode(el)) {
+                        node.x = el.position.x;
+                        node.y = el.position.y;
+                        el.data = node;
+                    }
+                    return el;
+                })
+            );
+
+            await nodeService.updateNode(node);
+        }
+
         event.preventDefault();
-        props.setEditMode(false);
-        const node: INode = {
-            ...data,
-            label,
-            status,
-            priority,
-        };
-
-        props.setElements((els) =>
-            els.map((el) => {
-                if (el.id === String(node.id) && isNode(el)) {
-                    node.x = el.position.x;
-                    node.y = el.position.y;
-                    el.data = node;
-                }
-                return el;
-            })
-        );
-
-        await nodeService.updateNode(node);
+        event.stopPropagation();
     };
 
     const handleCancel = () => {
@@ -54,10 +61,11 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
     }
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group id="label-field" className="mb-3" controlId="labelId">
                 <Form.Label>Label</Form.Label>
                 <Form.Control
+                    required
                     type="text"
                     placeholder="Enter label"
                     value={label}

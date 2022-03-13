@@ -15,10 +15,7 @@ const sendEdge = async (edge: IEdge): Promise<boolean> => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const deleteEdge = async (
-    source: string | number,
-    target: string | number
-): Promise<void> => {
+const deleteEdge = async (source: number, target: number): Promise<void> => {
     await axiosWrapper(axios.delete(`${baseUrl}/${source}/${target}`));
 };
 

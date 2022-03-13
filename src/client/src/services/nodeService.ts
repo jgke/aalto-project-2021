@@ -18,7 +18,7 @@ const sendNode = async (node: INode): Promise<number | undefined> => {
     ).id;
 };
 
-const deleteNode = async (id: string | number): Promise<void> => {
+const deleteNode = async (id: number): Promise<void> => {
     await axiosWrapper(axios.delete(`${baseUrl}/${id}`));
 };
 

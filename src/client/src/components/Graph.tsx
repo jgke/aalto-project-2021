@@ -23,11 +23,11 @@ import ReactFlow, {
     isNode,
     isEdge,
     removeElements,
+    ConnectionLineType,
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
-import { Toolbar } from './Toolbar';
+import { Toolbar, ToolbarHandle } from './Toolbar';
 import toast from 'react-hot-toast';
-
 const graphStyle = {
     height: '100%',
     width: 'auto',
@@ -40,6 +40,7 @@ const graphStyle = {
 export interface GraphProps {
     selectedProject: IProject;
     elements: Elements;
+    DefaultNodeType: string;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
@@ -60,6 +61,41 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
+
+    const connectButtonRef = useRef<ToolbarHandle>();
+
+    // For detecting the os
+    const platform = navigator.userAgent;
+
+    // State for keeping track of node source handle sizes
+    const [connectState, setConnectState] = useState(false);
+
+    // CSS magic to style the node handles when pressing shift or clicking button
+    const switchConnectState = (newValue: boolean): void => {
+        if (newValue === true) {
+            document.body.style.setProperty('--bottom-handle-size', '100%');
+            document.body.style.setProperty(
+                '--source-handle-border-radius',
+                '0'
+            );
+            document.body.style.setProperty('--source-handle-opacity', '0');
+            if (connectButtonRef.current) {
+                connectButtonRef.current.setConnectText('Connecting');
+            }
+        } else {
+            document.body.style.setProperty('--bottom-handle-size', '6px');
+            document.body.style.setProperty(
+                '--source-handle-border-radius',
+                '100%'
+            );
+            document.body.style.setProperty('--source-handle-opacity', '0.5');
+            if (connectButtonRef.current) {
+                connectButtonRef.current.setConnectText('Connect');
+            }
+        }
+        setConnectState(() => newValue);
+    };
+    const reverseConnectState = () => switchConnectState(!connectState);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -154,6 +190,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     project_id: selectedProject.id,
                 };
 
+                if (!data.label) {
+                    setElements((els) => {
+                        return els.filter((e) => e.id !== 'TEMP');
+                    });
+
+                    return;
+                }
+
                 const returnId = await nodeService.sendNode(n);
 
                 if (returnId) {
@@ -167,6 +211,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                                     ...{
                                         id: String(returnId),
                                         data: n,
+                                        type: props.DefaultNodeType,
                                         position: { x: pos.x, y: pos.y },
                                         draggable: true,
                                     },
@@ -179,7 +224,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        if (event.ctrlKey && reactFlowInstance && reactFlowWrapper?.current) {
+        if (((event.metaKey && platform.includes('Macintosh')) || event.ctrlKey) && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -188,7 +233,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             });
 
             position = { x: Math.floor(position.x), y: Math.floor(position.y) };
-            console.log(position);
 
             const tempExists =
                 elements.findIndex((el) => el.id === 'TEMP') >= 0;
@@ -196,6 +240,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             const b: Node = {
                 id: 'TEMP',
                 data: {},
+                type: props.DefaultNodeType,
                 position,
                 draggable: false,
             };
@@ -212,6 +257,54 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     : els.concat(b)
             );
         }
+    }; 
+    const handleKeyPress = (event: KeyboardEvent) => {
+        if (event.shiftKey) {
+            switchConnectState(true);
+        }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+        if (event.key === 'Shift') {
+            switchConnectState(false);
+        }
+    };
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keyup', handleKeyUp);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [handleKeyUp]);
+
+    const onConnectStart = () => {
+        document.body.style.setProperty('--top-handle-size', '100%');
+        document.body.style.setProperty('--source-handle-visibility', 'none');
+        document.body.style.setProperty('--target-handle-border-radius', '0');
+        document.body.style.setProperty('--target-handle-opacity', '0');
+    };
+
+    const onConnectEnd = () => {
+        document.body.style.setProperty('--top-handle-size', '6px');
+        document.body.style.setProperty('--source-handle-visibility', 'block');
+        document.body.style.setProperty(
+            '--target-handle-border-radius',
+            '100%'
+        );
+        document.body.style.setProperty('--target-handle-opacity', '0.5');
     };
 
     /**
@@ -244,13 +337,13 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await nodeService.deleteNode(e.id);
+                    await nodeService.deleteNode(parseInt(e.id));
                 } catch (e) {
                     console.log('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
                 await edgeService
-                    .deleteEdge(e.source, e.target)
+                    .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
                     );
@@ -271,6 +364,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }, [handleMousePress]);
 
     const onConnect = (params: Edge<IEdge> | Connection) => {
+        if (params.source === params.target) {
+            return;
+        }
         if (params.source && params.target && selectedProject) {
             //This does not mean params is an edge but rather a Connection
 
@@ -310,6 +406,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
         }
     };
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
 
     const onNodeEdit = async (id: string, data: INode) => {
         setElements((els) =>
@@ -387,12 +492,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }
 
     return (
-        <div className="graph" style={{ height: '100%' }}>
-            <h2
-                style={{ position: 'absolute', color: 'white', margin: '1rem' }}
-            >
-                Tasks
-            </h2>
+        <div style={{ height: '100%' }}>
+            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
                     className="flow-wrapper"
@@ -400,8 +501,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     ref={reactFlowWrapper}
                 >
                     <ReactFlow
+                        id="graph"
                         elements={elements}
                         onConnect={onConnect}
+                        connectionLineType={ConnectionLineType.Straight}
+                        onConnectStart={onConnectStart}
+                        onConnectEnd={onConnectEnd}
                         onElementsRemove={onElementsRemove}
                         //onEdge update does not remove edge BUT changes the mouse icon when selecting an edge
                         // so it works as a hitbox detector
@@ -410,6 +515,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
+                        selectionKeyCode={'e'}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -437,9 +543,11 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             <Toolbar
                 createNode={createNode}
+                reverseConnectState={reverseConnectState}
                 layoutWithDagre={layoutWithDagre}
                 setNodeHidden={setNodeHidden}
                 nodeHidden={nodeHidden}
+                ref={connectButtonRef}
                 forceDirected={forceDirected}
             />
         </div>

@@ -98,6 +98,7 @@ describe('<Graph>', () => {
                         selectedProject={selectedProject}
                         setElements={jest.fn()}
                         onElementClick={jest.fn()}
+                        DefaultNodeType={'default'}
                     />
                 </Provider>
             </BrowserRouter>
@@ -152,4 +153,25 @@ describe('<Graph>', () => {
         expect(o).toBeVisible;
         expect(d).not.toBeVisible;
     })
+    test('changes the Connect button text when clicking it', () => {
+        const toolbarButtons =
+            testGraph.container.querySelectorAll('.button-toolbar');
+        const connectButton = toolbarButtons[1];
+        expect(connectButton).toHaveTextContent('Connect');
+        fireEvent.click(connectButton);
+        expect(connectButton).toHaveTextContent('Connecting');
+        fireEvent.click(connectButton);
+        expect(connectButton).toHaveTextContent('Connect');
+    });
+
+    test('changes the Connect button text when holding Shift', () => {
+        const toolbarButtons =
+            testGraph.container.querySelectorAll('.button-toolbar');
+        const connectButton = toolbarButtons[1];
+        expect(connectButton).toHaveTextContent('Connect');
+        fireEvent.keyDown(connectButton, { shiftKey: true });
+        expect(connectButton).toHaveTextContent('Connecting');
+        fireEvent.keyUp(connectButton, { shiftKey: true });
+        expect(connectButton).toHaveTextContent('Connect');
+    });
 });

@@ -10,14 +10,16 @@ describe('Toolbar', () => {
     let component: RenderResult;
     const mockCreate = jest.fn();
     const mockHidden = jest.fn();
+    const mockReverseConnectState = jest.fn();
+    const mockLayout = jest.fn();
 
     beforeEach(() => {
         mockCreate.mockRestore();
         component = render(
             <Toolbar
                 createNode={mockCreate}
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                layoutWithDagre={async () => {}}
+                layoutWithDagre={mockLayout}
+                reverseConnectState={mockReverseConnectState}
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
                 forceDirected={async () => {}}
                 setNodeHidden={mockHidden}
@@ -26,12 +28,15 @@ describe('Toolbar', () => {
         );
     });
 
-    test('calls a function when button is clicked', () => {
-        const button = component.container.querySelector('button')!;
-        expect(button).toBeDefined;
-        fireEvent.click(button);
-
+    test('calls an appropriate function when a button is clicked', () => {
+        const buttons = component.container.querySelectorAll('button');
+        expect(buttons[0]).toBeDefined;
+        fireEvent.click(buttons[0]);
         expect(mockCreate).toBeCalled;
+
+        expect(buttons[1]).toBeDefined;
+        fireEvent.click(buttons[1]);
+        expect(mockReverseConnectState).toBeCalled;
     });
 
     test('renders the button with proper text', () => {

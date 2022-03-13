@@ -48,10 +48,13 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
 
         if (props.type === 'Node') {
             const data = props.element as Node<INode>;
-            await nodeService.deleteNode(data.id);
+            await nodeService.deleteNode(parseInt(data.id));
         } else if (props.type === 'Edge') {
             const data = props.element as Edge<IEdge>;
-            await edgeService.deleteEdge(data.source, data.target);
+            await edgeService.deleteEdge(
+                parseInt(data.source),
+                parseInt(data.target)
+            );
         }
 
         props.setElements((els) => removeElements([el, ...removeEdges], els));
@@ -71,6 +74,7 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
                     <button
                         className="icon-button"
                         onClick={() => setEditMode(!editMode)}
+                        id="edit-button"
                     >
                         <BsPencilFill />
                     </button>
