@@ -82,7 +82,6 @@ describe('<Graph>', () => {
 
     let testGraph: RenderResult;
 
-
     const renderGraph = (elements: Elements) => {
         const selectedProject: IProject = {
             id: 1,
@@ -104,15 +103,13 @@ describe('<Graph>', () => {
             selectedProject: selectedProject,
             DefaultNodeType: 'default',
             setElements: jest.fn(),
-            onElementClick: jest.fn()
-        }
+            onElementClick: jest.fn(),
+        };
 
         return render(
             <BrowserRouter>
                 <Provider store={store}>
-                    <Graph
-                        {...graphProps}
-                    />
+                    <Graph {...graphProps} />
                 </Provider>
             </BrowserRouter>
         );

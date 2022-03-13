@@ -130,6 +130,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 y: 5 + elements.length * 10,
                 project_id: selectedProject.id,
             };
+            console.log('The node?');
+            console.log(n);
 
             props.sendCreatedNode(n, elements, setElements);
         }

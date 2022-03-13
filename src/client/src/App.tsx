@@ -26,7 +26,6 @@ export const basicNode: INode = {
 export const App: FC = () => {
     const dispatch = useDispatch();
 
-
     const [user, setUser] = useState<UserToken | null>(null);
     const [userParsed, setUserParsed] = useState<boolean>(false);
 

@@ -1,11 +1,6 @@
 import React from 'react';
 import { INode, IEdge, IProject } from '../../../../types';
-import {
-    Node,
-    Elements,
-    ArrowHeadType,
-    isNode,
-} from 'react-flow-renderer';
+import { Node, Elements, ArrowHeadType, isNode } from 'react-flow-renderer';
 import toast from 'react-hot-toast';
 
 import * as nodeService from '../services/nodeService';
@@ -20,6 +15,7 @@ const sendCreatedNode = async (
 ): Promise<void> => {
     const returnId = await nodeService.sendNode(node);
     if (returnId) {
+        node.id = returnId;
         const b: Node<INode> = {
             id: String(returnId),
             data: node,
@@ -35,15 +31,15 @@ const sendNode = async (
     setElements: React.Dispatch<React.SetStateAction<Elements>>
 ): Promise<void> => {
     const returnId = await nodeService.sendNode(data);
-    console.log('What did it return?')
-    console.log(returnId)
+    console.log('What did it return?');
+    console.log(returnId);
 
     if (returnId) {
         data.id = returnId;
         setElements((els) =>
             els.map((el) => {
                 if (el.id === node.id) {
-                    console.log('Success!')
+                    console.log('Success!');
                     const pos = (el as Node).position;
                     el = {
                         ...el,
