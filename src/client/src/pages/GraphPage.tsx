@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
+import * as graphProps from '../components/GraphProps';
 
 export const GraphPage = (): JSX.Element => {
     const { id } = useParams();
@@ -105,6 +106,7 @@ export const GraphPage = (): JSX.Element => {
                 selectedProject={selectedProject}
                 onElementClick={onElementClick}
                 DefaultNodeType={DefaultNodeType}
+                {...graphProps}
             />
             <ElementDetail
                 element={selectedElement}

@@ -5,8 +5,6 @@ import React, {
     useRef,
 } from 'react';
 import { IEdge, INode, IProject } from '../../../../types';
-import * as nodeService from '../services/nodeService';
-import * as edgeService from '../services/edgeService';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -27,7 +25,6 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
 import { Toolbar, ToolbarHandle } from './Toolbar';
-import toast from 'react-hot-toast';
 const graphStyle = {
     height: '100%',
     width: 'auto',
@@ -38,9 +35,31 @@ const graphStyle = {
 };
 
 export interface GraphProps {
-    selectedProject: IProject;
     elements: Elements;
+    selectedProject: IProject;
     DefaultNodeType: string;
+    sendNode: (
+        data: INode,
+        node: Node,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    deleteNode: (node: number) => Promise<void>;
+    deleteEdge: (source: number, target: number) => Promise<void>;
+    updateNode: (node: INode) => Promise<void>;
+    getElements: (
+        project: IProject,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendCreatedNode: (
+        node: INode,
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendEdge: (edge: IEdge) => Promise<void>;
+    updateNodes: (
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
@@ -113,16 +132,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 y: 5 + elements.length * 10,
                 project_id: selectedProject.id,
             };
-            const returnId = await nodeService.sendNode(n);
-            if (returnId !== undefined) {
-                n.id = returnId;
-                const b: Node<INode> = {
-                    id: String(returnId),
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                };
-                setElements(elements.concat(b));
-            }
+            console.log('The node?');
+            console.log(n);
+
+            props.sendCreatedNode(n, elements, setElements);
         }
     };
 
@@ -148,7 +161,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     return el;
                 })
             );
-            await nodeService.updateNode(n);
+            props.updateNode(n);
         } else {
             console.log('INode data not found');
         }
@@ -196,33 +209,16 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     return;
                 }
 
-                const returnId = await nodeService.sendNode(n);
-
-                if (returnId) {
-                    n.id = returnId;
-                    setElements((els) =>
-                        els.map((el) => {
-                            if (el.id === node.id) {
-                                const pos = (el as Node).position;
-                                el = {
-                                    ...el,
-                                    ...{
-                                        id: String(returnId),
-                                        data: n,
-                                        type: props.DefaultNodeType,
-                                        position: { x: pos.x, y: pos.y },
-                                        draggable: true,
-                                    },
-                                };
-                            }
-                            return el;
-                        })
-                    );
-                }
+                props.sendNode(n, node, setElements);
             }
         };
 
-        if (((event.metaKey && platform.includes('Macintosh')) || event.ctrlKey) && reactFlowInstance && reactFlowWrapper?.current) {
+        if (
+            ((event.metaKey && platform.includes('Macintosh')) ||
+                event.ctrlKey) &&
+            reactFlowInstance &&
+            reactFlowWrapper?.current
+        ) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -245,7 +241,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             b.data.label = (
                 <NodeEdit
                     node={b}
-                    onNodeEdit={async (_, data) => await onEditDone(data, b)}
+                    onNodeEdit={async (_, data) => onEditDone(data, b)}
                 />
             );
 
@@ -255,7 +251,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     : els.concat(b)
             );
         }
-    }; 
+    };
     const handleKeyPress = (event: KeyboardEvent) => {
         if (event.shiftKey) {
             switchConnectState(true);
@@ -335,12 +331,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await nodeService.deleteNode(parseInt(e.id));
+                    await props.deleteNode(parseInt(e.id));
                 } catch (e) {
                     console.log('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
-                await edgeService
+                await props
                     .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
@@ -397,7 +393,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 )
             );
 
-            edgeService.sendEdge(edge);
+            props.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
@@ -424,25 +420,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             })
         );
 
-        await nodeService.updateNode(data);
-    };
-
-    //calls nodeService.updateNode for all nodes
-    const updateNodes = async (els: Elements): Promise<void> => {
-        for (const el of els) {
-            if (isNode(el)) {
-                const node: INode = el.data;
-
-                if (node) {
-                    node.x = el.position.x;
-                    node.y = el.position.y;
-
-                    await nodeService.updateNode(node);
-                } else {
-                    toast('❌ What is going on?');
-                }
-            }
-        }
+        await props.updateNode(data);
     };
 
     const layoutWithDagre = async (direction: string) => {
@@ -450,18 +428,14 @@ export const Graph = (props: GraphProps): JSX.Element => {
         const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
 
     //does force direced iterations, without scrambling the nodes
     const forceDirected = async () => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
 
     if (!selectedProject) {
