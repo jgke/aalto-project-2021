@@ -78,6 +78,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
+    const [nodeHidden, setNodeHidden] = useState(false);
 
     const connectButtonRef = useRef<ToolbarHandle>();
 
@@ -438,6 +439,29 @@ export const Graph = (props: GraphProps): JSX.Element => {
         await props.updateNodes(newElements, setElements);
     };
 
+    //for hiding done nodes and edges
+    useEffect(() => {
+        setElements((els) =>
+            els.map((el) => {
+                if (isNode(el)) {
+                    const node: INode = el.data;
+                    if (node.status == 'Done') {
+                        el.isHidden = nodeHidden;
+                        for (const e of els) {
+                            if (
+                                isEdge(e) &&
+                                (e.source == el.id || e.target == el.id)
+                            ) {
+                                e.isHidden = nodeHidden;
+                            }
+                        }
+                    }
+                }
+                return el;
+            })
+        );
+    }, [nodeHidden, setElements]);
+
     if (!selectedProject) {
         return <></>;
     }
@@ -496,6 +520,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 createNode={createNode}
                 reverseConnectState={reverseConnectState}
                 layoutWithDagre={layoutWithDagre}
+                setNodeHidden={setNodeHidden}
+                nodeHidden={nodeHidden}
                 ref={connectButtonRef}
                 forceDirected={forceDirected}
             />
