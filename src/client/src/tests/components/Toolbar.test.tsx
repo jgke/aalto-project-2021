@@ -62,7 +62,7 @@ describe('Toolbar', () => {
         const cb = component.container.querySelector('input')!;
         expect(cb).toBeDefined;
         fireEvent.change(cb, {
-            target: { checked: true }
+            target: { checked: true },
         });
 
         expect(cb).toBeChecked;

@@ -80,7 +80,8 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
                     className="checkbox-toolbar"
                     checked={nodeHidden}
                     onChange={(evt) => hideNode(evt.target.checked)}
-                /> Hide done tasks
+                />{' '}
+                Hide done tasks
             </div>
         </div>
     );

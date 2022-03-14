@@ -61,7 +61,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
-
     const connectButtonRef = useRef<ToolbarHandle>();
 
     // For detecting the os
@@ -224,7 +223,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        if (((event.metaKey && platform.includes('Macintosh')) || event.ctrlKey) && reactFlowInstance && reactFlowWrapper?.current) {
+        if (
+            ((event.metaKey && platform.includes('Macintosh')) ||
+                event.ctrlKey) &&
+            reactFlowInstance &&
+            reactFlowWrapper?.current
+        ) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -257,7 +261,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     : els.concat(b)
             );
         }
-    }; 
+    };
     const handleKeyPress = (event: KeyboardEvent) => {
         if (event.shiftKey) {
             switchConnectState(true);
@@ -475,7 +479,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     if (node.status == 'Done') {
                         el.isHidden = nodeHidden;
                         for (const e of els) {
-                            if (isEdge(e) && (e.source == el.id || e.target == el.id)) {
+                            if (
+                                isEdge(e) &&
+                                (e.source == el.id || e.target == el.id)
+                            ) {
                                 e.isHidden = nodeHidden;
                             }
                         }
@@ -486,7 +493,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         );
     }, [nodeHidden, setElements]);
 
-    
     if (!selectedProject) {
         return <></>;
     }

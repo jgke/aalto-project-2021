@@ -140,19 +140,18 @@ describe('<Graph>', () => {
         const cb = testGraph.container.querySelector('input')!;
         expect(cb).toBeDefined;
         fireEvent.change(cb, {
-            target: { checked: true }
+            target: { checked: true },
         });
 
         const i = testGraph.container.querySelector('Input node')!;
         const o = testGraph.container.querySelector('Output node')!;
         const d = testGraph.container.querySelector('Default node')!;
 
-
         expect(cb).toBeChecked;
         expect(i).toBeVisible;
         expect(o).toBeVisible;
         expect(d).not.toBeVisible;
-    })
+    });
     test('changes the Connect button text when clicking it', () => {
         const toolbarButtons =
             testGraph.container.querySelectorAll('.button-toolbar');
