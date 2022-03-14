@@ -471,7 +471,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
     }
     //for hiding done nodes and edges
 
-
     if (!selectedProject) {
         return <></>;
     }
@@ -539,7 +538,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     forceDirected={forceDirected}
                 />
             )}
-
         </div>
     );
 };

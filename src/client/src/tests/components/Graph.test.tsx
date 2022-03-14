@@ -111,7 +111,7 @@ describe('<Graph>', () => {
             DefaultNodeType: 'default',
             setElements: jest.fn(),
             onElementClick: jest.fn(),
-            permissions: permissions
+            permissions: permissions,
         };
 
         return render(
