@@ -15,6 +15,12 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     const [description, setDescription] = useState<string>(
         props.defaultProject?.description || ''
     );
+    const [public_view, setPublicView] = useState<boolean>(
+        props.defaultProject?.public_view || false
+    );
+    const [public_edit, setPublicEdit] = useState<boolean>(
+        props.defaultProject?.public_edit || false
+    );
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -24,9 +30,14 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 description,
                 owner_id: props.user.id,
                 id: props.defaultProject?.id || 0,
+                public_view,
+                public_edit,
             };
             setName('');
             setDescription('');
+            setPublicView(false);
+            setPublicEdit(false);
+
             props.handleSubmit(project);
         }
     };
@@ -55,6 +66,30 @@ export const ProjectForm: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         placeholder="Enter Description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                    />
+                </Form.Group>
+                <Form.Group
+                    id="public-view-field"
+                    className="mb-3"
+                    controlId="publicViewId"
+                >
+                    <Form.Check
+                        type="switch"
+                        label="Enable public viewing"
+                        defaultChecked={public_view}
+                        onChange={(e) => setPublicView(e.target.checked)}
+                    />
+                </Form.Group>
+                <Form.Group
+                    id="public-edit-field"
+                    className="mb-3"
+                    controlId="publicViewId"
+                >
+                    <Form.Check
+                        type="switch"
+                        label="Enable public editing"
+                        defaultChecked={public_edit}
+                        onChange={(e) => setPublicEdit(e.target.checked)}
                     />
                 </Form.Group>
 

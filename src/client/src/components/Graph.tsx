@@ -4,7 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, IProject } from '../../../../types';
+import { IEdge, INode, IProject, ProjectPermissions } from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -35,8 +35,9 @@ const graphStyle = {
 };
 
 export interface GraphProps {
+    selectedProject: IProject | undefined;
+    permissions: ProjectPermissions;
     elements: Elements;
-    selectedProject: IProject;
     DefaultNodeType: string;
     sendNode: (
         data: INode,
@@ -71,6 +72,7 @@ interface FlowInstance {
 
 export const Graph = (props: GraphProps): JSX.Element => {
     const selectedProject = props.selectedProject;
+    const permissions = props.permissions;
 
     const elements = props.elements;
     const setElements = props.setElements;
@@ -124,7 +126,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
      */
     const createNode = async (nodeText: string): Promise<void> => {
-        if (selectedProject) {
+        if (selectedProject && permissions.edit) {
             const n: INode = {
                 status: 'ToDo',
                 label: nodeText,
@@ -172,7 +174,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         event: ReactMouseEvent<Element, MouseEvent>,
         node: Node<INode>
     ) => {
-        if (node.data && node.id !== 'TEMP') {
+        if (node.data && node.id !== 'TEMP' && permissions.edit) {
             const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
 
             setElements((els) =>
@@ -325,6 +327,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * for adjacent edges when a node is removed.
      */
     const onElementsRemove = async (elementsToRemove: Elements) => {
+        if (!permissions.edit) {
+            return;
+        }
+
         // Must remove edges first to prevent referencing issues in database
         const sortedElementsToRemove = elementsToRemove.sort(
             compareElementsEdgesFirst
@@ -438,8 +444,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
         await props.updateNodes(newElements, setElements);
     };
-
-    //for hiding done nodes and edges
     useEffect(() => {
         setElements((els) =>
             els.map((el) => {
@@ -461,6 +465,11 @@ export const Graph = (props: GraphProps): JSX.Element => {
             })
         );
     }, [nodeHidden, setElements]);
+
+    if (!selectedProject || !permissions || !permissions.view) {
+        return <h2>No permissions or project doesn't exist</h2>;
+    }
+    //for hiding done nodes and edges
 
     if (!selectedProject) {
         return <></>;
@@ -491,6 +500,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
+                        nodesDraggable={permissions.edit}
+                        nodesConnectable={permissions.edit}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -516,15 +527,17 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     </ReactFlow>
                 </div>
             </ReactFlowProvider>
-            <Toolbar
-                createNode={createNode}
-                reverseConnectState={reverseConnectState}
-                layoutWithDagre={layoutWithDagre}
-                setNodeHidden={setNodeHidden}
-                nodeHidden={nodeHidden}
-                ref={connectButtonRef}
-                forceDirected={forceDirected}
-            />
+            {permissions.edit && (
+                <Toolbar
+                    createNode={createNode}
+                    reverseConnectState={reverseConnectState}
+                    layoutWithDagre={layoutWithDagre}
+                    setNodeHidden={setNodeHidden}
+                    nodeHidden={nodeHidden}
+                    ref={connectButtonRef}
+                    forceDirected={forceDirected}
+                />
+            )}
         </div>
     );
 };

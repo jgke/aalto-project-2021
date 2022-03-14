@@ -24,6 +24,8 @@ export interface IProject {
     owner_id: number;
     name: string;
     description: string;
+    public_view: boolean;
+    public_edit: boolean;
 }
 
 export interface Registration {
@@ -67,6 +69,11 @@ export interface ToolbarProps {
     setNodeHidden: (value: React.SetStateAction<boolean>) => void;
     nodeHidden: boolean;
     forceDirected: () => Promise<void>;
+}
+
+export interface ProjectPermissions {
+    view: boolean;
+    edit: boolean;
 }
 
 export interface ITag {
