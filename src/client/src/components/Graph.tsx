@@ -291,7 +291,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (event.shiftKey) {
             switchConnectState(true);
         }
-        if ((platform.includes('Macintosh') && event.metaKey) || event.ctrlKey) {
+        if (
+            (platform.includes('Macintosh') && event.metaKey) ||
+            event.ctrlKey
+        ) {
             switchCreateState(true);
         }
     };
