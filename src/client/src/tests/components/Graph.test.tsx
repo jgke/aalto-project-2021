@@ -6,12 +6,12 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { RenderResult } from '@testing-library/react';
 
-import { Graph } from '../../components/Graph';
+import { Graph, GraphProps } from '../../components/Graph';
 import { Elements } from 'react-flow-renderer';
 import { store } from '../../store';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { IProject } from '../../../../../types';
+import { IProject, ProjectPermissions } from '../../../../../types';
 
 describe('<Graph>', () => {
     beforeAll(() => {
@@ -48,19 +48,19 @@ describe('<Graph>', () => {
         {
             id: '1',
             type: 'input',
-            data: { label: 'Input node' },
+            data: { label: 'Input node', status: 'ToDo' },
             position: { x: 100, y: 5 },
         },
         {
             id: '2',
             type: 'default',
-            data: { label: 'Default node' },
+            data: { label: 'Default node', status: 'Done' },
             position: { x: 100, y: 100 },
         },
         {
             id: '3',
             type: 'output',
-            data: { label: 'Output node' },
+            data: { label: 'Output node', status: 'Doing' },
             position: { x: 100, y: 200 },
         },
         {
@@ -88,18 +88,36 @@ describe('<Graph>', () => {
             owner_id: 1,
             name: 'project',
             description: 'desc',
+            public_view: true,
+            public_edit: true,
+        };
+
+        const permissions: ProjectPermissions = {
+            view: selectedProject.public_view,
+            edit: selectedProject.public_edit,
+        };
+
+        const graphProps: GraphProps = {
+            deleteEdge: jest.fn(),
+            deleteNode: jest.fn(),
+            getElements: jest.fn(),
+            sendCreatedNode: jest.fn(),
+            sendEdge: jest.fn(),
+            sendNode: jest.fn(),
+            updateNode: jest.fn(),
+            updateNodes: jest.fn(),
+            elements: elements,
+            selectedProject: selectedProject,
+            DefaultNodeType: 'default',
+            setElements: jest.fn(),
+            onElementClick: jest.fn(),
+            permissions: permissions,
         };
 
         return render(
             <BrowserRouter>
                 <Provider store={store}>
-                    <Graph
-                        elements={elements}
-                        selectedProject={selectedProject}
-                        setElements={jest.fn()}
-                        onElementClick={jest.fn()}
-                        DefaultNodeType={'default'}
-                    />
+                    <Graph {...graphProps} />
                 </Provider>
             </BrowserRouter>
         );
@@ -136,6 +154,22 @@ describe('<Graph>', () => {
         expect(c).toHaveLength(3);
     });
 
+    test('calls a function when checkbox is checked', () => {
+        const cb = testGraph.container.querySelector('input')!;
+        expect(cb).toBeDefined;
+        fireEvent.change(cb, {
+            target: { checked: true },
+        });
+
+        const i = testGraph.container.querySelector('Input node')!;
+        const o = testGraph.container.querySelector('Output node')!;
+        const d = testGraph.container.querySelector('Default node')!;
+
+        expect(cb).toBeChecked;
+        expect(i).toBeVisible;
+        expect(o).toBeVisible;
+        expect(d).not.toBeVisible;
+    });
     test('changes the Connect button text when clicking it', () => {
         const toolbarButtons =
             testGraph.container.querySelectorAll('.button-toolbar');

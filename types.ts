@@ -24,6 +24,8 @@ export interface IProject {
     owner_id: number;
     name: string;
     description: string;
+    public_view: boolean;
+    public_edit: boolean;
 }
 
 export interface Registration {
@@ -64,5 +66,23 @@ export interface ToolbarProps {
     reverseConnectState: () => void;
     reverseCreateState: () => void;
     layoutWithDagre: (direction: string) => Promise<void>;
+    setNodeHidden: (value: React.SetStateAction<boolean>) => void;
+    nodeHidden: boolean;
     forceDirected: () => Promise<void>;
+}
+
+export interface ProjectPermissions {
+    view: boolean;
+    edit: boolean;
+}
+
+export interface ITag {
+    id: number;
+    label: string;
+    color: string;
+}
+
+export interface ITaggedNode {
+    node_id: string;
+    tag_id: number;
 }

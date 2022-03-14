@@ -8,6 +8,7 @@ import { Toolbar } from '../../components/Toolbar';
 
 describe('Toolbar', () => {
     let component: RenderResult;
+    const mockHidden = jest.fn();
     const mockReverseConnectState = jest.fn();
     const mockReverseCreateState = jest.fn();
     const mockLayout = jest.fn();
@@ -20,6 +21,8 @@ describe('Toolbar', () => {
                 reverseCreateState={mockReverseCreateState}
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
                 forceDirected={async () => {}}
+                setNodeHidden={mockHidden}
+                nodeHidden={false}
             />
         );
     });
@@ -44,5 +47,16 @@ describe('Toolbar', () => {
     test('does not contain a text field', () => {
         const input = component.container.querySelector('input');
         expect(input).toBeNull;
+    });
+
+    test('calls a function when checkbox is checked', () => {
+        const cb = component.container.querySelector('input')!;
+        expect(cb).toBeDefined;
+        fireEvent.change(cb, {
+            target: { checked: true },
+        });
+
+        expect(cb).toBeChecked;
+        expect(mockHidden).toBeCalled;
     });
 });

@@ -4,9 +4,7 @@ import React, {
     useState,
     useRef,
 } from 'react';
-import { IEdge, INode, IProject } from '../../../../types';
-import * as nodeService from '../services/nodeService';
-import * as edgeService from '../services/edgeService';
+import { IEdge, INode, IProject, ProjectPermissions } from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -27,8 +25,6 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeEdit } from './NodeEdit';
 import { Toolbar, ToolbarHandle } from './Toolbar';
-import toast from 'react-hot-toast';
-
 const graphStyle = {
     height: '100%',
     width: 'auto',
@@ -39,9 +35,32 @@ const graphStyle = {
 };
 
 export interface GraphProps {
-    selectedProject: IProject;
+    selectedProject: IProject | undefined;
+    permissions: ProjectPermissions;
     elements: Elements;
     DefaultNodeType: string;
+    sendNode: (
+        data: INode,
+        node: Node,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    deleteNode: (node: number) => Promise<void>;
+    deleteEdge: (source: number, target: number) => Promise<void>;
+    updateNode: (node: INode) => Promise<void>;
+    getElements: (
+        project: IProject,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendCreatedNode: (
+        node: INode,
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendEdge: (edge: IEdge) => Promise<void>;
+    updateNodes: (
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
@@ -53,6 +72,7 @@ interface FlowInstance {
 
 export const Graph = (props: GraphProps): JSX.Element => {
     const selectedProject = props.selectedProject;
+    const permissions = props.permissions;
 
     const elements = props.elements;
     const setElements = props.setElements;
@@ -60,8 +80,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
+    const [nodeHidden, setNodeHidden] = useState(false);
 
     const ToolbarRef = useRef<ToolbarHandle>();
+
+    // For detecting the os
+    const platform = navigator.userAgent;
 
     // State for toggling shift + drag
     const [connectState, setConnectState] = useState(false);
@@ -125,8 +149,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
     const reverseCreateState = () => switchCreateState(!createState);
 
-    const DefaultNodeType = 'default';
-
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
         setReactFlowInstance(_reactFlowInstance);
@@ -139,36 +161,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (props.elements) {
             setElements(props.elements);
         } else if (selectedProject) {
-            const getElementsHook = async () => {
-                let nodes: INode[];
-                let edges: IEdge[];
-                try {
-                    [nodes, edges] = await Promise.all([
-                        nodeService.getAll(selectedProject.id),
-                        edgeService.getAll(selectedProject.id),
-                    ]);
-                } catch (e) {
-                    return;
-                }
-
-                const nodeElements: Elements = nodes.map((n) => ({
-                    id: String(n.id),
-                    type: DefaultNodeType,
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                }));
-                // Edge Types: 'default' | 'step' | 'smoothstep' | 'straight'
-                const edgeElements: Elements = edges.map((e) => ({
-                    id: String(e.source_id) + '-' + String(e.target_id),
-                    source: String(e.source_id),
-                    target: String(e.target_id),
-                    type: 'straight',
-                    arrowHeadType: ArrowHeadType.ArrowClosed,
-                    data: e,
-                }));
-                setElements(nodeElements.concat(edgeElements));
-            };
-            getElementsHook();
+            props.getElements(selectedProject, setElements);
         }
     }, [selectedProject]);
 
@@ -194,7 +187,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     return el;
                 })
             );
-            await nodeService.updateNode(n);
+            props.updateNode(n);
         } else {
             console.log('INode data not found');
         }
@@ -204,7 +197,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         event: ReactMouseEvent<Element, MouseEvent>,
         node: Node<INode>
     ) => {
-        if (node.data && node.id !== 'TEMP') {
+        if (node.data && node.id !== 'TEMP' && permissions.edit) {
             const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
 
             setElements((els) =>
@@ -242,29 +235,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     return;
                 }
 
-                const returnId = await nodeService.sendNode(n);
-
-                if (returnId) {
-                    n.id = returnId;
-                    setElements((els) =>
-                        els.map((el) => {
-                            if (el.id === node.id) {
-                                const pos = (el as Node).position;
-                                el = {
-                                    ...el,
-                                    ...{
-                                        id: String(returnId),
-                                        data: n,
-                                        type: props.DefaultNodeType,
-                                        position: { x: pos.x, y: pos.y },
-                                        draggable: true,
-                                    },
-                                };
-                            }
-                            return el;
-                        })
-                    );
-                }
+                props.sendNode(n, node, setElements);
             }
         };
 
@@ -305,7 +276,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             b.data.label = (
                 <NodeEdit
                     node={b}
-                    onNodeEdit={async (_, data) => await onEditDone(data, b)}
+                    onNodeEdit={async (_, data) => onEditDone(data, b)}
                 />
             );
 
@@ -316,12 +287,11 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
         }
     };
-
     const handleKeyPress = (event: KeyboardEvent) => {
         if (event.shiftKey) {
             switchConnectState(true);
         }
-        if (event.ctrlKey) {
+        if ((platform.includes('Macintosh') && event.metaKey) || event.ctrlKey) {
             switchCreateState(true);
         }
     };
@@ -395,6 +365,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * for adjacent edges when a node is removed.
      */
     const onElementsRemove = async (elementsToRemove: Elements) => {
+        if (!permissions.edit) {
+            return;
+        }
+
         // Must remove edges first to prevent referencing issues in database
         const sortedElementsToRemove = elementsToRemove.sort(
             compareElementsEdgesFirst
@@ -402,12 +376,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await nodeService.deleteNode(parseInt(e.id));
+                    await props.deleteNode(parseInt(e.id));
                 } catch (e) {
                     console.log('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
-                await edgeService
+                await props
                     .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
                         console.log('Error when deleting edge', e)
@@ -464,7 +438,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 )
             );
 
-            edgeService.sendEdge(edge);
+            props.sendEdge(edge);
         } else {
             console.log(
                 'source or target of edge is null, unable to send to db'
@@ -491,7 +465,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             })
         );
 
-        await nodeService.updateNode(data);
+        await props.updateNode(data);
     };
 
     const onNodeDragStart = () => {
@@ -499,42 +473,46 @@ export const Graph = (props: GraphProps): JSX.Element => {
         setConnectState(false);
     };
 
-    //calls nodeService.updateNode for all nodes
-    const updateNodes = async (els: Elements): Promise<void> => {
-        for (const el of els) {
-            if (isNode(el)) {
-                const node: INode = el.data;
-
-                if (node) {
-                    node.x = el.position.x;
-                    node.y = el.position.y;
-
-                    await nodeService.updateNode(node);
-                } else {
-                    toast('❌ What is going on?');
-                }
-            }
-        }
-    };
-
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
         const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
 
     //does force direced iterations, without scrambling the nodes
     const forceDirected = async () => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
+    useEffect(() => {
+        setElements((els) =>
+            els.map((el) => {
+                if (isNode(el)) {
+                    const node: INode = el.data;
+                    if (node.status == 'Done') {
+                        el.isHidden = nodeHidden;
+                        for (const e of els) {
+                            if (
+                                isEdge(e) &&
+                                (e.source == el.id || e.target == el.id)
+                            ) {
+                                e.isHidden = nodeHidden;
+                            }
+                        }
+                    }
+                }
+                return el;
+            })
+        );
+    }, [nodeHidden, setElements]);
+
+    if (!selectedProject || !permissions || !permissions.view) {
+        return <h2>No permissions or project doesn't exist</h2>;
+    }
+    //for hiding done nodes and edges
 
     if (!selectedProject) {
         return <></>;
@@ -565,6 +543,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
+                        nodesDraggable={permissions.edit}
+                        nodesConnectable={permissions.edit}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -590,13 +570,17 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     </ReactFlow>
                 </div>
             </ReactFlowProvider>
-            <Toolbar
-                reverseCreateState={reverseCreateState}
-                reverseConnectState={reverseConnectState}
-                layoutWithDagre={layoutWithDagre}
-                ref={ToolbarRef}
-                forceDirected={forceDirected}
-            />
+            {permissions.edit && (
+                <Toolbar
+                    reverseConnectState={reverseConnectState}
+                    reverseCreateState={reverseCreateState}
+                    layoutWithDagre={layoutWithDagre}
+                    setNodeHidden={setNodeHidden}
+                    nodeHidden={nodeHidden}
+                    ref={ToolbarRef}
+                    forceDirected={forceDirected}
+                />
+            )}
         </div>
     );
 };
