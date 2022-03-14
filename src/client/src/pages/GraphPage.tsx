@@ -22,6 +22,7 @@ import { useParams } from 'react-router';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as projectService from '../services/projectService';
+import * as graphProps from '../components/GraphProps';
 
 export const GraphPage = (): JSX.Element => {
     const { id } = useParams();
@@ -139,6 +140,7 @@ export const GraphPage = (): JSX.Element => {
                 onElementClick={onElementClick}
                 DefaultNodeType={DefaultNodeType}
                 permissions={permissions}
+                {...graphProps}
             />
             <ElementDetail
                 element={selectedElement}

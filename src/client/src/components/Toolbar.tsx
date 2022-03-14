@@ -8,10 +8,12 @@ export type ToolbarHandle = {
 // This looks very confusing because of Typescript
 export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
     const [nodeText, setNodeText] = useState('');
+    const nodeHidden = props.nodeHidden;
     const [connectText, setConnectText] = useState('Connect');
     const createNode = props.createNode;
     const reverseConnectState = props.reverseConnectState;
     const layoutWithDagre = props.layoutWithDagre;
+    const hideNode = props.setNodeHidden;
     const forceDirected = props.forceDirected;
 
     useImperativeHandle(ref, () => {
@@ -72,6 +74,15 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
             >
                 Force-directed
             </button>
+            <div>
+                <input
+                    type="checkbox"
+                    className="checkbox-toolbar"
+                    checked={nodeHidden}
+                    onChange={(evt) => hideNode(evt.target.checked)}
+                />{' '}
+                Hide done tasks
+            </div>
         </div>
     );
 });
