@@ -29,15 +29,12 @@ const sendNode = async (
     setElements: React.Dispatch<React.SetStateAction<Elements>>
 ): Promise<void> => {
     const returnId = await nodeService.sendNode(data);
-    console.log('What did it return?');
-    console.log(returnId);
 
     if (returnId) {
         data.id = returnId;
         setElements((els) =>
             els.map((el) => {
                 if (el.id === node.id) {
-                    console.log('Success!');
                     const pos = (el as Node).position;
                     el = {
                         ...el,

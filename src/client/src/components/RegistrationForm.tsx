@@ -67,7 +67,6 @@ export const RegistrationForm: ({
         } else {
             setErr(errMessage.concat('Error occured when creating a user'));
             errTimeout();
-            console.log('ERROR!');
         }
     };
 

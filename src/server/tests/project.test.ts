@@ -1,11 +1,4 @@
-import {
-    beforeEach,
-    beforeAll,
-    expect,
-    test,
-    afterAll,
-    describe,
-} from '@jest/globals';
+import { beforeEach, beforeAll, expect, test, describe } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { INode, IProject, Registration, User } from '../../../types';
 import supertest from 'supertest';
@@ -132,7 +125,6 @@ describe('Projects', () => {
             const project = res.body[0];
             expect(project.name).toBe('Test-1');
             expect(project.description).toBe('First-project');
-            console.log(project, user);
             expect(project.owner_id).toBe(user.id);
         });
 
@@ -258,8 +250,6 @@ describe('Projects', () => {
                     ]
                 )
             ).rows[0].id;
-
-            console.log(onlyViewId, `${baseUrl}/${onlyViewId}`);
         });
 
         test('should return 200 on get if public_view is true on an anonymous account', async () => {
@@ -282,9 +272,5 @@ describe('Projects', () => {
 
             await api.post('/api/node').send(n).expect(401);
         });
-    });
-
-    afterAll(() => {
-        console.log('Tests are done!');
     });
 });

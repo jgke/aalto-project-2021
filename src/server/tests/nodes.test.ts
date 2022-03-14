@@ -112,7 +112,6 @@ describe('DELETE request', () => {
         const id = result.body[0].id;
         await api.delete(`/api/node/${id}`).expect(200);
         result = await api.get(`/api/node/${pId}`).expect(200);
-        console.log('What is the length?', result.body.length);
         expect(result.body).toHaveLength(1);
     });
 

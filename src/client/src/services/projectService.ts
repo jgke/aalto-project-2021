@@ -34,7 +34,6 @@ const sendProject = async (project: IProject): Promise<number | undefined> => {
     const response = await axiosWrapper(
         axios.post<{ id: number }>(baseUrl, project, getAuthConfig())
     );
-    console.log(response);
     return response?.id;
 };
 
