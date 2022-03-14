@@ -6,8 +6,6 @@ import toast from 'react-hot-toast';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 
-//const [elements, setElements] = useState<Elements>([]);
-
 const sendCreatedNode = async (
     node: INode,
     elements: Elements,
