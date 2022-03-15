@@ -18,7 +18,9 @@ export const checkProjectPermission = async (
 
     if (req.token && req.user) {
         const userId = req.user.id;
-        const belongsToProject = project.owner_id === userId;
+
+        const belongsToProject = await userMemberOfProject(userId, project_id);
+
         if (!project.public_view) {
             return { view: belongsToProject, edit: belongsToProject };
         } else if (!project.public_edit) {
@@ -27,4 +29,20 @@ export const checkProjectPermission = async (
     }
 
     return { view: project.public_view, edit: project.public_edit };
+};
+
+export const userMemberOfProject = async (
+    userId: number,
+    projectId: number
+): Promise<boolean> => {
+    try {
+        const query = await db.query(
+            'SELECT * FROM userBelongProject WHERE users_id = $1 AND project_id = $2',
+            [userId, projectId]
+        );
+
+        return query.rowCount > 0;
+    } catch (e) {
+        return false;
+    }
 };
