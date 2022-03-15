@@ -26,7 +26,6 @@ router
 
         const permissions = await checkProjectPermission(req, project_id);
 
-        console.log(permissions);
         if (!permissions.view) {
             return res.status(401).json({ message: 'No permission' });
         }
