@@ -3,6 +3,7 @@ import { INode, Status } from '../../../../types';
 import { Form, Button } from 'react-bootstrap';
 import { Elements, isNode, Node } from 'react-flow-renderer';
 import * as nodeService from '../services/nodeService';
+import toast from 'react-hot-toast';
 
 export interface NodeFormProps {
     element: Node<INode>;
@@ -46,6 +47,8 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
             );
 
             await nodeService.updateNode(node);
+        } else {
+            toast(`❌ ${label ? 'Invalid Task' : 'Label cannot be empty'}`);
         }
 
         event.preventDefault();
