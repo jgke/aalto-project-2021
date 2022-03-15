@@ -234,7 +234,8 @@ router
             'DELETE FROM userBelongProject WHERE project_id = $1 AND users_id = $2',
             [projectId, userId]
         );
-        res.status(200);
+
+        res.status(200).json();
     });
 
 export { router as project };
