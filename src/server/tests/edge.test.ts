@@ -32,6 +32,7 @@ let token: string;
 
 describe('Edge', () => {
     beforeAll(async () => {
+        await db.initDatabase();
         const login = await registerLoginUser(api, user);
         user.id = login.id;
         token = login.token;

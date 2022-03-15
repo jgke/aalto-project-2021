@@ -39,6 +39,10 @@ const addDummyUsers = async () => {
 };
 
 describe('User registration', () => {
+    beforeAll(async () => {
+        await db.initDatabase();
+    });
+
     beforeEach(async () => {
         await db.query('DELETE FROM users', []);
     });

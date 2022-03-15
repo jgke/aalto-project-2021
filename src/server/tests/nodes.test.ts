@@ -25,6 +25,7 @@ let token: string;
 
 describe('Node', () => {
     beforeAll(async () => {
+        await db.initDatabase();
         const login = await registerLoginUser(api, user);
         user.id = login.id;
         token = login.token;

@@ -55,6 +55,7 @@ const addDummyProjects = async (): Promise<void> => {
 //Helper functions end here
 describe('Projects', () => {
     beforeAll(async () => {
+        await db.initDatabase();
         const login = await registerLoginUser(api, user);
         user.id = login.id;
         token = login.token;
