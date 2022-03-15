@@ -1,50 +1,56 @@
-import React, { useState, useImperativeHandle, forwardRef } from 'react';
+import React, {
+    useState,
+    useImperativeHandle,
+    forwardRef,
+    useRef,
+} from 'react';
 import { ToolbarProps } from '../../../../types';
 
 export type ToolbarHandle = {
+    setCreateText: (newText: string) => void;
     setConnectText: (newText: string) => void;
+    getBounds: () => DOMRect;
 };
 
-// This looks very confusing because of Typescript
+// This slightly very confusing because of Typescript
 export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
-    const [nodeText, setNodeText] = useState('');
+    const [createText, setCreateText] = useState('Create');
     const nodeHidden = props.nodeHidden;
     const [connectText, setConnectText] = useState('Connect');
-    const createNode = props.createNode;
+    // The following two change Graph.tsx's states
     const reverseConnectState = props.reverseConnectState;
+    const reverseCreateState = props.reverseCreateState;
     const layoutWithDagre = props.layoutWithDagre;
     const hideNode = props.setNodeHidden;
     const forceDirected = props.forceDirected;
 
+    const toolbarDivRef = useRef<HTMLDivElement>(null);
+
+    const getBounds = (): DOMRect | null => {
+        if (toolbarDivRef.current) {
+            return toolbarDivRef.current.getBoundingClientRect();
+        } else {
+            return null;
+        }
+    };
+
     useImperativeHandle(ref, () => {
         return {
+            setCreateText,
             setConnectText,
+            getBounds,
         };
     });
-    /**
-     * Calls createNode from App.tsx and clears state
-     */
-    const sendCreateNode = (nodeText: string) => {
-        setNodeText('');
-        return createNode(nodeText);
-    };
 
     /* The following input field will be removed or re-positioned at some point */
     return (
-        <div className="toolbar">
-            <input
-                id="nodetext"
-                type="text"
-                placeholder="Text"
-                value={nodeText}
-                onChange={({ target }) => setNodeText(target.value)}
-            />
+        <div className="toolbar" ref={toolbarDivRef}>
             <button
                 id="createBtn"
                 className="button-toolbar"
-                onClick={() => sendCreateNode(nodeText)}
+                onClick={reverseCreateState}
             >
-                Create
+                {createText}
             </button>
             <button
                 id="connectBtn"

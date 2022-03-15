@@ -82,40 +82,72 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
-    const connectButtonRef = useRef<ToolbarHandle>();
+    const ToolbarRef = useRef<ToolbarHandle>();
 
     // For detecting the os
     const platform = navigator.userAgent;
 
-    // State for keeping track of node source handle sizes
+    // State for toggling shift + drag
     const [connectState, setConnectState] = useState(false);
+    // State for toggling ctrl + click
+    const [createState, setCreateState] = useState(false);
 
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
         if (newValue === true) {
+            switchCreateState(false);
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#310062'
+            );
             document.body.style.setProperty('--bottom-handle-size', '100%');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
                 '0'
             );
             document.body.style.setProperty('--source-handle-opacity', '0');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connecting');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connecting');
             }
         } else {
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#686559'
+            );
             document.body.style.setProperty('--bottom-handle-size', '6px');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
                 '100%'
             );
             document.body.style.setProperty('--source-handle-opacity', '0.5');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connect');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connect');
             }
         }
         setConnectState(() => newValue);
     };
     const reverseConnectState = () => switchConnectState(!connectState);
+
+    const switchCreateState = (newValue: boolean): void => {
+        if (ToolbarRef.current) {
+            if (newValue === true) {
+                switchConnectState(false);
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#310062'
+                );
+                ToolbarRef.current.setCreateText('Creating');
+            } else {
+                ToolbarRef.current.setCreateText('Create');
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#686559'
+                );
+            }
+        }
+        setCreateState(() => newValue);
+    };
+    const reverseCreateState = () => switchCreateState(!createState);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -123,24 +155,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     /**
-     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
+     * Fetches the elements from a database
      */
-    const createNode = async (nodeText: string): Promise<void> => {
-        if (selectedProject && permissions.edit) {
-            const n: INode = {
-                status: 'ToDo',
-                label: nodeText,
-                priority: 'Urgent',
-                x: 5 + elements.length * 10,
-                y: 5 + elements.length * 10,
-                project_id: selectedProject.id,
-            };
-            console.log('The node?');
-            console.log(n);
-
-            props.sendCreatedNode(n, elements, setElements);
+    useEffect(() => {
+        if (props.elements) {
+            setElements(props.elements);
+        } else if (selectedProject) {
+            props.getElements(selectedProject, setElements);
         }
-    };
+    }, [selectedProject]);
 
     const onNodeDragStop = async (
         x: React.MouseEvent,
@@ -216,12 +239,21 @@ export const Graph = (props: GraphProps): JSX.Element => {
             }
         };
 
-        if (
-            ((event.metaKey && platform.includes('Macintosh')) ||
-                event.ctrlKey) &&
-            reactFlowInstance &&
-            reactFlowWrapper?.current
-        ) {
+        // Don't do anything if clicking on Toolbar area
+        if (ToolbarRef.current) {
+            const toolbarBounds = ToolbarRef.current.getBounds();
+            // "If clicking on Toolbar"
+            if (
+                event.clientX >= toolbarBounds.left &&
+                event.clientY >= toolbarBounds.top &&
+                event.clientY <= toolbarBounds.bottom &&
+                event.clientX <= toolbarBounds.right
+            ) {
+                return;
+            }
+        }
+
+        if (createState && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
             let position = reactFlowInstance.project({
@@ -259,11 +291,20 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (event.shiftKey) {
             switchConnectState(true);
         }
+        if (
+            (platform.includes('Macintosh') && event.metaKey) ||
+            event.ctrlKey
+        ) {
+            switchCreateState(true);
+        }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
         if (event.key === 'Shift') {
             switchConnectState(false);
+        }
+        if (event.key === 'Control') {
+            switchCreateState(false);
         }
     };
 
@@ -430,6 +471,11 @@ export const Graph = (props: GraphProps): JSX.Element => {
         await props.updateNode(data);
     };
 
+    const onNodeDragStart = () => {
+        setCreateState(false);
+        setConnectState(false);
+    };
+
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
         const newElements = layoutService.dagreLayout(elements, direction);
@@ -477,7 +523,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     return (
         <div style={{ height: '100%' }}>
-            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
                     className="flow-wrapper"
@@ -496,6 +541,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // so it works as a hitbox detector
                         onEdgeUpdate={() => null}
                         onLoad={onLoad}
+                        onNodeDragStart={onNodeDragStart}
                         onNodeDragStop={onNodeDragStop}
                         onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
@@ -529,12 +575,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             {permissions.edit && (
                 <Toolbar
-                    createNode={createNode}
                     reverseConnectState={reverseConnectState}
+                    reverseCreateState={reverseCreateState}
                     layoutWithDagre={layoutWithDagre}
                     setNodeHidden={setNodeHidden}
                     nodeHidden={nodeHidden}
-                    ref={connectButtonRef}
+                    ref={ToolbarRef}
                     forceDirected={forceDirected}
                 />
             )}

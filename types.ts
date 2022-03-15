@@ -63,8 +63,8 @@ export interface RootState {
 }
 
 export interface ToolbarProps {
-    createNode: (nodeText: string) => Promise<void>;
     reverseConnectState: () => void;
+    reverseCreateState: () => void;
     layoutWithDagre: (direction: string) => Promise<void>;
     setNodeHidden: (value: React.SetStateAction<boolean>) => void;
     nodeHidden: boolean;
