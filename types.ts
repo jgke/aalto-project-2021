@@ -1,4 +1,11 @@
-export type Status = 'Done' | 'Doing' | 'ToDo';
+export type Status =
+    | 'Product Backlog'
+    | 'Sprint Backlog'
+    | 'ToDo'
+    | 'Doing'
+    | 'Code Review'
+    | 'Done'
+    | 'Done Done';
 
 // Id of a node is optional since the id is created in the database
 // so when sent to backend we don't give it any id

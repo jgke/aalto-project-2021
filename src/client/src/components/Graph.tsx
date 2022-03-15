@@ -495,7 +495,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             els.map((el) => {
                 if (isNode(el)) {
                     const node: INode = el.data;
-                    if (node.status == 'Done') {
+                    if (node.status === 'Done' || node.status === 'Done Done') {
                         el.isHidden = nodeHidden;
                         for (const e of els) {
                             if (

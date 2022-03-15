@@ -79,9 +79,13 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                     defaultValue={status}
                     onChange={(e) => setStatus(e.target.value as Status)}
                 >
-                    <option value={'Done'}>Done</option>
+                    <option value={'Product Backlog'}>Product Backlog</option>
+                    <option value={'Sprint Backlog'}>Sprint Backlog</option>
+                    <option value={'ToDo'}>ToDo</option>
                     <option value={'Doing'}>Doing</option>
-                    <option value={'ToDo'}>To Do</option>
+                    <option value={'Code Review'}>Code Review</option>
+                    <option value={'Done'}>Done</option>
+                    <option value={'Done Done'}>Done Done</option>
                 </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3" controlId="priorityId">
