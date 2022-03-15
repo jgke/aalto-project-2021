@@ -25,6 +25,7 @@ import { BsFillPeopleFill } from 'react-icons/bs';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as projectService from '../services/projectService';
+import * as graphProps from '../components/GraphProps';
 import CSS from 'csstype';
 
 const buttonStyle: CSS.Properties = {
@@ -177,6 +178,7 @@ export const GraphPage = (): JSX.Element => {
                 onElementClick={onElementClick}
                 DefaultNodeType={DefaultNodeType}
                 permissions={permissions}
+                {...graphProps}
             />
             <ElementDetail
                 element={selectedElement}

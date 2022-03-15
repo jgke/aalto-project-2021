@@ -9,6 +9,7 @@ import { Toolbar } from '../../components/Toolbar';
 describe('Toolbar', () => {
     let component: RenderResult;
     const mockCreate = jest.fn();
+    const mockHidden = jest.fn();
     const mockReverseConnectState = jest.fn();
     const mockLayout = jest.fn();
 
@@ -21,6 +22,8 @@ describe('Toolbar', () => {
                 reverseConnectState={mockReverseConnectState}
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
                 forceDirected={async () => {}}
+                setNodeHidden={mockHidden}
+                nodeHidden={false}
             />
         );
     });
@@ -53,5 +56,16 @@ describe('Toolbar', () => {
             target: { value: 'Add physics' },
         });
         expect(input).toHaveValue('Add physics');
+    });
+
+    test('calls a function when checkbox is checked', () => {
+        const cb = component.container.querySelector('input')!;
+        expect(cb).toBeDefined;
+        fireEvent.change(cb, {
+            target: { checked: true },
+        });
+
+        expect(cb).toBeChecked;
+        expect(mockHidden).toBeCalled;
     });
 });
