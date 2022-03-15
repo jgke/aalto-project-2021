@@ -10,8 +10,6 @@ export const checkProjectPermission = async (
         project_id,
     ]);
 
-    console.log(q.rows, project_id);
-
     if (!q.rowCount) {
         throw Error('invalid project');
     }
