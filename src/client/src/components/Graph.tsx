@@ -196,7 +196,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         setElements((els) => {
             return els.filter((e) => e.id !== 'TEMP');
         });
-    }
+    };
 
     const onNodeNamingDone = async (label: string, node: Node) => {
         if (selectedProject) {
@@ -225,7 +225,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const onNodeNamingCancel = (canceledName: string) => {
         setLastCanceledName(canceledName);
         removeTempNode();
-    }
+    };
 
     // handle what happens on mousepress press
     const handleMousePress = (event: MouseEvent) => {
@@ -275,7 +275,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
         }
     };
-    
+
     const handleKeyPress = (event: KeyboardEvent) => {
         if (event.shiftKey) {
             switchConnectState(true);
