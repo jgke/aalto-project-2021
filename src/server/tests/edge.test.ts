@@ -10,7 +10,11 @@ import { db } from '../dbConfigs';
 import { IEdge, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
-import { addDummyNodes, addDummyProject, registerLoginUser } from './testHelper';
+import {
+    addDummyNodes,
+    addDummyProject,
+    registerLoginUser,
+} from './testHelper';
 import { mockUser } from '../../../testmock';
 
 const baseUrl = '/api/edge';
@@ -28,7 +32,7 @@ let token: string;
 
 describe('Edge', () => {
     beforeAll(async () => {
-        const login = await registerLoginUser(api, user)
+        const login = await registerLoginUser(api, user);
         user.id = login.id;
         token = login.token;
     });

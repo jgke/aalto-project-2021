@@ -10,7 +10,11 @@ import { db } from '../dbConfigs';
 import { INode, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
-import { addDummyNodes, addDummyProject, registerLoginUser } from './testHelper';
+import {
+    addDummyNodes,
+    addDummyProject,
+    registerLoginUser,
+} from './testHelper';
 import { mockUser } from '../../../testmock';
 
 const api = supertest(app);
@@ -21,7 +25,7 @@ let token: string;
 
 describe('Node', () => {
     beforeAll(async () => {
-        const login = await registerLoginUser(api, user)
+        const login = await registerLoginUser(api, user);
         user.id = login.id;
         token = login.token;
     });
@@ -205,7 +209,9 @@ describe('Node', () => {
             };
 
             await api.post('/api/node').send(node).expect(200);
-            q = await db.query('SELECT * FROM node WHERE  label=$1', [node.label]);
+            q = await db.query('SELECT * FROM node WHERE  label=$1', [
+                node.label,
+            ]);
             expect(q.rowCount).toBeGreaterThan(0);
         });
     });

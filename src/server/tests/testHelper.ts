@@ -19,18 +19,16 @@ export const registerLoginUser = async (
         .send({ email: user.email, password: user.password });
     return {
         id: res.body.id,
-        token: res.body.token
-    }
-}
+        token: res.body.token,
+    };
+};
 
 export const addProject = async (
     db: Database,
     project: IProject
 ): Promise<number> => {
-    
     let projectId = 0;
     try {
-
         const q = await db.query(
             'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
             [
@@ -47,7 +45,7 @@ export const addProject = async (
         console.log('Invalid project', e);
     }
     return projectId;
-}
+};
 
 export const addDummyProject = async (
     db: Database,
@@ -62,7 +60,7 @@ export const addDummyProject = async (
         public_edit: true,
     };
 
-    return addProject(db, p)
+    return addProject(db, p);
 };
 
 export const addDummyNodes = async (

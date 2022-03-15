@@ -1,4 +1,11 @@
-import { beforeEach, expect, test, describe, beforeAll, afterAll } from '@jest/globals';
+import {
+    beforeEach,
+    expect,
+    test,
+    describe,
+    beforeAll,
+    afterAll,
+} from '@jest/globals';
 import { db } from '../dbConfigs';
 import supertest from 'supertest';
 import { app } from '../index';
