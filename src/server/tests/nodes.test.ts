@@ -1,29 +1,25 @@
-import {
-    beforeEach,
-    expect,
-    test,
-    afterAll,
-    describe,
-    beforeAll,
-} from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { INode, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
-import { addDummyNodes, addDummyProject, registerLoginUser } from './testHelper';
+import {
+    addDummyNodes,
+    addDummyProject,
+    registerLoginUser,
+} from './testHelper';
 import { mockUser } from '../../../testmock';
 
 const api = supertest(app);
 
 let pId: number;
 const user: User = mockUser;
-let token: string;
 
 describe('Node', () => {
     beforeAll(async () => {
-        const login = await registerLoginUser(api, user)
+        await db.initDatabase();
+        const login = await registerLoginUser(api, user);
         user.id = login.id;
-        token = login.token;
     });
 
     beforeEach(async () => {
@@ -205,7 +201,9 @@ describe('Node', () => {
             };
 
             await api.post('/api/node').send(node).expect(200);
-            q = await db.query('SELECT * FROM node WHERE  label=$1', [node.label]);
+            q = await db.query('SELECT * FROM node WHERE  label=$1', [
+                node.label,
+            ]);
             expect(q.rowCount).toBeGreaterThan(0);
         });
     });

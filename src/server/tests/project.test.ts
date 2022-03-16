@@ -1,11 +1,4 @@
-import {
-    beforeEach,
-    beforeAll,
-    expect,
-    test,
-    afterAll,
-    describe,
-} from '@jest/globals';
+import { beforeEach, beforeAll, expect, test, describe } from '@jest/globals';
 import { INode, IProject, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
@@ -55,7 +48,8 @@ const addDummyProjects = async (): Promise<void> => {
 //Helper functions end here
 describe('Projects', () => {
     beforeAll(async () => {
-        const login = await registerLoginUser(api, user)
+        await db.initDatabase();
+        const login = await registerLoginUser(api, user);
         user.id = login.id;
         token = login.token;
     });
