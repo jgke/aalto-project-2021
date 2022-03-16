@@ -26,7 +26,139 @@
                     "403": { "description": "Forbidden" }
                 }
             }
+        },
+        "/api/node/:id": {
+            "get": {
+                "summary": "Fetch nodes",
+                "description": "Fetch all nodes belonging to the project",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the project of which to fetch nodes",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" },
+                    "403": { "description": "Forbidden" }
+                }
+            },
+            "delete": {
+                "summary": "Delete a node",
+                "description": "Deletes the specific node with id ':id' and all edges connected to that node",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Node id",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" },
+                    "403": { "description": "Forbidden" }
+                }
+            }
+        },
+        "/api/node": {
+            "post": {
+                "summary": "Create a node",
+                "description": "Create a new **node** for a **project**. You may need certain privilages to be able to add a node",
+                "requestBody": {
+                    "content": {
+                        "-": {
+                            "schema": { "$ref": "#/components/schemas/Node" }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" },
+                    "403": { "description": "Forbidden" }
+                }
+            },
+            "put": {
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "-": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FullNode"
+                            }
+                        }
+                    }
+                },
+                "summary": "Update node",
+                "description": "Updates the value of a node.",
+                "responses": {
+                    "200": { "description": "OK" },
+                    "403": { "description": "Forbidden" }
+                }
+            }
         }
     },
-    "components": {}
+    "components": {
+        "schemas": {
+            "Node": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "description": "Text seen in the middle of the node"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the node. Can be one of the following -> Product Backlog | Sprint Backlog | ToDo | Doing | Code Review | Done | Done Done"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "description": "A small description about how urgent the task of the node is"
+                    },
+                    "x": {
+                        "type": "float",
+                        "description": "x position of the node in the 2D graph. Though a float it will be rounded when a node is created"
+                    },
+                    "y": {
+                        "type": "float",
+                        "description": "y position of the node in the 2D graph. Though a float it will be rounded when a node is created"
+                    }
+                }
+            },
+            "FullNode": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Id of the to be updated node"
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "Text seen in the middle of the node"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the node. Can be one of the following -> Product Backlog | Sprint Backlog | ToDo | Doing | Code Review | Done | Done Done"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "description": "A small description about how urgent the task of the node is"
+                    },
+                    "x": {
+                        "type": "float",
+                        "description": "x position of the node in the 2D graph. Though a float it will be rounded when a node is created"
+                    },
+                    "y": {
+                        "type": "float",
+                        "description": "y position of the node in the 2D graph. Though a float it will be rounded when a node is created"
+                    }
+                }
+            }
+        }
+    }
 }

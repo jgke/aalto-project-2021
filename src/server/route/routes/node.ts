@@ -19,6 +19,15 @@ const nodeCheck = (node: INode): boolean => {
     );
 };
 
+/**
+ * GET /api/node/:id
+ * @summary Fetch nodes
+ * @description Fetch all nodes belonging to the project
+ * @pathParam {string} id - Id of the project of which to fetch nodes
+ * @response 200 - OK
+ * @response 401 - Unauthorized
+ * @response 403 - Forbidden
+ */
 router
     .route('/node/:id')
     .get(async (req: Request, res: Response) => {
@@ -35,6 +44,15 @@ router
         ]);
         res.json(q.rows);
     })
+    /**
+     * DELETE /api/node/:id
+     * @summary Delete a node
+     * @description Deletes the specific node with id ':id' and all edges connected to that node
+     * @pathParam {string} id - Node id
+     * @response 200 - OK
+     * @response 401 - Unauthorized
+     * @response 403 - Forbidden
+     */
     .delete(async (req: Request, res: Response) => {
         const id = req.params.id;
 
@@ -59,6 +77,16 @@ router
         res.status(200).json();
     });
 
+/**
+ * POST /api/node
+ * @summary Create a node
+ * @description Create a new **node** for a **project**. You may need certain privilages to be able to add a node
+ * @bodyContent {Node} - application/json
+ * @bodyRequired
+ * @response 200 - OK
+ * @response 401 - Unauthorized
+ * @response 403 - Forbidden
+ */
 router
     .route('/node')
     .post(async (req: Request, res: Response) => {
@@ -89,6 +117,16 @@ router
             res.status(403).json({ message: 'Invalid node' });
         }
     })
+    /**
+     * PUT /api/node
+     * @bodyRequired
+     * @summary Update node
+     * @description Updates the value of a node.
+     * @bodyRequired
+     * @bodyContent {FullNode} - application/json
+     * @response 200 - OK
+     * @response 403 - Forbidden
+     */
     .put(async (req: Request, res: Response) => {
         const n: INode = req.body;
 
