@@ -1,12 +1,9 @@
 import { router } from '../router';
 import { Request, Response } from 'express';
-import { IProject, User, UserData } from '../../../../types';
+import { IProject, UserData } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
-import {
-    checkProjectPermission,
-    userMemberOfProject,
-} from '../../helper/permissionHelper';
+import { checkProjectPermission } from '../../helper/permissionHelper';
 
 /* let projects: Array<IProject> = [{id: '1', name: 'test'}]; */
 

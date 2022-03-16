@@ -1,11 +1,4 @@
-import {
-    beforeEach,
-    expect,
-    test,
-    afterAll,
-    describe,
-    beforeAll,
-} from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { INode, User } from '../../../types';
 import supertest from 'supertest';
@@ -21,13 +14,12 @@ const api = supertest(app);
 
 let pId: number;
 const user: User = mockUser;
-let token: string;
 
 describe('Node', () => {
     beforeAll(async () => {
+        await db.initDatabase();
         const login = await registerLoginUser(api, user);
         user.id = login.id;
-        token = login.token;
     });
 
     beforeEach(async () => {
