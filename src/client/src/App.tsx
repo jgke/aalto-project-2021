@@ -35,11 +35,9 @@ export const App: FC = () => {
             const user = JSON.parse(loggedUserJson);
             checkLogin(user).then((x) => {
                 if (x) {
-                    console.log('User is valid!');
                     setUser(user);
                     setToken(user.token);
                 } else {
-                    console.log('OLD USER!');
                     setUser(null);
                     setToken('');
                     window.localStorage.removeItem('loggedGraphUser');

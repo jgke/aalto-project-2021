@@ -189,7 +189,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
             props.updateNode(n);
         } else {
-            console.log('INode data not found');
+            // eslint-disable-next-line no-console
+            console.error('INode data not found');
         }
     };
 
@@ -381,13 +382,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 try {
                     await props.deleteNode(parseInt(e.id));
                 } catch (e) {
-                    console.log('Error in node deletion', e);
+                    // eslint-disable-next-line no-console
+                    console.error('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
                 await props
                     .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
-                        console.log('Error when deleting edge', e)
+                        // eslint-disable-next-line no-console
+                        console.error('Error when deleting edge', e)
                     );
             }
         }
@@ -443,7 +446,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
             props.sendEdge(edge);
         } else {
-            console.log(
+            // eslint-disable-next-line no-console
+            console.error(
                 'source or target of edge is null, unable to send to db'
             );
         }

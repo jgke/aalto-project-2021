@@ -96,7 +96,8 @@ router
             /* console.log('adding project: ', project);
             projects.push(project) */
         } catch (e) {
-            console.log('Invalid project', e);
+            // eslint-disable-next-line no-console
+            console.error('Invalid project', e);
             res.status(403).json();
         }
     })

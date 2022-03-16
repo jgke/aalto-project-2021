@@ -26,7 +26,6 @@ router
 
         const permissions = await checkProjectPermission(req, project_id);
 
-        console.log(permissions);
         if (!permissions.view) {
             return res.status(401).json({ message: 'No permission' });
         }
@@ -112,6 +111,7 @@ router
             );
             res.status(200).json();
         } else {
+            // eslint-disable-next-line no-console
             console.error('Invalid data', n);
             res.status(403).json({ message: 'Invalid data' });
         }
