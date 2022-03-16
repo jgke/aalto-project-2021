@@ -46,7 +46,7 @@ export const addProject = async (
         projectId = q.rows[0].id;
 
         client.query(
-            'INSERT INTO userBelongProject (users_id, project_id) VALUES ($1, $2)',
+            'INSERT INTO users__project (users_id, project_id) VALUES ($1, $2)',
             [project.owner_id, projectId]
         );
     } catch (e) {
