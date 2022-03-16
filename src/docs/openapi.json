@@ -26,7 +26,131 @@
                     "403": { "description": "Forbidden" }
                 }
             }
+        },
+        "/api/project/:id": {
+            "get": {
+                "summary": "Get a project",
+                "description": "Get the specific project",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the project to retreive",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" }
+                }
+            },
+            "delete": {
+                "summary": "Delete a project",
+                "description": "Delete the project with a specific id from the application",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the project to delete",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" }
+                }
+            }
+        },
+        "/api/project/:id/permission": {
+            "get": {
+                "summary": "Check permissions of a project",
+                "description": "Depending on whether the user has been added to the project, they may view and/or edit the project",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the project to check permissions from",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": { "200": { "description": "OK" } }
+            }
+        },
+        "/api/project": {
+            "get": {
+                "description": "Given a user id in the body, retrieve all projects the user is the owner",
+                "summary": "Get all owned projects",
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" }
+                }
+            },
+            "post": {
+                "summary": "Create a project",
+                "description": "Create a **project** with predefined permissions. The given user in the body will automatically be the owner",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/Project" }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" },
+                    "403": { "description": "Forbidden" }
+                }
+            },
+            "put": {
+                "summary": "Update project details",
+                "description": "Update details of the **project** with the given id in the body with the settings in the body",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": { "$ref": "#/components/schemas/Project" }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "OK" },
+                    "401": { "description": "Unauthorized" }
+                }
+            }
         }
     },
-    "components": {}
+    "components": {
+        "schemas": {
+            "Project": {
+                "type": "object",
+                "properties": {
+                    "owner_id": {
+                        "type": "number",
+                        "description": "ID of the project's owner"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the project"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Small description of the new project"
+                    },
+                    "public_view": {
+                        "type": "boolean",
+                        "description": "Boolean value determining, whether anyone can view contents of the project even without logging in"
+                    },
+                    "public_edit": {
+                        "type": "boolean",
+                        "description": "Boolean value determining, whether anyone can edit edges and nodes of the project even without logging in"
+                    }
+                },
+                "xml": { "name": "Project" }
+            }
+        }
+    }
 }
