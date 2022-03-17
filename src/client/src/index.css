@@ -262,3 +262,7 @@ code {
     border-radius: var(--target-handle-border-radius) !important;
     opacity: var(--target-handle-opacity) !important;
 }
+
+.react-flow__node {
+    transition: transform .1s linear;
+}
