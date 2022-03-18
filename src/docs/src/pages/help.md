@@ -32,36 +32,37 @@ To delete a project, click on the "three dots" icon and select "Delete".
 
 To enter Project view click on a project card on the Home page. The Project view displays all contents of the project and allows you to edit the project. In the Project view you can:
 
-- Move the viewing window by clicking and dragging on empty space
-- Zoom in and out using the mouse scroll wheel, or pressing the "+" and "-" buttons in the lower left corner
-- Automatically fit the project to view window by clicking the "frame" icon in the lower left corner
-- Automatically layout the project with three different methods: vertical layout, horizontal layout and force-directed layout
-- Create and connect tasks according to the instructions below
+-   Move the viewing window by clicking and dragging on empty space
+-   Zoom in and out using the mouse scroll wheel, or pressing the "+" and "-" buttons in the lower left corner
+-   Automatically fit the project to view window by clicking the "frame" icon in the lower left corner
+-   Automatically layout the project with three different methods: vertical layout, horizontal layout and force-directed layout
+-   Create and connect tasks according to the instructions below
 
 ### Tasks
 
-- You can create tasks in two ways:
-  - Hold down the Ctrl key and click on empty space, then type in the desired text and press Enter
-  - Click the "Create" button instead of holding down the Ctrl key and repeat the above step
-- Edit tasks by double clicking on a task, which opens a sidebar. In the sidebar:
-  - Edit task contents by selecting the "pen" icon. To Save changes click "Save", to discard them click "Cancel"
-  - Delete the task by selecting the "recycle bin" icon
-  - Close the sidebar by selecting the "X" icon
-- Move tasks by clicking and dragging on a task. The cursor will be displayed as a hand.
-- Delete tasks by clicking on a task and pressing the Backspace key. You may alternatively click the "recycle bin" icon in the sidebar
+-   You can create tasks in two ways:
+    -   Hold down the Ctrl key and click on empty space, then type in the desired text and press Enter
+    -   Click the "Create" button instead of holding down the Ctrl key and repeat the above step
+-   Edit tasks by double clicking on a task, which opens a sidebar. In the sidebar:
+    -   Edit task contents by selecting the "pen" icon. To Save changes click "Save", to discard them click "Cancel"
+    -   Delete the task by selecting the "recycle bin" icon
+    -   Close the sidebar by selecting the "X" icon
+-   Move tasks by clicking and dragging on a task. The cursor will be displayed as a hand.
+-   Delete tasks by clicking on a task and pressing the Backspace key. You may alternatively click the "recycle bin" icon in the sidebar
 
 ### Connections
 
-- You can connect tasks in three ways
-  - Hold down Shift, then click and drag from one task to another
-  - Click on the "Connect" button, then click and drag from one task to another
-  - Click and drag from the bottom circle of a task to another task
-- To delete connections, do one of the following
-  - Hover near one endpoint of the connection until the mouse cursor changes, click and then press Backspace. When clicked the connection should change to a darker color
-  - Click anywhere on the connection line, then press Backspace (requires precision)
+-   You can connect tasks in three ways
+    -   Hold down Shift, then click and drag from one task to another
+    -   Click on the "Connect" button, then click and drag from one task to another
+    -   Click and drag from the bottom circle of a task to another task
+-   To delete connections, do one of the following
+    -   Hover near one endpoint of the connection until the mouse cursor changes, click and then press Backspace. When clicked the connection should change to a darker color
+    -   Click anywhere on the connection line, then press Backspace (requires precision)
 
 ### Selecting multiple items
 
 To select multiple items in project view, hold down the "E" key and highlight the area containing the items. When highlighted, you can:
-- Delete the items by pressing Backspace
-- Move all the items by moving any highlighted task
+
+-   Delete the items by pressing Backspace
+-   Move all the items by moving any highlighted task
