@@ -564,8 +564,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     ref={ToolbarRef}
                     forceDirected={forceDirected}
                 />
-                <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
             )}
+            <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
         </div>
     );
 };
