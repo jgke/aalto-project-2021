@@ -21,7 +21,7 @@ function path(url: string): IPathRoute {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],
         },
         '/project/:id': {
-            methods: ['DELETE'],
+            methods: ['GET', 'DELETE'],
         },
         '/tag': {
             methods: ['POST', 'GET', 'PUT', 'DELETE'],

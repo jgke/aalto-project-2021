@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IEdge, INode } from '../../../../types';
+import { IEdge, INode, ProjectPermissions } from '../../../../types';
 import { NodeDetail } from './NodeDetail';
 import { BsXLg, BsPencilFill, BsFillTrashFill } from 'react-icons/bs';
 import {
@@ -17,6 +17,7 @@ import * as edgeService from '../services/edgeService';
 interface ElementDetailProps {
     element: Node<INode> | Edge<IEdge> | null;
     elements: Elements;
+    permissions: ProjectPermissions;
     type: 'Node' | 'Edge' | null;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     closeSidebar: () => void;
@@ -60,31 +61,39 @@ export const ElementDetail = (props: ElementDetailProps): JSX.Element => {
         props.setElements((els) => removeElements([el, ...removeEdges], els));
     };
 
+    const buttonRow = [];
+    if (props.permissions.edit) {
+        buttonRow.push(
+            <button
+                className="icon-button"
+                style={{ color: 'orangered' }}
+                onClick={async () => await deleteElement()}
+            >
+                <BsFillTrashFill />
+            </button>
+        );
+
+        if (props.type === 'Node') {
+            buttonRow.push(
+                <button
+                    className="icon-button"
+                    onClick={() => setEditMode(!editMode)}
+                    id="edit-button"
+                >
+                    <BsPencilFill />
+                </button>
+            );
+        }
+    }
+    buttonRow.push(
+        <button className="icon-button" onClick={() => props.closeSidebar()}>
+            <BsXLg />
+        </button>
+    );
+
     return (
         <div className="detail-sidebar">
-            <div className="detail-sidebar-topbar">
-                <button
-                    className="icon-button"
-                    style={{ color: 'orangered' }}
-                    onClick={async () => await deleteElement()}
-                >
-                    <BsFillTrashFill />
-                </button>
-                {props.type === 'Node' && (
-                    <button
-                        className="icon-button"
-                        onClick={() => setEditMode(!editMode)}
-                    >
-                        <BsPencilFill />
-                    </button>
-                )}
-                <button
-                    className="icon-button"
-                    onClick={() => props.closeSidebar()}
-                >
-                    <BsXLg />
-                </button>
-            </div>
+            <div className="detail-sidebar-topbar">{buttonRow}</div>
             <div className="detail-sidebar-content">
                 {element && isNode(element) && (
                     <NodeDetail

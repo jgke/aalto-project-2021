@@ -14,6 +14,10 @@ const getAuthHeader = (): { Authorization: string } => {
     return { Authorization: token };
 };
 
+const getAuthConfig = (): { headers: { Authorization: string } } => ({
+    headers: getAuthHeader(),
+});
+
 const createUser = async (user: Registration): Promise<boolean> => {
     return (
         (await axiosWrapper(axios.post(`${baseUrl}/register`, user))) !==
@@ -38,9 +42,6 @@ const checkLogin = async (token: UserToken): Promise<boolean> => {
         axios.post<{ valid: boolean }>(`${baseUrl}/validity`, token)
     );
 
-    console.log('What is response?');
-    console.log(response);
-
     if (response) {
         return response.valid;
     }
@@ -53,6 +54,7 @@ export {
     loginUser,
     logoutUser,
     getAuthHeader,
+    getAuthConfig,
     setToken,
     checkLogin,
 };

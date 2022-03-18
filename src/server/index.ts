@@ -23,7 +23,6 @@ app.use('/api', routes);
 // Send index.html on root request
 app.use(express.static('dist'));
 app.get('/*', (req: Request, res: Response) => {
-    console.log('sending index.html');
     res.sendFile('/dist/index.html', { root: __dirname });
 });
 
@@ -31,5 +30,7 @@ app.get('/*', (req: Request, res: Response) => {
 // =============================================================================
 if (process.env.NODE_ENV !== 'test') {
     app.listen(port);
+
+    // eslint-disable-next-line no-console
     console.log(`App listening on ${port}`);
 }

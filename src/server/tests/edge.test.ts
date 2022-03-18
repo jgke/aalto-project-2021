@@ -169,12 +169,11 @@ describe('DELETE request', () => {
         };
         await api
             .delete(`${baseUrl}/${e.source_id}/${e.target_id}`)
-            .expect(200);
+            .expect(403);
     });
 });
 
 afterAll(async () => {
-    console.log('Tests are done!');
     await db.query(
         'DELETE FROM users; DELETE FROM edge; DELETE FROM node;',
         []

@@ -1,12 +1,5 @@
-import React, {
-    useEffect,
-    MouseEvent as ReactMouseEvent,
-    useState,
-    useRef,
-} from 'react';
-import { IEdge, INode, IProject, ITag } from '../../../../types';
-import * as nodeService from '../services/nodeService';
-import * as edgeService from '../services/edgeService';
+import React, { useEffect, useState, useRef } from 'react';
+import { IEdge, INode, IProject, ProjectPermissions, ITag } from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -25,10 +18,10 @@ import ReactFlow, {
     removeElements,
     ConnectionLineType,
 } from 'react-flow-renderer';
-import { NodeEdit } from './NodeEdit';
+import { NodeNaming } from './NodeNaming';
 import { Toolbar, ToolbarHandle } from './Toolbar';
 import { Tag } from './Tag';
-import toast from 'react-hot-toast';
+import { basicNode } from '../App';
 
 const graphStyle = {
     height: '100%',
@@ -40,9 +33,32 @@ const graphStyle = {
 };
 
 export interface GraphProps {
-    selectedProject: IProject;
+    selectedProject: IProject | undefined;
+    permissions: ProjectPermissions;
     elements: Elements;
     DefaultNodeType: string;
+    sendNode: (
+        data: INode,
+        node: Node,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    deleteNode: (node: number) => Promise<void>;
+    deleteEdge: (source: number, target: number) => Promise<void>;
+    updateNode: (node: INode) => Promise<void>;
+    getElements: (
+        project: IProject,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendCreatedNode: (
+        node: INode,
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
+    sendEdge: (edge: IEdge) => Promise<void>;
+    updateNodes: (
+        elements: Elements,
+        setElements: React.Dispatch<React.SetStateAction<Elements>>
+    ) => Promise<void>;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     onElementClick: (event: React.MouseEvent, element: FlowElement) => void;
 }
@@ -54,6 +70,7 @@ interface FlowInstance {
 
 export const Graph = (props: GraphProps): JSX.Element => {
     const selectedProject = props.selectedProject;
+    const permissions = props.permissions;
 
     const elements = props.elements;
     const setElements = props.setElements;
@@ -61,39 +78,75 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [reactFlowInstance, setReactFlowInstance] =
         useState<FlowInstance | null>(null);
+    const [nodeHidden, setNodeHidden] = useState(false);
 
     const [tags, setTags] = useState<ITag[]>([]);
-    const connectButtonRef = useRef<ToolbarHandle>();
+    const ToolbarRef = useRef<ToolbarHandle>();
 
-    // State for keeping track of node source handle sizes
+    // For detecting the os
+    const platform = navigator.userAgent;
+
+    // State for toggling shift + drag
     const [connectState, setConnectState] = useState(false);
+    // State for toggling ctrl + click
+    const [createState, setCreateState] = useState(false);
 
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
         if (newValue === true) {
+            switchCreateState(false);
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#310062'
+            );
             document.body.style.setProperty('--bottom-handle-size', '100%');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
                 '0'
             );
             document.body.style.setProperty('--source-handle-opacity', '0');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connecting');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connecting');
             }
         } else {
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#686559'
+            );
             document.body.style.setProperty('--bottom-handle-size', '6px');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
                 '100%'
             );
             document.body.style.setProperty('--source-handle-opacity', '0.5');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connect');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connect');
             }
         }
         setConnectState(() => newValue);
     };
     const reverseConnectState = () => switchConnectState(!connectState);
+
+    const switchCreateState = (newValue: boolean): void => {
+        if (ToolbarRef.current) {
+            if (newValue === true) {
+                switchConnectState(false);
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#310062'
+                );
+                ToolbarRef.current.setCreateText('Creating');
+            } else {
+                ToolbarRef.current.setCreateText('Create');
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#686559'
+                );
+            }
+        }
+        setCreateState(() => newValue);
+    };
+    const reverseCreateState = () => switchCreateState(!createState);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -101,30 +154,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     /**
-     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
+     * Fetches the elements from a database
      */
-    const createNode = async (nodeText: string): Promise<void> => {
-        if (selectedProject) {
-            const n: INode = {
-                status: 'ToDo',
-                label: nodeText,
-                priority: 'Urgent',
-                x: 5 + elements.length * 10,
-                y: 5 + elements.length * 10,
-                project_id: selectedProject.id,
-            };
-            const returnId = await nodeService.sendNode(n);
-            if (returnId !== undefined) {
-                n.id = returnId;
-                const b: Node<INode> = {
-                    id: String(returnId),
-                    data: n,
-                    position: { x: n.x, y: n.y },
-                };
-                setElements(elements.concat(b));
-            }
+    useEffect(() => {
+        if (props.elements) {
+            setElements(props.elements);
+        } else if (selectedProject) {
+            props.getElements(selectedProject, setElements);
         }
-    };
+    }, [selectedProject]);
 
     const onNodeDragStop = async (
         x: React.MouseEvent,
@@ -148,111 +186,95 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     return el;
                 })
             );
-            await nodeService.updateNode(n);
+            props.updateNode(n);
         } else {
-            console.log('INode data not found');
+            // eslint-disable-next-line no-console
+            console.error('INode data not found');
         }
     };
 
-    const onNodeDoubleClick = (
-        event: ReactMouseEvent<Element, MouseEvent>,
-        node: Node<INode>
-    ) => {
-        if (node.data && node.id !== 'TEMP') {
-            const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
+    const [lastCanceledName, setLastCanceledName] = useState('');
 
-            setElements((els) =>
-                els.map((el) => {
-                    if (el.id === node.id) {
-                        el.data = {
-                            ...el.data,
-                            label: form,
-                        };
-                    }
-                    return el;
-                })
-            );
+    const removeTempNode = () => {
+        setElements((els) => {
+            return els.filter((e) => e.id !== 'TEMP');
+        });
+    };
+
+    const onNodeNamingDone = async (label: string, node: Node) => {
+        if (selectedProject) {
+            if (!label) {
+                removeTempNode();
+
+                return;
+            }
+
+            setLastCanceledName('');
+
+            const data: INode = {
+                ...basicNode,
+                ...{
+                    label,
+                    x: node.position.x,
+                    y: node.position.y,
+                    project_id: selectedProject.id,
+                },
+            };
+
+            props.sendNode(data, node, setElements);
         }
+    };
+
+    const onNodeNamingCancel = (canceledName: string) => {
+        setLastCanceledName(canceledName);
+        removeTempNode();
     };
 
     // handle what happens on mousepress press
     const handleMousePress = (event: MouseEvent) => {
-        const onEditDone = async (data: INode, node: Node) => {
-            if (selectedProject) {
-                const n: INode = {
-                    status: 'ToDo',
-                    label: data.label,
-                    priority: 'Urgent',
-                    x: node.position.x,
-                    y: node.position.y,
-                    project_id: selectedProject.id,
-                };
-
-                if (!data.label) {
-                    setElements((els) => {
-                        return els.filter((e) => e.id !== 'TEMP');
-                    });
-
-                    return;
-                }
-
-                const returnId = await nodeService.sendNode(n);
-
-                if (returnId) {
-                    n.id = returnId;
-                    setElements((els) =>
-                        els.map((el) => {
-                            if (el.id === node.id) {
-                                const pos = (el as Node).position;
-                                el = {
-                                    ...el,
-                                    ...{
-                                        id: String(returnId),
-                                        data: n,
-                                        type: props.DefaultNodeType,
-                                        position: { x: pos.x, y: pos.y },
-                                        draggable: true,
-                                    },
-                                };
-                            }
-                            return el;
-                        })
-                    );
-                }
+        // Don't do anything if clicking on Toolbar area
+        if (ToolbarRef.current) {
+            const toolbarBounds = ToolbarRef.current.getBounds();
+            // "If clicking on Toolbar"
+            if (
+                event.clientX >= toolbarBounds.left &&
+                event.clientY >= toolbarBounds.top &&
+                event.clientY <= toolbarBounds.bottom &&
+                event.clientX <= toolbarBounds.right
+            ) {
+                return;
             }
-        };
+        }
 
-        if (event.ctrlKey && reactFlowInstance && reactFlowWrapper?.current) {
+        if (createState && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
-            let position = reactFlowInstance.project({
-                x: event.clientX - reactFlowBounds.left,
-                y: event.clientY - reactFlowBounds.top,
+
+            const position = reactFlowInstance.project({
+                x: Math.floor(event.clientX - reactFlowBounds.left),
+                y: Math.floor(event.clientY - reactFlowBounds.top),
             });
 
-            position = { x: Math.floor(position.x), y: Math.floor(position.y) };
-
-            const tempExists =
-                elements.findIndex((el) => el.id === 'TEMP') >= 0;
-
-            const b: Node = {
+            const unnamedNode: Node = {
                 id: 'TEMP',
                 data: {},
                 type: props.DefaultNodeType,
                 position,
                 draggable: false,
             };
-            b.data.label = (
-                <NodeEdit
-                    node={b}
-                    onNodeEdit={async (_, data) => await onEditDone(data, b)}
+
+            unnamedNode.data.label = (
+                <NodeNaming
+                    initialName={lastCanceledName}
+                    onNodeNamingDone={async (name) =>
+                        onNodeNamingDone(name, unnamedNode)
+                    }
+                    onCancel={onNodeNamingCancel}
                 />
             );
 
             setElements((els) =>
-                tempExists
-                    ? els.map((el) => (el.id === 'TEMP' ? b : el))
-                    : els.concat(b)
+                els.filter((el) => el.id !== 'TEMP').concat(unnamedNode)
             );
         }
     };
@@ -261,11 +283,20 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (event.shiftKey) {
             switchConnectState(true);
         }
+        if (
+            (platform.includes('Macintosh') && event.metaKey) ||
+            event.ctrlKey
+        ) {
+            switchCreateState(true);
+        }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
         if (event.key === 'Shift') {
             switchConnectState(false);
+        }
+        if (event.key === 'Control') {
+            switchCreateState(false);
         }
     };
 
@@ -329,6 +360,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
      * for adjacent edges when a node is removed.
      */
     const onElementsRemove = async (elementsToRemove: Elements) => {
+        if (!permissions.edit) {
+            return;
+        }
+
         // Must remove edges first to prevent referencing issues in database
         const sortedElementsToRemove = elementsToRemove.sort(
             compareElementsEdgesFirst
@@ -336,15 +371,17 @@ export const Graph = (props: GraphProps): JSX.Element => {
         for (const e of sortedElementsToRemove) {
             if (isNode(e)) {
                 try {
-                    await nodeService.deleteNode(parseInt(e.id));
+                    await props.deleteNode(parseInt(e.id));
                 } catch (e) {
-                    console.log('Error in node deletion', e);
+                    // eslint-disable-next-line no-console
+                    console.error('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
-                await edgeService
+                await props
                     .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
-                        console.log('Error when deleting edge', e)
+                        // eslint-disable-next-line no-console
+                        console.error('Error when deleting edge', e)
                     );
             }
         }
@@ -398,9 +435,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 )
             );
 
-            edgeService.sendEdge(edge);
+            props.sendEdge(edge);
         } else {
-            console.log(
+            // eslint-disable-next-line no-console
+            console.error(
                 'source or target of edge is null, unable to send to db'
             );
         }
@@ -415,35 +453,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
         };
     }, [handleKeyPress]);
 
-    const onNodeEdit = async (id: string, data: INode) => {
-        setElements((els) =>
-            els.map((el) => {
-                if (el.id === id) {
-                    el.data = data;
-                }
-                return el;
-            })
-        );
-
-        await nodeService.updateNode(data);
-    };
-
-    //calls nodeService.updateNode for all nodes
-    const updateNodes = async (els: Elements): Promise<void> => {
-        for (const el of els) {
-            if (isNode(el)) {
-                const node: INode = el.data;
-
-                if (node) {
-                    node.x = el.position.x;
-                    node.y = el.position.y;
-
-                    await nodeService.updateNode(node);
-                } else {
-                    toast('❌ What is going on?');
-                }
-            }
-        }
+    const onNodeDragStart = () => {
+        setCreateState(false);
+        setConnectState(false);
     };
 
     const layoutWithDagre = async (direction: string) => {
@@ -451,19 +463,41 @@ export const Graph = (props: GraphProps): JSX.Element => {
         const newElements = layoutService.dagreLayout(elements, direction);
 
         //sends updated node positions to backend
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
 
     //does force direced iterations, without scrambling the nodes
     const forceDirected = async () => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
-        await updateNodes(newElements);
-
-        setElements(newElements);
+        await props.updateNodes(newElements, setElements);
     };
+    useEffect(() => {
+        setElements((els) =>
+            els.map((el) => {
+                if (isNode(el)) {
+                    const node: INode = el.data;
+                    if (node.status === 'Done' || node.status === 'Done Done') {
+                        el.isHidden = nodeHidden;
+                        for (const e of els) {
+                            if (
+                                isEdge(e) &&
+                                (e.source == el.id || e.target == el.id)
+                            ) {
+                                e.isHidden = nodeHidden;
+                            }
+                        }
+                    }
+                }
+                return el;
+            })
+        );
+    }, [nodeHidden, setElements]);
+
+    if (!selectedProject || !permissions || !permissions.view) {
+        return <h2>No permissions or project doesn't exist</h2>;
+    }
+    //for hiding done nodes and edges
 
     if (!selectedProject) {
         return <></>;
@@ -471,7 +505,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     return (
         <div style={{ height: '100%' }}>
-            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
                     className="flow-wrapper"
@@ -490,10 +523,12 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // so it works as a hitbox detector
                         onEdgeUpdate={() => null}
                         onLoad={onLoad}
+                        onNodeDragStart={onNodeDragStart}
                         onNodeDragStop={onNodeDragStop}
-                        onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
+                        nodesDraggable={permissions.edit}
+                        nodesConnectable={permissions.edit}
                     >
                         <Controls />
                         <Background color="#aaa" gap={16} />
@@ -519,14 +554,18 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     </ReactFlow>
                 </div>
             </ReactFlowProvider>
-            <Toolbar
-                createNode={createNode}
-                reverseConnectState={reverseConnectState}
-                layoutWithDagre={layoutWithDagre}
-                ref={connectButtonRef}
-                forceDirected={forceDirected}
-            />
-            <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
+            {permissions.edit && (
+                <Toolbar
+                    reverseConnectState={reverseConnectState}
+                    reverseCreateState={reverseCreateState}
+                    layoutWithDagre={layoutWithDagre}
+                    setNodeHidden={setNodeHidden}
+                    nodeHidden={nodeHidden}
+                    ref={ToolbarRef}
+                    forceDirected={forceDirected}
+                />
+                <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
+            )}
         </div>
     );
 };

@@ -6,7 +6,7 @@ import { Topbar } from './components/TopBar';
 import { useDispatch } from 'react-redux';
 import * as projectReducer from './reducers/projectReducer';
 import './App.css';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { Registration } from './pages/Registration';
 import { loginUser, setToken } from './services/userService';
 import { LoginForm } from './components/LoginForm';
@@ -35,11 +35,9 @@ export const App: FC = () => {
             const user = JSON.parse(loggedUserJson);
             checkLogin(user).then((x) => {
                 if (x) {
-                    console.log('User is valid!');
                     setUser(user);
                     setToken(user.token);
                 } else {
-                    console.log('OLD USER!');
                     setUser(null);
                     setToken('');
                     window.localStorage.removeItem('loggedGraphUser');
@@ -66,14 +64,6 @@ export const App: FC = () => {
         return <></>;
     }
 
-    if (!user && !location.pathname.startsWith('/user')) {
-        //useNavigate causes a warning when used here for some reason, but works!
-        //navigate('/user/login');
-
-        // This solution shows the home page for a moment if not logged in, but does not cause an error
-        window.location.href = '/user/login';
-    }
-
     return (
         <div className="app">
             <Toaster toastOptions={{ duration: 30000 }}>
@@ -98,7 +88,16 @@ export const App: FC = () => {
                 <Topbar user={user} setUser={setUser} />
             </div>
             <Routes>
-                <Route path="/" element={<Projects user={user} />}></Route>
+                <Route
+                    path="/"
+                    element={
+                        user ? (
+                            <Projects user={user} />
+                        ) : (
+                            <Navigate to="/user/login" />
+                        )
+                    }
+                ></Route>
                 <Route path="/project/:id" element={<GraphPage />}></Route>
                 <Route path="/user/register" element={<Registration />}></Route>
                 <Route

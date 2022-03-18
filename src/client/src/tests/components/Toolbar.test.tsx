@@ -8,19 +8,21 @@ import { Toolbar } from '../../components/Toolbar';
 
 describe('Toolbar', () => {
     let component: RenderResult;
-    const mockCreate = jest.fn();
+    const mockHidden = jest.fn();
     const mockReverseConnectState = jest.fn();
+    const mockReverseCreateState = jest.fn();
     const mockLayout = jest.fn();
 
     beforeEach(() => {
-        mockCreate.mockRestore();
         component = render(
             <Toolbar
-                createNode={mockCreate}
                 layoutWithDagre={mockLayout}
                 reverseConnectState={mockReverseConnectState}
+                reverseCreateState={mockReverseCreateState}
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
                 forceDirected={async () => {}}
+                setNodeHidden={mockHidden}
+                nodeHidden={false}
             />
         );
     });
@@ -29,7 +31,7 @@ describe('Toolbar', () => {
         const buttons = component.container.querySelectorAll('button');
         expect(buttons[0]).toBeDefined;
         fireEvent.click(buttons[0]);
-        expect(mockCreate).toBeCalled;
+        expect(mockReverseCreateState).toBeCalled;
 
         expect(buttons[1]).toBeDefined;
         fireEvent.click(buttons[1]);
@@ -42,16 +44,19 @@ describe('Toolbar', () => {
         expect(button).toHaveTextContent('Create');
     });
 
-    test('has an empty textbox by default', () => {
+    test('does not contain a text field', () => {
         const input = component.container.querySelector('input');
-        expect(input).toHaveValue('');
+        expect(input).toBeNull;
     });
 
-    test('can change the text box value', () => {
-        const input = component.container.querySelector('input')!;
-        fireEvent.change(input, {
-            target: { value: 'Add physics' },
+    test('calls a function when checkbox is checked', () => {
+        const cb = component.container.querySelector('input')!;
+        expect(cb).toBeDefined;
+        fireEvent.change(cb, {
+            target: { checked: true },
         });
-        expect(input).toHaveValue('Add physics');
+
+        expect(cb).toBeChecked;
+        expect(mockHidden).toBeCalled;
     });
 });

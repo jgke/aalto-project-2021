@@ -13,6 +13,7 @@ export const logger = (
 
     const date: Date = new Date();
     if (process.env.NODE_ENV !== 'test') {
+        // eslint-disable-next-line no-console
         console.table([
             {
                 date: `${date.toLocaleDateString()} - ${date.toLocaleTimeString()}`,

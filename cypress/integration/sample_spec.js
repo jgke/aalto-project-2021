@@ -110,49 +110,25 @@ describe('Graph', () => {
         cy.get('#logout-link').click()
     });
 
-    describe('Has nodetext', () => {
-        it('Has an input to enter node name', () => {
-            cy.get('input#nodetext');
-        });
-    });
-
-    describe('nodetext has add button', () => {
-        it('Has button to add node', () => {
-            cy.get('input#nodetext').parent().contains('Create')
-        });
-    });
-
     describe('test add node', () => {
 
-        const node_name_1 = '__test__1';
-        const node_name_2 = '__test__2';
+        const node_name_1 = myConsts.node_name_prefix + 'TEST-NODE1';
+        const node_name_2 = myConsts.node_name_prefix + 'TEST-NODE2';
 
-        it('Can add and remove nodes', () => {
-            const n_nodes_to_add = 3;
+        it('Can create and remove nodes', () => {
 
-            if (!myConsts.global_clean) {
-                // remove nodes prefixed with __test__
-                cy.removeAllTestNodes();
-
-                cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
-                cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
-            }
+            cy.get('#createBtn').click(); // Toggle on
+            cy.get('.react-flow__renderer').click('center')
+            cy.get('.react-flow input').type(node_name_1 + '{enter}')
             
-            cy.insertNode(node_name_1);
-
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
 
-            for (let i = 0; i < n_nodes_to_add; i++) {
-                cy.insertNode(node_name_1);
-            }
+            cy.get('.react-flow__renderer').click('left')
+            cy.get('.react-flow input').type(node_name_2 + '{enter}')
 
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
+            cy.get('#createBtn').click(); // Toggle off
 
-            cy.insertNode(node_name_2);
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist');
+            cy.get(`.react-flow__node-default:contains('${node_name_2}')`).should('exist').click().trigger('keydown', {keyCode: 8}).trigger('keyup', {keyCode: 8});
 
             cy.removeAllTestNodes();
 
@@ -161,37 +137,6 @@ describe('Graph', () => {
 
         });
 
-        it('Can rename nodes with double click', () => {
-            const new_node_name = '__test__NEW_NODE';
-            cy.get('input#nodetext').type(node_name_1)
-            cy.get('input#nodetext').parent().contains('Create').click()
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
-            cy.get('.react-flow__node input').type('{selectall}{backspace}' + new_node_name + '{enter}')
-
-            cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
-
-            if (!myConsts.global_clean) {
-                cy.removeAllTestNodes();
-                cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('not.exist');
-            }
-        });
-
-        it('Can create nodes with ctrl click', () => {
-            const new_node_name1 = '__test__NEW_NODE_1'
-
-            cy.get('.react-flow__renderer').click('center', {ctrlKey: true})
-            cy.get('.react-flow input').type(new_node_name1 + '{enter}')
-
-            
-            cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('exist');
-
-            if (!myConsts.global_clean) {
-                cy.removeAllTestNodes();
-                cy.get(`.react-flow__node-default:contains(${new_node_name1})`).should('not.exist');
-            }
-
-        });
     });
 
     describe('test add edge', () => {
@@ -205,30 +150,17 @@ describe('Graph', () => {
                 cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('not.exist');
             }
             
-            cy.insertNode(node_name_1);
-            cy.insertNode(node_name_2);
+            cy.insertNode(node_name_1, 'center');
+            cy.insertNode(node_name_2, 'left');
 
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('exist');
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('exist');
 
-            cy.get('.react-flow__edge-straight').should('not.exist');
-
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).find('.react-flow__handle-bottom').should('have.length', 1).trigger('mousedown');
-
-            cy.get(`.react-flow__node-default:contains(${node_name_1})`).find('.react-flow__handle-top').should('have.length', 1).trigger('mouseup');
-
-
-            cy.get('.react-flow__edge-straight').should('have.length', 1);
-
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
-                cy.log('FUBARFUBARFUBAR')
+            /*cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
                 let node_pos1 = $node[0].getBoundingClientRect();
 
                 cy.get('.react-flow__pane').should('have.length', 1).then(($node) => {
                     let pane_pos = $node[0].getBoundingClientRect();
-
-                    cy.log('pane_pos.x');
-                    cy.log(pane_pos.x);
 
                     // move node
                     cy.get(`.react-flow__node-default:contains(${node_name_2})`).trigger('mousehover').trigger('mousedown', 2, 2).then( () => {
@@ -242,13 +174,24 @@ describe('Graph', () => {
 
                     });
                 });
-            });
+            });*/
+
+            cy.get('.react-flow__edge-straight').should('not.exist');
+
+            cy.get(`.react-flow__node-default:contains(${node_name_2})`).find('.react-flow__handle-bottom').should('have.length', 1).trigger('mousedown');
+
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).find('.react-flow__handle-top').should('have.length', 1).trigger('mouseup');
+
+
+            cy.get('.react-flow__edge-straight').should('have.length', 1);
 
             cy.get('.react-flow__edge-straight')
                 .should('have.length', 1)
                 .click('topLeft', { force: true })
-                .trigger('keydown', { key: 'Backspace', charCode: 0, keyCode: 8 })
-                .trigger('keyup', { key: 'Backspace', charCode: 0, keyCode: 8 });
+                .trigger('keydown', { key: 'Backspace', charCode: 0, keyCode: 8, force: true})
+
+            cy.get('.react-flow__pane').should('have.length', 1)
+                .trigger('keyup', { key: 'Backspace', charCode: 0, keyCode: 8, force: true});
 
             cy.get('.react-flow__edge-straight').should('not.exist');
             
@@ -263,10 +206,10 @@ describe('Graph', () => {
             let node_name_1 = '__test__1';
             let node_name_2 = '__test__2';
 
-            cy.insertNode(node_name_1);
-            cy.insertNode(node_name_2);
+            cy.insertNode(node_name_1, 'center');
+            cy.insertNode(node_name_2, 'left');
 
-            cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
+            /*cy.get(`.react-flow__node-default:contains(${node_name_2})`).should('have.length', 1).then(($node) => {
 
                 let node_pos1 = $node[0].getBoundingClientRect();
 
@@ -288,7 +231,7 @@ describe('Graph', () => {
 
                     });
                 });
-            });
+            });*/
 
             cy.get(`.react-flow__node-default:contains(${node_name_2})`).find('.react-flow__handle-bottom').should('have.length', 1).trigger('mousedown');
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).find('.react-flow__handle-top').should('have.length', 1).trigger('mouseup');
@@ -312,6 +255,8 @@ describe('Graph', () => {
                 cy.removeAllTestNodes();
             }
 
+            cy.get('.flow-wrapper').should('exist');
+
             cy.insertNode(node_name_1);
 
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).click();
@@ -321,6 +266,26 @@ describe('Graph', () => {
             cy.get(`.detail-sidebar-topbar .icon-button`).first().click();
 
             cy.get(`.react-flow__node-default:contains(${node_name_1})`).should('not.exist');
+        });
+
+        it('Can rename nodes on the sidebar', () => {
+            const node_name_1 = '__test__1';
+            const new_node_name = '__test__NEW_NODE';
+
+            cy.get('.flow-wrapper').should('exist');
+
+            cy.insertNode(node_name_1);
+
+            cy.get(`.react-flow__node-default:contains(${node_name_1})`).dblclick('center')
+            cy.get('#edit-button').click();
+            cy.get('#label-field').click().type('{selectall}{backspace}' + new_node_name + '{enter}')
+
+            cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('exist')
+
+            if (!myConsts.global_clean) {
+                cy.removeAllTestNodes();
+                cy.get(`.react-flow__node-default:contains(${new_node_name})`).should('not.exist');
+            }
         });
     });
 });
