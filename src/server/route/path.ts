@@ -48,11 +48,6 @@ function path(url: string): IPathRoute {
     } else if (url.includes('/tag/proj/')) {
         return allRoutes['/tag/proj/:proj'];
     }
-    if (!(url in allRoutes)) {
-        console.log(
-            `The path '${url}' was requested but not included in the list of allRoutes`
-        );
-    }
     return allRoutes[url];
 }
 

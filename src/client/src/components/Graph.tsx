@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { IEdge, INode, IProject, ProjectPermissions, ITag } from '../../../../types';
+import {
+    IEdge,
+    INode,
+    IProject,
+    ProjectPermissions,
+    ITag,
+} from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,

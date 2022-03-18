@@ -5,7 +5,7 @@ import * as tagService from '../services/tagService';
 
 interface TagProps {
     tags: ITag[];
-    setTags: React.Dispatch<React.SetStateAction<ITag[]>>;
+    setTags(tags: ITag[]): void;
     projId: number;
 }
 
@@ -30,47 +30,27 @@ export const Tag = (props: TagProps): JSX.Element => {
         const returnId: number | undefined = await tagService.sendTag(t);
         if (returnId) {
             t.id = returnId;
-            //setTags(tags.concat(t));
             await refreshTagList(props.projId);
         }
     };
 
-    /*
-    const onTagEdit = async (data: ITag) => {
-        props.setTags((tgs) =>
-            tgs.map((tg) => {
-                if (tg.id === data.id) {
-                    tg = data;
-                }
-                return tg;
-            })
-        );
-
-        await tagService.updateTag(data);
-    };
-    */
-
     const onTagRemove = async (id: number) => {
         const idx = props.tags.findIndex((t) => t.id === id);
         if (idx >= 0) {
-            console.log('deleting tag: ', props.tags[idx]);
+            // deleting tag: props.tags[idx]
             await tagService.deleteTag(props.tags[idx]);
-            //setTags(tags.splice(idx, 1));
             await refreshTagList(props.projId);
         } else {
-            console.log('could not find tag with id: ', id);
+            // could not find tag with id: id
         }
     };
 
     const refreshTagList = async (projId: number): Promise<void> => {
         try {
-            //console.log('refreshing tag list');
             const tagList = await tagService.getAllForProj(projId);
-            // TODO: limit the number of tags returned from tagService
-            //console.log(tagList[0].label)
             props.setTags(tagList.slice(0, 49));
         } catch (e) {
-            console.log('Error in tagService.getAll', e);
+            // Error in tagService.getAll
         }
     };
 
@@ -78,7 +58,7 @@ export const Tag = (props: TagProps): JSX.Element => {
         try {
             await onTagRemove(id);
         } catch (e) {
-            console.log('Error in tagService.clickTag', e);
+            // Error in tagService.clickTag
         }
     };
 
