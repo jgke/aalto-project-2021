@@ -23,6 +23,12 @@ function path(url: string): IPathRoute {
         '/project/:id': {
             methods: ['GET', 'DELETE'],
         },
+        '/tag': {
+            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+        },
+        '/tag/proj/:proj': {
+            methods: ['GET'],
+        },
         '/user/register': {
             methods: ['POST'],
         },
@@ -39,8 +45,9 @@ function path(url: string): IPathRoute {
         return allRoutes['/node/:id'];
     } else if (url.includes('/project/')) {
         return allRoutes['/project/:id'];
+    } else if (url.includes('/tag/proj/')) {
+        return allRoutes['/tag/proj/:proj'];
     }
-
     return allRoutes[url];
 }
 

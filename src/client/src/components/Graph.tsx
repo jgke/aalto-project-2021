@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { IEdge, INode, IProject, ProjectPermissions } from '../../../../types';
+import {
+    IEdge,
+    INode,
+    IProject,
+    ProjectPermissions,
+    ITag,
+} from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -20,6 +26,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeNaming } from './NodeNaming';
 import { Toolbar, ToolbarHandle } from './Toolbar';
+import { Tag } from './Tag';
 import { basicNode } from '../App';
 
 const graphStyle = {
@@ -79,6 +86,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
+    const [tags, setTags] = useState<ITag[]>([]);
     const ToolbarRef = useRef<ToolbarHandle>();
 
     // For detecting the os
@@ -563,6 +571,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     forceDirected={forceDirected}
                 />
             )}
+            <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
         </div>
     );
 };
