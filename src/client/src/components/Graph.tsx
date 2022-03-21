@@ -89,6 +89,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
+    const [tags, setTags] = useState<ITag[]>([]);
     const href = window.location.href;
     const url = href.substring(href.indexOf('project'), href.length);
 
