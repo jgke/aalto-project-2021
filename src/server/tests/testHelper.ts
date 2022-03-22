@@ -27,9 +27,12 @@ export const addProject = async (
     db: Database,
     project: IProject
 ): Promise<number> => {
+    const client = await db.getClient();
     let projectId = 0;
     try {
-        const q = await db.query(
+        await client.query('BEGIN');
+
+        const q = await client.query(
             'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
             [
                 project.name,
@@ -41,8 +44,16 @@ export const addProject = async (
         );
 
         projectId = q.rows[0].id;
+
+        client.query(
+            'INSERT INTO users__project (users_id, project_id) VALUES ($1, $2)',
+            [project.owner_id, projectId]
+        );
     } catch (e) {
         console.log('Invalid project', e);
+        await client.query('ROLLBACK');
+    } finally {
+        client.release();
     }
     return projectId;
 };
