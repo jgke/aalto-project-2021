@@ -18,32 +18,32 @@ const config = {
 
     presets: [
         [
-          "docusaurus-preset-openapi",
-          /** @type {import('docusaurus-preset-openapi').Options} */
-          ({
-            api: {
-              path: "./openapi.json",
-              routeBasePath: "petstore",
-            },
-            docs: {
-              sidebarPath: require.resolve("./sidebars.js"),
-              // Please change this to your repo.
-              editUrl:
-                "https://github.com/cloud-annotations/docusaurus-openapi/edit/main/demo/",
-            },
-            blog: false,
-            theme: {
-              customCss: require.resolve("./src/css/custom.css"),
-            },
-            proxy: {
-              "/proxy": {
-                target: "http://localhost:8091",
-                pathRewrite: { "^/proxy": "" },
-              },
-            },
-          }),
+            "docusaurus-preset-openapi",
+            /** @type {import('docusaurus-preset-openapi').Options} */
+            ({
+                api: {
+                    path: "./openapi.json",
+                    routeBasePath: "petstore",
+                },
+                docs: {
+                    sidebarPath: require.resolve("./sidebars.js"),
+                    // Please change this to your repo.
+                    editUrl:
+                        "https://github.com/cloud-annotations/docusaurus-openapi/edit/main/demo/",
+                },
+                blog: false,
+                theme: {
+                    customCss: require.resolve("./src/css/custom.css"),
+                },
+                proxy: {
+                    "/proxy": {
+                        target: "http://localhost:8091",
+                        pathRewrite: { "^/proxy": "" },
+                    },
+                },
+            }),
         ],
-      ],
+    ],
 
     plugins: [
         [
@@ -66,24 +66,13 @@ const config = {
                 },
                 items: [
                     {
-                        type: 'doc',
-                        docId: 'intro',
-                        position: 'left',
-                        label: 'Documentation',
-                    },
-                    {
-                        to: '/blog',
-                        label: 'Blog',
+                        to: '/help',
+                        label: 'Help',
                         position: 'left'
                     },
                     {
-                        href: 'https://github.com/facebook/docusaurus',
-                        label: 'GitHub',
-                        position: 'right',
-                    },
-                    {
-                        to: '/help',
-                        label: 'Help',
+                        to: '/api',
+                        label: 'Api Documentation',
                         position: 'left'
                     }
                 ],
@@ -92,46 +81,16 @@ const config = {
                 style: 'dark',
                 links: [
                     {
-                        title: 'Docs',
+                        title: 'Useful links',
                         items: [
                             {
-                                label: 'Tutorial',
-                                to: '/docs/intro',
-                            },
-                        ],
-                    },
-                    {
-                        title: 'Community',
-                        items: [
-                            {
-                                label: 'Stack Overflow',
-                                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-                            },
-                            {
-                                label: 'Discord',
-                                href: 'https://discordapp.com/invite/docusaurus',
-                            },
-                            {
-                                label: 'Twitter',
-                                href: 'https://twitter.com/docusaurus',
-                            },
-                        ],
-                    },
-                    {
-                        title: 'More',
-                        items: [
-                            {
-                                label: 'Blog',
-                                to: '/blog',
-                            },
-                            {
-                                label: 'GitHub',
-                                href: 'https://github.com/facebook/docusaurus',
+                                label: 'The app',
+                                href: 'https://aalto-project.herokuapp.com/',
                             },
                         ],
                     },
                 ],
-                copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+                copyright: `Copyright © ${new Date().getFullYear()} Bytecraft. Built with Docusaurus.`,
             },
             prism: {
                 theme: lightCodeTheme,
