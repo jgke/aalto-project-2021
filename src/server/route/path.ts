@@ -11,6 +11,9 @@ function path(url: string): IPathRoute {
         '/node/:id': {
             methods: ['GET', 'DELETE'],
         },
+        '/assignment': {
+            methods: ['GET', 'POST', 'DELETE'],
+        },
         '/edge': {
             methods: ['POST', 'PUT'],
         },
@@ -61,6 +64,8 @@ function path(url: string): IPathRoute {
             }
 
             return allRoutes['/project/:id'];
+        } else if (url.includes('/assignment/')) {
+            return allRoutes['/assignment'];
         }
     }
     return allRoutes[url];
