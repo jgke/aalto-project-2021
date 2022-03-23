@@ -66,7 +66,7 @@ router
         //check whether user belongs to project
 
         const projectBelongQuery = await db.query(
-            'SELECT COUNT(*) FROM userBelongProject WHERE project_id = $1 AND users_id = $2;',
+            'SELECT COUNT(*) FROM users__project WHERE project_id = $1 AND users_id = $2;',
             [projectId, userId]
         );
 
