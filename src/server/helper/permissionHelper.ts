@@ -37,7 +37,7 @@ export const userMemberOfProject = async (
 ): Promise<boolean> => {
     try {
         const query = await db.query(
-            'SELECT * FROM userBelongProject WHERE users_id = $1 AND project_id = $2',
+            'SELECT * FROM users__project WHERE users_id = $1 AND project_id = $2',
             [userId, projectId]
         );
 

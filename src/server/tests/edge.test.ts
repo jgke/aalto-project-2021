@@ -1,11 +1,4 @@
-import {
-    beforeEach,
-    expect,
-    test,
-    afterAll,
-    describe,
-    beforeAll,
-} from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { IEdge, User } from '../../../types';
 import supertest from 'supertest';
@@ -13,7 +6,7 @@ import { app } from '../index';
 import {
     addDummyNodes,
     addDummyProject,
-    registerLoginUser,
+    registerRandomUser,
 } from './testHelper';
 import { mockUser } from '../../../testmock';
 
@@ -25,20 +18,18 @@ const api = supertest(app);
 
 //Helper functions for the tests
 let pId: number;
-const user: User = mockUser;
-let token: string;
+let user: User = mockUser;
 
 //Helper functions end here
 
 describe('Edge', () => {
     beforeAll(async () => {
-        const login = await registerLoginUser(api, user);
-        user.id = login.id;
-        token = login.token;
+        await db.initDatabase();
+        const login = await registerRandomUser(api);
+        user = login.user;
     });
 
     beforeEach(async () => {
-        await db.query('DELETE FROM project', []);
         pId = await addDummyProject(db, user.id);
     });
 

@@ -1,5 +1,4 @@
 .app {
-    background-color: #34303a;
     justify-content: right;
     display: flex;
     flex-flow: column;
@@ -7,8 +6,8 @@
 }
 
 .icon-button {
-    color: white;
-    background-color: rgb(13 110 253 / 25%);
+    color: #eeefff;
+    background-color: #eeefff31;
     border: none;
     width: 32px;
     padding: 0;
@@ -21,7 +20,20 @@
 }
 
 .icon-button:hover {
-    background-color: rgb(13 110 253 / 50%);
+    color: #000614;
+    background-color: #eeefffc0;
+}
+
+.dropdown > .btn-primary:focus {
+    color: #000614;
+    background-color: #eeefffc0;
+    border-color: #eeefff;
+    box-shadow: none;
+}
+
+.show > .btn-primary.dropdown-toggle {
+    color: #000614;
+    background-color: #eeefff !important;
 }
 
 .detail-sidebar {
@@ -61,8 +73,8 @@
     color: black;
 }
 
-.project-card.view {
-    height: 200px;
+.project-card.edit {
+    height: 283px !important;
 }
 
 .project-card.view:hover {
@@ -70,15 +82,18 @@
     cursor: pointer;
 }
 
+.card-body {
+    background: #eeefff31;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    color: #eeefff;
+}
+
 .fallback-card-image {
-    height: 100px;
+    height: 100%;
     background: rgb(164, 195, 215);
-    background: linear-gradient(
-        0deg,
-        rgba(164, 195, 215, 1) 0%,
-        rgba(173, 216, 230, 1) 30%,
-        rgba(118, 254, 243, 1) 100%
-    );
+    background: linear-gradient(to bottom right, #00164f, #4e009c, #290066);
 }
 
 .flex-space-between {
@@ -91,82 +106,4 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.topbar {
-    display: flex;
-}
-
-.topbar > * {
-    margin: 2px 4px;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.toolbar {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    align-items: center;
-    position: absolute;
-    z-index: 4;
-}
-
-.button-toolbar {
-    display: flex;
-    padding: 0.55em 1.7em;
-    border: 0.2em solid #21007a;
-    margin: 0.1em 0.3em 0.1em;
-    border-radius: 0.12em;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    color: #ffffff;
-    background-color: #6600cc;
-    text-align: center;
-    transition: all 0.2s;
-    align-self: center;
-}
-
-.button-toolbar:hover,
-.button-toolbar.active {
-    background-color: #41005f;
-    border-color: #dcd9fd;
-    color: #ffffff;
-}
-
-.button-layout {
-    display: flex;
-    padding: 0.2em 0.4em;
-    border: 0.2em solid #21007a;
-    margin: 0.1em 0.3em 0.1em;
-    border-radius: 0.12em;
-    box-sizing: border-box;
-    width: 80%;
-    text-decoration: none;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    color: #ffffff;
-    background-color: #3c0077;
-    text-align: center;
-    justify-content: center;
-    transition: all 0.2s;
-    align-self: auto;
-}
-
-.button-layout:hover {
-    background-color: #2d0061;
-    color: #ffffff;
-}
-
-.button-layout#dagreTB {
-    margin-top: 30px;
 }

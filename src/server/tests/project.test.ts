@@ -1,19 +1,21 @@
-import { beforeEach, beforeAll, expect, test, describe } from '@jest/globals';
+import { beforeAll, expect, test, describe } from '@jest/globals';
+import { db } from '../dbConfigs';
 import { INode, IProject, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
-import { mockUser } from '../../../testmock';
-import { addProject, registerLoginUser } from './testHelper';
+import {
+    addProject,
+    registerLoginUser,
+    registerRandomUser,
+} from './testHelper';
 
 const baseUrl = '/api/project';
 
 const api = supertest(app);
 
-import { db } from '../dbConfigs';
-
 //This holds the possible dummy project's ID's
 let ids: number[] = [];
-const user: User = mockUser;
+let user: User;
 let token: string;
 
 //Helper functions for the tests
@@ -48,9 +50,9 @@ const addDummyProjects = async (): Promise<void> => {
 //Helper functions end here
 describe('Projects', () => {
     beforeAll(async () => {
-        await db.query('DELETE FROM users', []);
-        const login = await registerLoginUser(api, user);
-        user.id = login.id;
+        await db.initDatabase();
+        const login = await registerRandomUser(api);
+        user = login.user;
         token = login.token;
     });
 
@@ -91,7 +93,6 @@ describe('Projects', () => {
             const project = res.body[0];
             expect(project.name).toBe('Test-1');
             expect(project.description).toBe('First-project');
-
             expect(project.owner_id).toBe(user.id);
         });
 

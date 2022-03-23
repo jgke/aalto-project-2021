@@ -101,8 +101,6 @@ router.route('/user/login').post(async (req: Request, res: Response) => {
 
 router.route('/user/validity').post(async (req: Request, res: Response) => {
     const body: UserToken = req.body;
-    console.log('What is body?');
-    console.log(body);
     let valid = false;
 
     const q = await db.query('SELECT * FROM users WHERE username=$1', [

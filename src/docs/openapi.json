@@ -1,0 +1,32 @@
+{
+    "openapi": "",
+    "info": { "title": "", "version": "" },
+    "paths": {
+        "/api/edge/:id": {
+            "get": {
+                "summary": "Get edges",
+                "description": "Fetch edges from the project 'id'",
+                "responses": { "200": { "description": "OK" } }
+            }
+        },
+        "/api/edge/:source/:target": {
+            "delete": {
+                "description": "Delete an edge connected to 'source' and 'target'",
+                "summary": "Delete an edge",
+                "responses": { "200": { "description": "OK" } }
+            }
+        },
+        "/api/edge": {
+            "post": {
+                "summary": "Create an edge",
+                "description": "Create a new  **edge**",
+                "requestBody": { "required": true },
+                "responses": {
+                    "200": { "description": "OK" },
+                    "403": { "description": "Forbidden" }
+                }
+            }
+        }
+    },
+    "components": {}
+}
