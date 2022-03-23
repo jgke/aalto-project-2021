@@ -1,5 +1,6 @@
 import { beforeEach, beforeAll, expect, test, describe } from '@jest/globals';
-import { INode, IProject, User } from '../../../types';
+import { db } from '../dbConfigs';
+import { INode, IProject, Registration, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 import { mockUser } from '../../../testmock';
@@ -8,8 +9,6 @@ import { addProject, registerLoginUser } from './testHelper';
 const baseUrl = '/api/project';
 
 const api = supertest(app);
-
-import { db } from '../dbConfigs';
 
 //This holds the possible dummy project's ID's
 let ids: number[] = [];
@@ -110,7 +109,6 @@ describe('Projects', () => {
             const project = res.body[0];
             expect(project.name).toBe('Test-1');
             expect(project.description).toBe('First-project');
-
             expect(project.owner_id).toBe(user.id);
         });
 

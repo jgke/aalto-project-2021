@@ -39,6 +39,12 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
         'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
         'Helvetica Neue', sans-serif;
+    background-image: linear-gradient(
+        to bottom right,
+        #34332d 30%,
+        #310062 70%,
+        #34332d
+    );
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
@@ -49,6 +55,8 @@ body {
     --source-handle-border-radius: 100%;
     --target-handle-opacity: 0.5;
     --source-handle-opacity: 0.5;
+    --create-btn-bckg-color: #686559;
+    --connect-btn-bckg-color: #686559;
 }
 
 code {
@@ -62,32 +70,182 @@ code {
     align-self: center;
     align-items: center;
     position: absolute;
-    z-index: 4;
+    width: 145px;
+    z-index: 5;
     right: 0;
-    top: 128px;
+    top: 30%;
 }
 
 .button-toolbar {
     display: flex;
     padding: 0.55em 1.7em;
-    border: 0.2em solid #21007a;
+    border: 0.2em solid #310062;
     margin: 0.1em 0.3em 0.1em;
     border-radius: 0.12em;
     box-sizing: border-box;
+    width: 70%;
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    color: #ffffff;
-    background-color: #6600cc;
-    text-align: center;
-    transition: all 0.2s;
+    color: #eeefff;
+    background-color: #686559;
+    justify-content: center;
+    transition: all 0.1s;
     align-self: center;
+    font-weight: bolder;
 }
 
-#button-toolbar:hover {
-    background-color: #442072;
-    border-color: #dcd9fd;
-    color: #ffffff;
+#createBtn {
+    background-color: var(--create-btn-bckg-color);
+}
+
+#connectBtn {
+    background-color: var(--connect-btn-bckg-color);
+}
+
+.button-toolbar:hover {
+    background-color: #49473f;
+}
+
+.button-layout {
+    display: flex;
+    padding: 0.2em;
+    border: 0.2em solid #310062;
+    margin: 0.1em 0.3em 0.1em;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    width: 100%;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    color: #eeefff;
+    background-color: #34332d;
+    text-align: center;
+    justify-content: center;
+    transition: all 0.2s;
+    align-self: auto;
+}
+
+.button-layout:hover {
+    background-color: #2c2b27;
+    color: #eeefff;
+}
+
+.button-layout#dagreTB {
+    margin-top: 30px;
+}
+
+.topbar {
+    flex-flow: column wrap;
+    position: absolute;
+    width: 100%;
+    background-color: #44207249;
+}
+
+.topbar > * {
+    margin: 4px 6px;
+    padding: 0.2em;
+    z-index: 5;
+}
+
+.link-topbar {
+    display: inline-flex;
+    position: relative;
+    background-color: #686559;
+    color: #eeefff;
+    padding: 0.2em 0.4em;
+    border: 2px solid #34332d;
+    border-radius: 0.12em;
+    text-decoration: none;
+    font-weight: bolder;
+    float: inline-start;
+}
+
+.link-topbar:hover {
+    background-color: #49473f;
+    color: #eeefff;
+}
+
+#whoamiText {
+    float: inline-end;
+}
+
+#logout-link {
+    float: inline-end;
+}
+
+#logout-link:hover {
+    border-color: #24231f;
+}
+
+.project-container {
+    margin: 10% 5%;
+    padding: 0;
+    border-radius: 0.5em;
+    color: #eeefff;
+}
+
+.project-form-container {
+    /* ohut granite gray border vois olla ehkä kova*/
+    background: #0006143b;
+    padding: 25px;
+    border-radius: 0.2em;
+}
+
+.form-control {
+    border-radius: 0.12em;
+}
+
+.btn {
+    border-radius: 0.12em;
+}
+
+.project-list {
+    margin-top: 12px;
+    border-radius: 0.12em;
+}
+
+.form-box-login,
+.form-box-reg {
+    display: block;
+    margin-top: 200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.form-box-login > input,
+.form-box-reg > input {
+    border-radius: 0.12em;
+}
+
+.form-box-login > form > div,
+.form-box-reg > form > div {
+    margin-top: 0.2em;
+}
+
+.button-action-one {
+    display: flex;
+    padding: 0.55em 1.7em;
+    border: 0.2em solid #34332d;
+    margin: 0.3em 0;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    width: auto;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    color: #eeefff;
+    background-color: #686559;
+    justify-content: center;
+    transition: all 0.1s;
+    align-self: center;
+    font-weight: bolder;
+}
+
+.button-action-one:hover {
+    background-color: #49473f;
+    border-color: #eeefff;
+    color: #eeefff;
 }
 
 .react-flow__handle-bottom {
@@ -103,4 +261,48 @@ code {
     height: var(--top-handle-size) !important;
     border-radius: var(--target-handle-border-radius) !important;
     opacity: var(--target-handle-opacity) !important;
+}
+
+.tag-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    position: absolute;
+    z-index: 4;
+
+    width: 200px;
+    left: 0;
+    top: 128px;
+}
+.tag-taglist > p {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    z-index: 4;
+}
+
+.tag-disptag {
+    display: flex;
+    padding: 0.2em 0.4em;
+    border: 0.2em solid #21007a;
+    margin: 0.1em 0.3em 0.1em;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    width: 80%;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    color: #ffffff;
+    background-color: #3c0077;
+    text-align: center;
+    justify-content: center;
+    transition: all 0.2s;
+    align-self: auto;
+}
+
+.tag-disptag:hover {
+    background-color: #2d0061;
+    color: #ffffff;
 }

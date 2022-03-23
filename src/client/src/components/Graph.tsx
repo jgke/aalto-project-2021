@@ -1,10 +1,11 @@
-import React, {
-    useEffect,
-    MouseEvent as ReactMouseEvent,
-    useState,
-    useRef,
-} from 'react';
-import { IEdge, INode, IProject, ProjectPermissions } from '../../../../types';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+    IEdge,
+    INode,
+    IProject,
+    ProjectPermissions,
+    ITag,
+} from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
     MiniMap,
@@ -23,8 +24,11 @@ import ReactFlow, {
     removeElements,
     ConnectionLineType,
 } from 'react-flow-renderer';
-import { NodeEdit } from './NodeEdit';
+import { NodeNaming } from './NodeNaming';
 import { Toolbar, ToolbarHandle } from './Toolbar';
+import { Tag } from './Tag';
+import { basicNode } from '../App';
+
 const graphStyle = {
     height: '100%',
     width: 'auto',
@@ -82,40 +86,73 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
-    const connectButtonRef = useRef<ToolbarHandle>();
+    const [tags, setTags] = useState<ITag[]>([]);
+    const ToolbarRef = useRef<ToolbarHandle>();
 
     // For detecting the os
     const platform = navigator.userAgent;
 
-    // State for keeping track of node source handle sizes
+    // State for toggling shift + drag
     const [connectState, setConnectState] = useState(false);
+    // State for toggling ctrl + click
+    const [createState, setCreateState] = useState(false);
 
     // CSS magic to style the node handles when pressing shift or clicking button
     const switchConnectState = (newValue: boolean): void => {
         if (newValue === true) {
+            switchCreateState(false);
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#310062'
+            );
             document.body.style.setProperty('--bottom-handle-size', '100%');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
                 '0'
             );
             document.body.style.setProperty('--source-handle-opacity', '0');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connecting');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connecting');
             }
         } else {
+            document.body.style.setProperty(
+                '--connect-btn-bckg-color',
+                '#686559'
+            );
             document.body.style.setProperty('--bottom-handle-size', '6px');
             document.body.style.setProperty(
                 '--source-handle-border-radius',
                 '100%'
             );
             document.body.style.setProperty('--source-handle-opacity', '0.5');
-            if (connectButtonRef.current) {
-                connectButtonRef.current.setConnectText('Connect');
+            if (ToolbarRef.current) {
+                ToolbarRef.current.setConnectText('Connect');
             }
         }
         setConnectState(() => newValue);
     };
     const reverseConnectState = () => switchConnectState(!connectState);
+
+    const switchCreateState = (newValue: boolean): void => {
+        if (ToolbarRef.current) {
+            if (newValue === true) {
+                switchConnectState(false);
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#310062'
+                );
+                ToolbarRef.current.setCreateText('Creating');
+            } else {
+                ToolbarRef.current.setCreateText('Create');
+                document.body.style.setProperty(
+                    '--create-btn-bckg-color',
+                    '#686559'
+                );
+            }
+        }
+        setCreateState(() => newValue);
+    };
+    const reverseCreateState = () => switchCreateState(!createState);
 
     const onLoad = (_reactFlowInstance: FlowInstance) => {
         _reactFlowInstance.fitView();
@@ -123,24 +160,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
     };
 
     /**
-     * Creates a new node and stores it in the 'elements' React state. Nodes are stored in the database.
+     * Fetches the elements from a database
      */
-    const createNode = async (nodeText: string): Promise<void> => {
-        if (selectedProject && permissions.edit) {
-            const n: INode = {
-                status: 'ToDo',
-                label: nodeText,
-                priority: 'Urgent',
-                x: 5 + elements.length * 10,
-                y: 5 + elements.length * 10,
-                project_id: selectedProject.id,
-            };
-            console.log('The node?');
-            console.log(n);
-
-            props.sendCreatedNode(n, elements, setElements);
+    useEffect(() => {
+        if (props.elements) {
+            setElements(props.elements);
+        } else if (selectedProject) {
+            props.getElements(selectedProject, setElements);
         }
-    };
+    }, [selectedProject]);
 
     const onNodeDragStop = async (
         x: React.MouseEvent,
@@ -166,104 +194,115 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
             props.updateNode(n);
         } else {
-            console.log('INode data not found');
+            // eslint-disable-next-line no-console
+            console.error('INode data not found');
         }
     };
 
-    const onNodeDoubleClick = (
-        event: ReactMouseEvent<Element, MouseEvent>,
-        node: Node<INode>
-    ) => {
-        if (node.data && node.id !== 'TEMP' && permissions.edit) {
-            const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
+    const [lastCanceledName, setLastCanceledName] = useState('');
 
-            setElements((els) =>
-                els.map((el) => {
-                    if (el.id === node.id) {
-                        el.data = {
-                            ...el.data,
-                            label: form,
-                        };
-                    }
-                    return el;
-                })
-            );
+    const removeTempNode = () => {
+        setElements((els) => {
+            return els.filter((e) => e.id !== 'TEMP');
+        });
+    };
+
+    const onNodeNamingDone = async (label: string, node: Node) => {
+        if (selectedProject) {
+            if (!label) {
+                removeTempNode();
+
+                return;
+            }
+
+            setLastCanceledName('');
+
+            const data: INode = {
+                ...basicNode,
+                ...{
+                    label,
+                    x: node.position.x,
+                    y: node.position.y,
+                    project_id: selectedProject.id,
+                },
+            };
+
+            props.sendNode(data, node, setElements);
         }
+    };
+
+    const onNodeNamingCancel = (canceledName: string) => {
+        setLastCanceledName(canceledName);
+        removeTempNode();
     };
 
     // handle what happens on mousepress press
     const handleMousePress = (event: MouseEvent) => {
-        const onEditDone = async (data: INode, node: Node) => {
-            if (selectedProject) {
-                const n: INode = {
-                    status: 'ToDo',
-                    label: data.label,
-                    priority: 'Urgent',
-                    x: node.position.x,
-                    y: node.position.y,
-                    project_id: selectedProject.id,
-                };
-
-                if (!data.label) {
-                    setElements((els) => {
-                        return els.filter((e) => e.id !== 'TEMP');
-                    });
-
-                    return;
-                }
-
-                props.sendNode(n, node, setElements);
+        // Don't do anything if clicking on Toolbar area
+        if (ToolbarRef.current) {
+            const toolbarBounds = ToolbarRef.current.getBounds();
+            // "If clicking on Toolbar"
+            if (
+                event.clientX >= toolbarBounds.left &&
+                event.clientY >= toolbarBounds.top &&
+                event.clientY <= toolbarBounds.bottom &&
+                event.clientX <= toolbarBounds.right
+            ) {
+                return;
             }
-        };
+        }
 
-        if (
-            ((event.metaKey && platform.includes('Macintosh')) ||
-                event.ctrlKey) &&
-            reactFlowInstance &&
-            reactFlowWrapper?.current
-        ) {
+        if (createState && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
-            let position = reactFlowInstance.project({
-                x: event.clientX - reactFlowBounds.left,
-                y: event.clientY - reactFlowBounds.top,
+
+            const position = reactFlowInstance.project({
+                x: Math.floor(event.clientX - reactFlowBounds.left),
+                y: Math.floor(event.clientY - reactFlowBounds.top),
             });
 
-            position = { x: Math.floor(position.x), y: Math.floor(position.y) };
-
-            const tempExists =
-                elements.findIndex((el) => el.id === 'TEMP') >= 0;
-
-            const b: Node = {
+            const unnamedNode: Node = {
                 id: 'TEMP',
                 data: {},
                 type: props.DefaultNodeType,
                 position,
                 draggable: false,
             };
-            b.data.label = (
-                <NodeEdit
-                    node={b}
-                    onNodeEdit={async (_, data) => onEditDone(data, b)}
+
+            unnamedNode.data.label = (
+                <NodeNaming
+                    initialName={lastCanceledName}
+                    onNodeNamingDone={async (name) =>
+                        onNodeNamingDone(name, unnamedNode)
+                    }
+                    onCancel={onNodeNamingCancel}
                 />
             );
 
             setElements((els) =>
-                tempExists
-                    ? els.map((el) => (el.id === 'TEMP' ? b : el))
-                    : els.concat(b)
+                els.filter((el) => el.id !== 'TEMP').concat(unnamedNode)
             );
         }
     };
+
     const handleKeyPress = (event: KeyboardEvent) => {
         if (event.shiftKey) {
             switchConnectState(true);
+        }
+        if (
+            (platform.includes('Macintosh') && event.metaKey) ||
+            event.ctrlKey
+        ) {
+            switchCreateState(true);
         }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
         if (event.key === 'Shift') {
             switchConnectState(false);
+        }
+        if (event.key === 'Control') {
+            switchCreateState(false);
         }
     };
 
@@ -340,13 +379,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 try {
                     await props.deleteNode(parseInt(e.id));
                 } catch (e) {
-                    console.log('Error in node deletion', e);
+                    // eslint-disable-next-line no-console
+                    console.error('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
                 await props
                     .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
-                        console.log('Error when deleting edge', e)
+                        // eslint-disable-next-line no-console
+                        console.error('Error when deleting edge', e)
                     );
             }
         }
@@ -402,7 +443,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
             props.sendEdge(edge);
         } else {
-            console.log(
+            // eslint-disable-next-line no-console
+            console.error(
                 'source or target of edge is null, unable to send to db'
             );
         }
@@ -417,17 +459,9 @@ export const Graph = (props: GraphProps): JSX.Element => {
         };
     }, [handleKeyPress]);
 
-    const onNodeEdit = async (id: string, data: INode) => {
-        setElements((els) =>
-            els.map((el) => {
-                if (el.id === id) {
-                    el.data = data;
-                }
-                return el;
-            })
-        );
-
-        await props.updateNode(data);
+    const onNodeDragStart = () => {
+        setCreateState(false);
+        setConnectState(false);
     };
 
     const layoutWithDagre = async (direction: string) => {
@@ -449,7 +483,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
             els.map((el) => {
                 if (isNode(el)) {
                     const node: INode = el.data;
-                    if (node.status == 'Done') {
+                    if (node.status === 'Done' || node.status === 'Done Done') {
                         el.isHidden = nodeHidden;
                         for (const e of els) {
                             if (
@@ -477,7 +511,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     return (
         <div style={{ height: '100%' }}>
-            <h2 style={{ position: 'absolute', color: 'white' }}>Tasks</h2>
             <ReactFlowProvider>
                 <div
                     className="flow-wrapper"
@@ -496,8 +529,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // so it works as a hitbox detector
                         onEdgeUpdate={() => null}
                         onLoad={onLoad}
+                        onNodeDragStart={onNodeDragStart}
                         onNodeDragStop={onNodeDragStop}
-                        onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
                         nodesDraggable={permissions.edit}
@@ -529,15 +562,16 @@ export const Graph = (props: GraphProps): JSX.Element => {
             </ReactFlowProvider>
             {permissions.edit && (
                 <Toolbar
-                    createNode={createNode}
                     reverseConnectState={reverseConnectState}
+                    reverseCreateState={reverseCreateState}
                     layoutWithDagre={layoutWithDagre}
                     setNodeHidden={setNodeHidden}
                     nodeHidden={nodeHidden}
-                    ref={connectButtonRef}
+                    ref={ToolbarRef}
                     forceDirected={forceDirected}
                 />
             )}
+            <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
         </div>
     );
 };

@@ -42,9 +42,6 @@ const checkLogin = async (token: UserToken): Promise<boolean> => {
         axios.post<{ valid: boolean }>(`${baseUrl}/validity`, token)
     );
 
-    console.log('What is response?');
-    console.log(response);
-
     if (response) {
         return response.valid;
     }

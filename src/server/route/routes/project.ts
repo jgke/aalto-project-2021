@@ -112,6 +112,7 @@ router
             /* console.log('adding project: ', project);
             projects.push(project) */
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.log('Invalid project', e);
             await client.query('ROLLBACK');
             res.status(403).json();
