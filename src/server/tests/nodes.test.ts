@@ -6,25 +6,22 @@ import { app } from '../index';
 import {
     addDummyNodes,
     addDummyProject,
-    registerLoginUser,
+    registerRandomUser,
 } from './testHelper';
-import { mockUser } from '../../../testmock';
 
 const api = supertest(app);
 
 let pId: number;
-const user: User = mockUser;
+let user: User;
 
 describe('Node', () => {
     beforeAll(async () => {
         await db.initDatabase();
-        const login = await registerLoginUser(api, user);
-        user.id = login.id;
+        const login = await registerRandomUser(api);
+        user = login.user;
     });
 
     beforeEach(async () => {
-        // DATABASE RESET
-        await db.query('DELETE FROM project', []);
         //adding project
         pId = await addDummyProject(db, user.id);
     });

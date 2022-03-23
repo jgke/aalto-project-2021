@@ -2,6 +2,24 @@ import supertest from 'supertest';
 import { INode, IProject, Registration, User } from '../../../types';
 import { Database } from '../dbConfigs';
 
+export const registerRandomUser = async (
+    api: supertest.SuperTest<supertest.Test>
+) => {
+    const user: User = {
+        username: (Math.random() + 1).toString(36).substring(7),
+        password: (Math.random() + 1).toString(36).substring(7),
+        email: (Math.random() + 1).toString(36).substring(7) + '@test.com',
+        id: 0,
+    };
+
+    const tokens = await registerLoginUser(api, user);
+    user.id = tokens.id;
+    return {
+        user,
+        token: tokens.token,
+    };
+};
+
 export const registerLoginUser = async (
     api: supertest.SuperTest<supertest.Test>,
     user: User
