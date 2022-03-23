@@ -65,6 +65,12 @@ export interface User {
     id: number;
 }
 
+export interface UserData {
+    username: string;
+    email: string;
+    id: number;
+}
+
 export interface RootState {
     project: IProject[];
 }

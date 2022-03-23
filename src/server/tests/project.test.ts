@@ -4,13 +4,14 @@ import { INode, IProject, Registration, User } from '../../../types';
 import supertest from 'supertest';
 import { app } from '../index';
 import { mockUser } from '../../../testmock';
+import { addProject, registerLoginUser } from './testHelper';
 
 const baseUrl = '/api/project';
 
 const api = supertest(app);
 
 //This holds the possible dummy project's ID's
-let ids: string[] = [];
+let ids: number[] = [];
 const user: User = mockUser;
 let token: string;
 
@@ -37,40 +38,23 @@ const addDummyProjects = async (): Promise<void> => {
     };
 
     ids = [];
-    let r = await db.query(
-        'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [p1.name, p1.owner_id, p1.description, p1.public_view, p1.public_edit]
-    );
-    ids.push(r.rows[0].id);
-    r = await db.query(
-        'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [p2.name, p2.owner_id, p2.description, p2.public_view, p2.public_edit]
-    );
-    ids.push(r.rows[0].id);
+    let id = await addProject(db, p1);
+    ids.push(id);
+    id = await addProject(db, p2);
+    ids.push(id);
 };
 
 //Helper functions end here
 describe('Projects', () => {
-    beforeEach(async () => {
-        await db.query('TRUNCATE project, node, edge CASCADE;', []);
-    });
-
     beforeAll(async () => {
         await db.initDatabase();
+        const login = await registerLoginUser(api, user);
+        user.id = login.id;
+        token = login.token;
+    });
 
-        const registration: Registration = {
-            username: user.username,
-            password: user.password,
-            email: user.email,
-        };
-
-        await api.post('/api/user/register').send(registration);
-
-        const res = await api
-            .post('/api/user/login')
-            .send({ email: user.email, password: user.password });
-        user.id = res.body.id;
-        token = res.body.token;
+    beforeEach(async () => {
+        await db.query('DELETE FROM project', []);
     });
 
     describe('GET request', () => {
@@ -149,6 +133,7 @@ describe('Projects', () => {
                 .get(baseUrl)
                 .set('Authorization', `bearer ${token}`)
                 .expect(200);
+
             expect(result.body[0].id).toBeDefined();
             expect(result.body[1].id).toBeDefined();
             const id = result.body[0].id;
@@ -225,31 +210,8 @@ describe('Projects', () => {
                 public_edit: false,
             };
 
-            onlyViewId = (
-                await db.query(
-                    'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                    [
-                        p1.name,
-                        p1.owner_id,
-                        p1.description,
-                        p1.public_view,
-                        p1.public_edit,
-                    ]
-                )
-            ).rows[0].id;
-
-            noViewId = (
-                await db.query(
-                    'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                    [
-                        p2.name,
-                        p2.owner_id,
-                        p2.description,
-                        p2.public_view,
-                        p2.public_edit,
-                    ]
-                )
-            ).rows[0].id;
+            onlyViewId = await addProject(db, p1);
+            noViewId = await addProject(db, p2);
         });
 
         test('should return 200 on get if public_view is true on an anonymous account', async () => {

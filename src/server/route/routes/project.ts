@@ -1,6 +1,6 @@
 import { router } from '../router';
 import { Request, Response } from 'express';
-import { IProject } from '../../../../types';
+import { IProject, UserData } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
 import { checkProjectPermission } from '../../helper/permissionHelper';
@@ -61,10 +61,15 @@ router
             return res.status(401).json({ error: 'token missing or invalid' });
         }
 
-        const ownerId = req.user.id;
-        const q = await db.query('SELECT * FROM project WHERE owner_id = $1', [
-            ownerId,
-        ]);
+        const userId = req.user.id;
+        const q = await db.query(
+            `SELECT * FROM project
+            WHERE id IN (
+                SELECT project_id FROM users__project
+                WHERE users_id = $1
+            )`,
+            [userId]
+        );
         res.json(q.rows);
         /* console.log('projects: ', projects);
         res.json(projects); */
@@ -81,8 +86,11 @@ router
             return res.status(401).json({ error: 'invalid owner id' });
         }
 
+        const client = await db.getClient();
         try {
-            const q = await db.query(
+            await client.query('BEGIN');
+
+            const q = await client.query(
                 'INSERT INTO project (name, owner_id, description, public_view, public_edit) VALUES ($1, $2, $3, $4, $5) RETURNING id',
                 [
                     project.name,
@@ -92,13 +100,24 @@ router
                     project.public_edit,
                 ]
             );
-            res.status(200).json(q.rows[0]);
+
+            const projectId = q.rows[0].id;
+
+            client.query(
+                'INSERT INTO users__project (users_id, project_id) VALUES ($1, $2)',
+                [project.owner_id, projectId]
+            );
+            client.query('COMMIT');
+            res.status(200).json({ id: projectId });
             /* console.log('adding project: ', project);
             projects.push(project) */
         } catch (e) {
             // eslint-disable-next-line no-console
-            console.error('Invalid project', e);
+            console.log('Invalid project', e);
+            await client.query('ROLLBACK');
             res.status(403).json();
+        } finally {
+            client.release();
         }
     })
     .put(async (req: Request, res: Response) => {
@@ -108,9 +127,10 @@ router
 
         const p: IProject = req.body;
 
-        const ownerId = req.user.id;
-        if (p.owner_id !== ownerId) {
-            return res.status(401).json({ error: 'invalid owner id' });
+        const permissions = await checkProjectPermission(req, p.id);
+
+        if (!permissions.view) {
+            return res.status(401).json({ message: 'No permission' });
         }
 
         const q = await db.query(
@@ -131,6 +151,88 @@ router
     })
     .delete(async (req: Request, res: Response) => {
         res.status(404).json({ message: 'Not implemented' });
+    });
+
+router
+    .route('/project/:id/members')
+    .get(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.id);
+        const permissions = await checkProjectPermission(req, projectId);
+
+        if (!permissions.view) {
+            return res.status(401).json({ message: 'No permission' });
+        }
+
+        const query = await db.query(
+            `SELECT username, email, id FROM users
+            WHERE id IN (
+                SELECT users_id FROM users__project
+                WHERE project_id = $1
+            )`,
+            [projectId]
+        );
+
+        return res.status(200).json(query.rows);
+    })
+    .post(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.id);
+        const permissions = await checkProjectPermission(req, projectId);
+
+        const invite: string = req.body.member;
+
+        // Test whether inviter belongs in project
+        if (!permissions.edit) {
+            return res.status(401).json({ message: 'No permission' });
+        }
+
+        // Invite users
+        try {
+            const user: UserData = (
+                await db.query(
+                    'SELECT username, email, id FROM users WHERE username = $1 OR email = $1',
+                    [invite]
+                )
+            ).rows[0];
+
+            await db.query(
+                'INSERT INTO users__project (users_id, project_id) VALUES ($1, $2)',
+                [user.id, projectId]
+            );
+
+            res.status(200).json(user);
+        } catch (e) {
+            console.log('Could not invite ', e);
+            res.status(403).json();
+        }
+    });
+
+router
+    .route('/project/:pid/members/:uid')
+    .delete(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.pid);
+        const userId = parseInt(req.params.uid);
+        const permissions = await checkProjectPermission(req, projectId);
+
+        // Test whether inviter belongs in project
+        if (!permissions.edit) {
+            return res.status(401).json({ message: 'No permission' });
+        }
+
+        // Test that the person being deleted is not a owner
+        const q = await db.query(
+            'SELECT * FROM project WHERE id = $1 AND owner_id = $2',
+            [projectId, userId]
+        );
+
+        if (q.rowCount > 0) {
+            return res.status(403).json({ message: 'Cannot delete owner' });
+        }
+
+        await db.query(
+            'DELETE FROM users__project WHERE project_id = $1 AND users_id = $2',
+            [projectId, userId]
+        );
+        res.status(200);
     });
 
 export { router as project };
