@@ -22,8 +22,6 @@ const assignmentCheck = async (
         [userId]
     );
 
-    console.log('0');
-
     if (!Number(userQuery.rows[0].count)) {
         res.status(403).json({ message: 'Invalid user id' });
         return;
@@ -82,7 +80,7 @@ router
         //check whether user is already assigned
 
         const userAssignedQuery = await db.query(
-            'SELECT COUNT(*) FROM userAssign WHERE users_id = $1 AND node_id = $2;',
+            'SELECT COUNT(*) FROM users__node WHERE users_id = $1 AND node_id = $2;',
             [userId, nodeId]
         );
 
@@ -96,7 +94,7 @@ router
         //assign user
 
         await db.query(
-            'INSERT INTO userAssign (users_id, node_id) VALUES ($1, $2);',
+            'INSERT INTO users__node (users_id, node_id) VALUES ($1, $2);',
             [userId, nodeId]
         );
 
@@ -111,7 +109,7 @@ router
         //unassign user
 
         await db.query(
-            'DELETE FROM userAssign WHERE users_id = $1 AND node_id = $2;',
+            'DELETE FROM users__node WHERE users_id = $1 AND node_id = $2;',
             [userId, nodeId]
         );
 
@@ -145,7 +143,7 @@ router.route('/assignment/:nodeId').get(async (req: Request, res: Response) => {
     }
 
     const asd = await db.query(
-        'SELECT username, email, id FROM users WHERE id IN (SELECT users_id FROM userAssign WHERE node_id = $1)',
+        'SELECT username, email, id FROM users WHERE id IN (SELECT users_id FROM users__node WHERE node_id = $1)',
         [nodeId]
     );
 

@@ -38,7 +38,7 @@ describe('assignment', () => {
             const nodeIds = await addDummyNodes(db, pId);
 
             db.query(
-                'INSERT INTO userAssign (users_id, node_id) VALUES ($1, $2)',
+                'INSERT INTO users__node (users_id, node_id) VALUES ($1, $2)',
                 [user.id, nodeIds[0]]
             );
 
@@ -68,7 +68,7 @@ describe('assignment', () => {
                 .post(`/api/assignment/assign/${nodeIds[0]}/${user.id}`)
                 .expect(200);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(1);
             expect(q.rows[0]).toEqual({
@@ -88,7 +88,7 @@ describe('assignment', () => {
                 )
                 .expect(403);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(0);
         });
@@ -100,7 +100,7 @@ describe('assignment', () => {
                 .post(`/api/assignment/assign/${nodeIds[0]}/${user.id * 2}`)
                 .expect(403);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(0);
         });
@@ -116,7 +116,7 @@ describe('assignment', () => {
                 .post(`/api/assignment/assign/${nodeIds[0]}/${user.id}`)
                 .expect(403);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(1);
         });
@@ -127,7 +127,7 @@ describe('assignment', () => {
             const nodeIds = await addDummyNodes(db, pId);
 
             db.query(
-                'INSERT INTO userAssign (users_id, node_id) VALUES ($1, $2)',
+                'INSERT INTO users__node (users_id, node_id) VALUES ($1, $2)',
                 [user.id, nodeIds[0]]
             );
 
@@ -135,7 +135,7 @@ describe('assignment', () => {
                 .delete(`/api/assignment/assign/${nodeIds[0]}/${user.id}`)
                 .expect(200);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(0);
         });
@@ -144,7 +144,7 @@ describe('assignment', () => {
             const nodeIds = await addDummyNodes(db, pId);
 
             db.query(
-                'INSERT INTO userAssign (users_id, node_id) VALUES ($1, $2)',
+                'INSERT INTO users__node (users_id, node_id) VALUES ($1, $2)',
                 [user.id, nodeIds[0]]
             );
 
@@ -156,7 +156,7 @@ describe('assignment', () => {
                 )
                 .expect(403);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(1);
         });
@@ -165,7 +165,7 @@ describe('assignment', () => {
             const nodeIds = await addDummyNodes(db, pId);
 
             db.query(
-                'INSERT INTO userAssign (users_id, node_id) VALUES ($1, $2)',
+                'INSERT INTO users__node (users_id, node_id) VALUES ($1, $2)',
                 [user.id, nodeIds[0]]
             );
 
@@ -173,7 +173,7 @@ describe('assignment', () => {
                 .delete(`/api/assignment/assign/${nodeIds[0]}/${user.id * 2}`)
                 .expect(403);
 
-            const q = await db.query('SELECT * FROM userAssign');
+            const q = await db.query('SELECT * FROM users__node');
 
             expect(q.rows).toHaveLength(1);
         });
