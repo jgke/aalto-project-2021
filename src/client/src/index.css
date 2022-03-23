@@ -264,5 +264,5 @@ code {
 }
 
 .react-flow__node {
-    transition: transform .1s linear;
+    transition: all 1s;
 }
