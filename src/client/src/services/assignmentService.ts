@@ -4,7 +4,10 @@ import { axiosWrapper } from './axiosWrapper';
 import { getAuthConfig } from './userService';
 export const baseUrl = '/api/assignment';
 
-export const assignUser = async (nodeId: number, userId: number) => {
+export const assignUser = async (
+    nodeId: number,
+    userId: number
+): Promise<void> => {
     await axiosWrapper(
         axios.post(
             `${baseUrl}/assign/${nodeId}/${userId}`,
@@ -15,7 +18,10 @@ export const assignUser = async (nodeId: number, userId: number) => {
     );
 };
 
-export const unassignUser = async (nodeId: number, userId: number) => {
+export const unassignUser = async (
+    nodeId: number,
+    userId: number
+): Promise<void> => {
     await axiosWrapper(
         axios.delete(`${baseUrl}/assign/${nodeId}/${userId}`, getAuthConfig()),
         'user unassignment'
