@@ -4,6 +4,26 @@ import { IEdge } from '../../../../types';
 import { db } from '../../dbConfigs';
 import { checkProjectPermission } from '../../helper/permissionHelper';
 
+/**
+ * GET /api/edge/:id
+ * @summary Get edges
+ * @description Fetch edges from the project 'id'
+ * @response 200 - OK
+ */
+
+router.route('/edge/:id').get(async (req: Request, res: Response) => {
+    const project_id = req.params.id;
+    const q = await db.query('SELECT * FROM edge WHERE project_id = $1', [
+        project_id,
+    ]);
+    res.json(q.rows);
+});
+/**
+ * DELETE /api/edge/:source/:target
+ * @description Delete an edge connected to 'source' and 'target'
+ * @summary Delete an edge
+ * @response 200 - OK
+ */
 router
     .route('/edge/:source/:target')
     .delete(async (req: Request, res: Response) => {
@@ -34,20 +54,16 @@ router
         res.status(200).json();
     });
 
-router.route('/edge/:id').get(async (req: Request, res: Response) => {
-    const project_id = parseInt(req.params.id);
-
-    const permissions = await checkProjectPermission(req, project_id);
-    if (!permissions.view) {
-        return res.status(401).json({ message: 'No permission' });
-    }
-
-    const q = await db.query('SELECT * FROM edge WHERE project_id = $1', [
-        project_id,
-    ]);
-    res.json(q.rows);
-});
-
+// @bodyContent {string} text/plain gives a description of what the JSON body
+// sent should look like, but puts just a string in it. Need to look deeper how it works
+/**
+ * POST /api/edge
+ * @summary Create an edge
+ * @description Create a new  **edge**
+ * @bodyRequired
+ * @response 200 - OK
+ * @response 403 - Forbidden
+ */
 router
     .route('/edge')
     .post(async (req: Request, res: Response) => {

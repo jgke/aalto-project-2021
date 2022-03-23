@@ -29,6 +29,12 @@ function path(url: string): IPathRoute {
         '/project/:id/permission': {
             methods: ['GET'],
         },
+        '/tag': {
+            methods: ['POST', 'GET', 'PUT', 'DELETE'],
+        },
+        '/tag/proj/:proj': {
+            methods: ['GET'],
+        },
         '/user/register': {
             methods: ['POST'],
         },
@@ -39,11 +45,14 @@ function path(url: string): IPathRoute {
             methods: ['POST'],
         },
     };
+
     if (!allRoutes[url]) {
         if (url.includes('/edge/')) {
             return allRoutes['/edge/:source/:target'];
         } else if (url.includes('/node/')) {
             return allRoutes['/node/:id'];
+        } else if (url.includes('/tag/proj/')) {
+            return allRoutes['/tag/proj/:proj'];
         } else if (url.includes('/project/')) {
             if (url.includes('permission')) {
                 return allRoutes['/project/:id/permission'];
@@ -54,7 +63,6 @@ function path(url: string): IPathRoute {
             return allRoutes['/project/:id'];
         }
     }
-
     return allRoutes[url];
 }
 

@@ -1,4 +1,11 @@
-export type Status = 'Done' | 'Doing' | 'ToDo';
+export type Status =
+    | 'Product Backlog'
+    | 'Sprint Backlog'
+    | 'ToDo'
+    | 'Doing'
+    | 'Code Review'
+    | 'Done'
+    | 'Done Done';
 
 // Id of a node is optional since the id is created in the database
 // so when sent to backend we don't give it any id
@@ -69,8 +76,8 @@ export interface RootState {
 }
 
 export interface ToolbarProps {
-    createNode: (nodeText: string) => Promise<void>;
     reverseConnectState: () => void;
+    reverseCreateState: () => void;
     layoutWithDagre: (direction: string) => Promise<void>;
     setNodeHidden: (value: React.SetStateAction<boolean>) => void;
     nodeHidden: boolean;
@@ -86,9 +93,11 @@ export interface ITag {
     id: number;
     label: string;
     color: string;
+    project_id: number;
 }
 
 export interface ITaggedNode {
     node_id: string;
     tag_id: number;
+    project_id: number;
 }

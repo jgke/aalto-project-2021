@@ -27,16 +27,16 @@ export const Projects: FC<ProjectProps> = (props: ProjectProps) => {
     };
 
     return (
-        <div>
-            <h3>Create a new project</h3>
-            <div style={{ margin: '0px 16px' }}>
+        <div className="project-container">
+            <div className="project-form-container">
+                <h3>Create a new project</h3>
                 <ProjectForm
                     handleSubmit={handleSubmit}
                     saveMessage="New Project"
                     user={props.user}
                 />
             </div>
-            <div style={projectListStyle}>
+            <div style={projectListStyle} className="project-list">
                 {projects.map((project) => (
                     <ProjectCard
                         key={project.id}

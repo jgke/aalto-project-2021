@@ -1,12 +1,9 @@
 import { router } from '../router';
 import { Request, Response } from 'express';
-import { IProject, User, UserData } from '../../../../types';
+import { IProject, UserData } from '../../../../types';
 //import {IError} from '../../domain/IError';
 import { db } from '../../dbConfigs';
-import {
-    checkProjectPermission,
-    userMemberOfProject,
-} from '../../helper/permissionHelper';
+import { checkProjectPermission } from '../../helper/permissionHelper';
 
 /* let projects: Array<IProject> = [{id: '1', name: 'test'}]; */
 
@@ -68,7 +65,7 @@ router
         const q = await db.query(
             `SELECT * FROM project
             WHERE id IN (
-                SELECT project_id FROM userBelongProject
+                SELECT project_id FROM users__project
                 WHERE users_id = $1
             )`,
             [userId]
@@ -107,7 +104,7 @@ router
             const projectId = q.rows[0].id;
 
             client.query(
-                'INSERT INTO userBelongProject (users_id, project_id) VALUES ($1, $2)',
+                'INSERT INTO users__project (users_id, project_id) VALUES ($1, $2)',
                 [project.owner_id, projectId]
             );
             client.query('COMMIT');
@@ -115,6 +112,7 @@ router
             /* console.log('adding project: ', project);
             projects.push(project) */
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.log('Invalid project', e);
             await client.query('ROLLBACK');
             res.status(403).json();
@@ -168,7 +166,7 @@ router
         const query = await db.query(
             `SELECT username, email, id FROM users
             WHERE id IN (
-                SELECT users_id FROM userBelongProject
+                SELECT users_id FROM users__project
                 WHERE project_id = $1
             )`,
             [projectId]
@@ -197,7 +195,7 @@ router
             ).rows[0];
 
             await db.query(
-                'INSERT INTO userBelongProject (users_id, project_id) VALUES ($1, $2)',
+                'INSERT INTO users__project (users_id, project_id) VALUES ($1, $2)',
                 [user.id, projectId]
             );
 
@@ -231,7 +229,7 @@ router
         }
 
         await db.query(
-            'DELETE FROM userBelongProject WHERE project_id = $1 AND users_id = $2',
+            'DELETE FROM users__project WHERE project_id = $1 AND users_id = $2',
             [projectId, userId]
         );
 
