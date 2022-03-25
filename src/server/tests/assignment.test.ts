@@ -1,4 +1,11 @@
-import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
+import {
+    beforeEach,
+    expect,
+    test,
+    describe,
+    beforeAll,
+    jest,
+} from '@jest/globals';
 import { db } from '../dbConfigs';
 import { User, UserData } from '../../../types';
 import supertest from 'supertest';
@@ -14,6 +21,8 @@ const api = supertest(app);
 
 let pId: number;
 const user: User = mockUser;
+
+jest.setTimeout(10000);
 
 describe('assignment', () => {
     beforeAll(async () => {
