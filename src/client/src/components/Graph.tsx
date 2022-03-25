@@ -26,7 +26,6 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { NodeNaming } from './NodeNaming';
 import { Toolbar, ToolbarHandle } from './Toolbar';
-import { Tag } from './Tag';
 import { basicNode } from '../App';
 
 const graphStyle = {
@@ -86,7 +85,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         useState<FlowInstance | null>(null);
     const [nodeHidden, setNodeHidden] = useState(false);
 
-    const [tags, setTags] = useState<ITag[]>([]);
     const ToolbarRef = useRef<ToolbarHandle>();
 
     // For detecting the os
