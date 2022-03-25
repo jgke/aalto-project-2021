@@ -6,8 +6,7 @@
 }
 
 .featureSvg {
-    height:min-content;
-    width:min-content;
-    max-width: 90%; 
+    height: min-content;
+    width: min-content;
+    max-width: 90%;
 }
-
