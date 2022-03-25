@@ -571,7 +571,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                     forceDirected={forceDirected}
                 />
             )}
-            <Tag tags={tags} setTags={setTags} projId={selectedProject.id} />
         </div>
     );
 };
