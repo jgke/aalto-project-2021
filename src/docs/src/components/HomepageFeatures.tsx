@@ -11,16 +11,37 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
     {
-        title: 'Graph based task management!',
-        image: '/img/undraw_docusaurus_mountain.svg',
+        title: "Welcome to the documentation",
+        image: "/img/homepage_graph2.png",
         description: (
             <>
-                Task management software created by some people! Keep track of
-                your progress and see what needs to be done before you move onto
-                the next feature!
+                <p>
+                    This is the documentation for our app. 
+                </p>
+                <p>
+                    The purpose of this app to make task management easier by visualizing
+                    dependencies between tasks. Since Jira is a bit clunky and Trello 
+                </p>
+
+                <p>
+                    Since Jira feels a bit clunky and in Trello it is difficult
+                    to follow task dependencies the graph based task management
+                    software was created to solve these issues.
+                </p>
+                <p>
+                    The main function of this software is to able to manage your
+                    project better by being able to see things like task name,
+                    priority of the task, what is the current status of the task
+                    using simple to create nodes. Nodes can be connected to each
+                    other via edges showing the dependency between the two. An
+                    edge has an arrow representing, which task should be done
+                    first. All nodes can be freely moved in the graph that they
+                    are inserted in allowing for easy customization.
+                </p>
             </>
-        ),
-    },
+        )
+    }
+
 ];
 
 function Feature({ title, image, description }: FeatureItem) {
@@ -33,8 +54,8 @@ function Feature({ title, image, description }: FeatureItem) {
                     src={useBaseUrl(image)}
                 />
             </div>
-            <div className="text--center padding-horiz--md">
-                <h3>{title}</h3>
+            <div className="text--left padding-horiz--md">
+                <h3 className="text--center">{title}</h3>
                 <p>{description}</p>
             </div>
         </div>
@@ -54,3 +75,4 @@ export function HomepageFeatures(): JSX.Element {
         </section>
     );
 }
+
