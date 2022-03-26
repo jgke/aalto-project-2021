@@ -2,6 +2,7 @@ import express, { Request, Response, Router, Express } from 'express';
 require('express-async-errors'); //This needs to be imported before 'router' at least
 import * as router from './route';
 import { RequestHandler } from 'express-serve-static-core';
+import { projectIo } from './helper/socket';
 
 // call express
 export const app: Express = express(); // define our app using express
@@ -33,15 +34,6 @@ if (process.env.NODE_ENV !== 'test') {
 
     // eslint-disable-next-line no-console
     console.log(`App listening on ${port}`);
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const io = require('socket.io')(8051, {
-        cors: {
-            origin: ['http://localhost:3000'],
-        },
-    });
-
-    const projectIo = io.of('/project');
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
     projectIo.on('connection', (socket: any) => {
