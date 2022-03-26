@@ -3,19 +3,20 @@ import { Request, Response } from 'express';
 import { INode } from '../../../../types';
 import { db } from '../../dbConfigs';
 import { checkProjectPermission } from '../../helper/permissionHelper';
+import { projectIo } from '../../helper/socket';
 
 // Checks need to make sure the node is valid
 const nodeCheck = (node: INode): boolean => {
     //Check that the node has all properties
     return Boolean(
         node.label &&
-            node.status &&
-            node.priority &&
-            // eslint-disable-next-line no-prototype-builtins
-            node.hasOwnProperty('x') &&
-            // eslint-disable-next-line no-prototype-builtins
-            node.hasOwnProperty('y') &&
-            node.project_id
+        node.status &&
+        node.priority &&
+        // eslint-disable-next-line no-prototype-builtins
+        node.hasOwnProperty('x') &&
+        // eslint-disable-next-line no-prototype-builtins
+        node.hasOwnProperty('y') &&
+        node.project_id
     );
 };
 
@@ -111,6 +112,12 @@ router
                     Math.round(text.y),
                 ]
             );
+            if (projectIo) {
+                projectIo
+                    .except(req.get('socketId')!)
+                    .to(text.project_id.toString())
+                    .emit('add-node', { ...text, id: q.rows[0].id });
+            }
             res.status(200).json({ id: q.rows[0].id });
         } else {
             res.status(403).json({ message: 'Invalid node' });
