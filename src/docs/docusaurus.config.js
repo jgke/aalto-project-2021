@@ -74,6 +74,11 @@ const config = {
                         to: '/api',
                         label: 'Api Documentation',
                         position: 'left'
+                    },
+                    {
+                        to: '/internal',
+                        label: 'Internal Documentation',
+                        position: 'left'
                     }
                 ],
             },
