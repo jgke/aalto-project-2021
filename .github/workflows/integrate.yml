@@ -42,6 +42,7 @@ jobs:
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - uses: actions/checkout@v2
+            - uses: mansona/npm-lockfile-version@v1
             - uses: actions/setup-node@v1
               with:
                   node-version: 12
@@ -68,6 +69,7 @@ jobs:
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - uses: actions/checkout@v2
+            - uses: mansona/npm-lockfile-version@v1
             - uses: actions/setup-node@v1
               with:
                   node-version: 12
