@@ -47,9 +47,7 @@ jobs:
                   node-version: 12
             - uses: mansona/npm-lockfile-version@v1
               with:
-                node-version: 12
-                cache: 'npm'
-                cache-dependency-path: ./src/client/package-lock.json
+                entryPoint: ./src/client/package-lock.json
             - name: Install dependencies in the root
               run: npm ci
             - name: Install dependencies in the client folder
