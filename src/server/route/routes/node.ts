@@ -163,6 +163,12 @@ router
                     n.id,
                 ]
             );
+            if (projectIo) {
+                projectIo
+                    .except(req.get('socketId'))
+                    .to(n.project_id.toString())
+                    .emit('update-node', n)
+            }
             res.status(200).json();
         } else {
             // eslint-disable-next-line no-console
