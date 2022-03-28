@@ -19,6 +19,7 @@ const dropdownButtonStyle: CSS.Properties = {
     right: '8px',
     borderRadius: '50%',
     padding: 0,
+    display: 'flex',
 };
 const dropDownItemStyle: CSS.Properties = {
     display: 'flex',
