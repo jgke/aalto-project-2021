@@ -18,6 +18,22 @@ jobs:
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - uses: actions/checkout@v2
+            - name: Check lockfiles
+              uses: ChromaticHQ/javascript-lockfile-check-action@v1.2.0
+              with:
+                  package-manager: npm
+              uses: ChromaticHQ/javascript-lockfile-check-action@v1.2.0
+              with:
+                  package-manager: npm
+                  working-directory: ./src/client
+              uses: ChromaticHQ/javascript-lockfile-check-action@v1.2.0
+              with:
+                  package-manager: npm
+                  working-directory: ./src/docs
+              uses: ChromaticHQ/javascript-lockfile-check-action@v1.2.0
+              with:
+                  package-manager: npm
+                  working-directory: ./src/server
             - uses: actions/setup-node@v1
               with:
                   node-version: 12
@@ -45,9 +61,6 @@ jobs:
             - uses: actions/setup-node@v1
               with:
                   node-version: 12
-            - uses: mansona/npm-lockfile-version@v1
-              with:
-                entryPoint: ./src/client
             - name: Install dependencies in the root
               run: npm ci
             - name: Install dependencies in the client folder
@@ -71,7 +84,6 @@ jobs:
               env:
                   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - uses: actions/checkout@v2
-            - uses: mansona/npm-lockfile-version@v1
             - uses: actions/setup-node@v1
               with:
                   node-version: 12
