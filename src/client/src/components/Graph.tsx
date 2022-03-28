@@ -29,7 +29,6 @@ import { Toolbar, ToolbarHandle } from './Toolbar';
 import { Tag } from './Tag';
 import { basicNode } from '../App';
 import { socket } from '../services/socket';
-import { toast } from 'react-hot-toast';
 import 'setimmediate';
 
 // This is left here as a possible tip. You can check here whenever
@@ -206,7 +205,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 })
             );
             props.updateNode(n);
-            //socket.emit('anything', {}, url);
         } else {
             // eslint-disable-next-line no-console
             console.error('INode data not found');
@@ -243,7 +241,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
             props.sendNode(data, node, setElements);
 
-            //socket.emit('anything', {}, url);
         }
     };
 
@@ -394,7 +391,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             if (isNode(e)) {
                 try {
                     props.deleteNode(parseInt(e.id));
-                    //socket.emit('anything', {}, url);
                 } catch (e) {
                     // eslint-disable-next-line no-console
                     console.error('Error in node deletion', e);
@@ -406,7 +402,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // eslint-disable-next-line no-console
                         console.error('Error when deleting edge', e)
                     );
-                //socket.emit('anything', {}, url);
             }
         }
 
@@ -460,7 +455,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
 
             props.sendEdge(edge);
-            //socket.emit('anything', {}, url);
         } else {
             // eslint-disable-next-line no-console
             console.error(
@@ -489,7 +483,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
         //sends updated node positions to backend
         props.updateNodes(newElements, setElements);
-        //socket.emit('anything', {}, url);
     };
 
     //does force direced iterations, without scrambling the nodes
@@ -497,7 +490,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
         props.updateNodes(newElements, setElements);
-        //socket.emit('anything', {}, url);
     };
     useEffect(() => {
         setElements((els) =>
@@ -524,12 +516,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     useEffect(() => {
         socket.emit('join-project', url);
 
-        socket.on('anything', () => {
-            toast('A change was done in this project! Please refresh!');
-        });
-
         socket.on('add-node', (node) => {
-            toast('A node was added! Refresh!');
 
             const n: Node = {
                 id: String(node.id),
@@ -540,6 +527,24 @@ export const Graph = (props: GraphProps): JSX.Element => {
             };
             setElements((els) => els.concat(n));
         });
+
+        socket.on('update-node', (node: INode) => {
+            setElements((els) =>
+                els.map(el => {
+
+                    if (el.id === node.id!.toString()) {
+                        return {
+                            ...el,
+                            position: { x: node.x, y: node.y },
+                            data: node
+                        }
+
+                    } else {
+                        return el
+                    }
+                })
+            )
+        })
 
         return () => {
             socket.emit('leave-project', url);
