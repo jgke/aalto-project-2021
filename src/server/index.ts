@@ -3,7 +3,7 @@ require('express-async-errors'); //This needs to be imported before 'router' at 
 import * as router from './route';
 import { RequestHandler } from 'express-serve-static-core';
 import { projectIo } from './helper/socket';
-
+import { Socket } from 'socket.io';
 // call express
 export const app: Express = express(); // define our app using express
 
@@ -35,17 +35,13 @@ if (process.env.NODE_ENV !== 'test') {
     // eslint-disable-next-line no-console
     console.log(`App listening on ${port}`);
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    projectIo.on('connection', (socket: any) => {
-        socket.on('anything', (message: any, room: any) => {
-            //socket.broadcast.emit('anything', message)
-            socket.to(room).emit('anything', message);
-        });
-        socket.on('join-project', (room: any) => {
+    projectIo.on('connection', (socket: Socket) => {
+
+        socket.on('join-project', (room: string) => {
             socket.join(room);
         });
 
-        socket.on('leave-project', (room: any) => {
+        socket.on('leave-project', (room: string) => {
             socket.leave(room);
         });
     });

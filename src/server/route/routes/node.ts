@@ -10,13 +10,13 @@ const nodeCheck = (node: INode): boolean => {
     //Check that the node has all properties
     return Boolean(
         node.label &&
-        node.status &&
-        node.priority &&
-        // eslint-disable-next-line no-prototype-builtins
-        node.hasOwnProperty('x') &&
-        // eslint-disable-next-line no-prototype-builtins
-        node.hasOwnProperty('y') &&
-        node.project_id
+            node.status &&
+            node.priority &&
+            // eslint-disable-next-line no-prototype-builtins
+            node.hasOwnProperty('x') &&
+            // eslint-disable-next-line no-prototype-builtins
+            node.hasOwnProperty('y') &&
+            node.project_id
     );
 };
 
@@ -65,12 +65,9 @@ router
             return res.status(403).json({ message: 'Node does not exist' });
         }
 
-        const projectId = nodeQuery.rows[0].project_id
+        const projectId = nodeQuery.rows[0].project_id;
 
-        const permissions = await checkProjectPermission(
-            req,
-            projectId
-        );
+        const permissions = await checkProjectPermission(req, projectId);
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
         }
@@ -195,7 +192,15 @@ router
                 );
             }
             client.query('COMMIT');
+
             res.status(200).json();
+            /*
+            if (projectIo) {
+                projectIo
+                    .except(req.get('socketId'))
+                    .to(array[0].project_id.toString())
+                    .emit('update-node', array)
+            }*/
         } catch (e) {
             // eslint-disable-next-line no-console
             await client.query('ROLLBACK');
