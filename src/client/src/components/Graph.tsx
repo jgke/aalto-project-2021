@@ -541,6 +541,51 @@ export const Graph = (props: GraphProps): JSX.Element => {
             setElements((els) => els.concat(n));
         });
 
+        socket.on('add-edge', (edge: IEdge) => {
+            setElements((els) =>
+                els.concat({
+                    id: String(edge.source_id) + '-' + String(edge.target_id),
+                    source: String(edge.source_id),
+                    target: String(edge.target_id),
+                    type: 'straight',
+                    arrowHeadType: ArrowHeadType.ArrowClosed,
+                    data: edge,
+                })
+            );
+        });
+
+        socket.on('delete-edge', (edge: IEdge) => {
+            setElements((els) => {
+                return els.filter((e) => {
+                    return (
+                        !isEdge(e) ||
+                        e.id !== `${edge.source_id}-${edge.target_id}`
+                    );
+                });
+            });
+        });
+
+        socket.on('reverse-edge', (edge: IEdge) => {
+            setElements((els) => {
+                return els.map((e) => {
+                    if (
+                        isEdge(e) &&
+                        e.id === `${edge.target_id}-${edge.source_id}`
+                    ) {
+                        return {
+                            ...e,
+                            id: `${edge.source_id}-${edge.target_id}`,
+                            source: e.target,
+                            target: e.source,
+                            data: edge,
+                        };
+                    }
+
+                    return e;
+                });
+            });
+        });
+
         return () => {
             socket.emit('leave-project', url);
             socket.removeAllListeners();
