@@ -534,6 +534,10 @@ export const Graph = (props: GraphProps): JSX.Element => {
             setElements((els) => els.concat(n));
         });
 
+        socket.on('delete-node', ({ id }) => {
+            setElements((els) => els.filter((e) => e.id !== String(id)));
+        });
+
         socket.on('add-edge', (edge: IEdge) => {
             setElements((els) =>
                 els.concat({

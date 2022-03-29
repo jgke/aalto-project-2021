@@ -65,9 +65,11 @@ router
             return res.status(403).json({ message: 'Node does not exist' });
         }
 
+        const projectId = nodeQuery.rows[0].project_id
+
         const permissions = await checkProjectPermission(
             req,
-            nodeQuery.rows[0].project_id
+            projectId
         );
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
@@ -75,6 +77,13 @@ router
 
         await db.query('DELETE FROM node WHERE id = $1', [id]);
         res.status(200).json();
+
+        if (projectIo) {
+            projectIo
+                .except(req.get('socketId')!)
+                .to(projectId.toString())
+                .emit('delete-node', { id });
+        }
     });
 
 /**
