@@ -7,7 +7,7 @@ import styles from './index.module.css';
 function HomepageHeader() {
     return (
         <header className={clsx('hero hero--primary', styles.heroBanner)}>
-            <h1 className="hero__title">Documentation</h1>
+            <h1 className="hero__title">Documentation for Depsee</h1>
         </header>
     );
 }
@@ -16,7 +16,7 @@ function HomepageHeader() {
 export default function Home(): JSX.Element {
     return (
         <Layout
-            title={'Task Management Documentation'}
+            title={'Depsee documentation'}
             description="Documentation of the software<head />"
         >
             <HomepageHeader />
