@@ -45,7 +45,15 @@ export const Topbar = (props: TopbarProps): JSX.Element => {
                         Register
                     </Link>
                 )}
-                {user && (
+                <a className="link-topbar" id="docs-link" href="/docs">
+                    Help
+                </a>
+            </div>
+            {user && (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div id="whoamiText" style={{ marginRight: '8px' }}>
+                        Logged in as {user.username}
+                    </div>
                     <a
                         className="link-topbar"
                         id="logout-link"
@@ -54,18 +62,8 @@ export const Topbar = (props: TopbarProps): JSX.Element => {
                     >
                         Logout
                     </a>
-                )}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                {user && (
-                    <div id="whoamiText" style={{ marginRight: '8px' }}>
-                        Logged in as {user.username}
-                    </div>
-                )}
-                <a className="link-topbar" id="docs-link" href="/docs">
-                    Docs
-                </a>
-            </div>
+                </div>
+            )}
         </div>
     );
 };
