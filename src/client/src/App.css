@@ -7,8 +7,8 @@
 
 .icon-button {
     color: #eeefff;
-    background-color: #eeefff31;
-    border: none;
+    background-color: #eeefff31 !important;
+    border: none !important;
     width: 32px;
     padding: 0;
     height: 32px;

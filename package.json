@@ -5,9 +5,10 @@
         "prettier:write": "npx prettier --write .",
         "build-server": "cd ./src/server && npm i && npm run build && cp -r ./dist/src/server/.  ./../../build/",
         "build-client": "cd ./src/client && npm i && npm run build && cp -r ./build/. ./../../build/dist/",
+        "build-docs": "cd ./src/docs && npm i && npm run build && cp -r ./build/. ./../../build/dist/docs",
         "copy-migrations": "cp -r ./src/server/migrations ./build/",
         "install-deps": "cp ./src/server/package.json ./build/ && cp ./src/server/package.json ./build/ && cd build && npm install --production",
-        "build": "rm -rf ./build && npm run build-server && npm run build-client && npm run copy-migrations && npm run install-deps",
+        "build": "rm -rf ./build && npm run build-server && npm run build-client && npm run build-docs && npm run copy-migrations && npm run install-deps",
         "start": "cd build && node index.js",
         "cypress": "cross-env CYPRESS_BASE_URL=http://localhost:3000 cypress run --browser chrome",
         "cypress:open": "cross-env CYPRESS_BASE_URL=http://localhost:3000 cypress open"

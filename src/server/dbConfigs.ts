@@ -10,7 +10,7 @@ export class Database {
     //handled in another way. Need to find at a later time whether it can be given a type.
 
     //eslint-disable-next-line @typescript-eslint/no-explicit-any -- /* eslint-disable ... */
-    async query(text: string | QueryConfig<any>, params: unknown[]) {
+    async query(text: string | QueryConfig<any>, params?: unknown[]) {
         if (this._waiting) {
             await this._waiting;
         }
@@ -22,6 +22,7 @@ export class Database {
         const res = await pool.query(text, params);
         const duration = Date.now() - start;
         if (process.env.NODE_ENV !== 'test') {
+            // eslint-disable-next-line no-console
             console.log('executed query', {
                 text,
                 duration,
@@ -60,15 +61,18 @@ export class Database {
 
         this._waiting = new Promise((resolve) => {
             if (process.env.NODE_ENV !== 'test') {
+                // eslint-disable-next-line no-console
                 console.log('running migrations');
             }
             migrate({ client }, './migrations')
                 .then(() => {
                     if (process.env.NODE_ENV !== 'test') {
+                        // eslint-disable-next-line no-console
                         console.log('migrations done');
                     }
                 })
                 .catch(async (e: Error) => {
+                    // eslint-disable-next-line no-console
                     console.error('Migrations failed, shutting down.\n', e);
 
                     process.exit(1);

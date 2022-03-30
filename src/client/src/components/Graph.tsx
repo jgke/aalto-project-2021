@@ -1,9 +1,4 @@
-import React, {
-    useEffect,
-    MouseEvent as ReactMouseEvent,
-    useState,
-    useRef,
-} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { IEdge, INode, IProject, ProjectPermissions } from '../../../../types';
 import * as layoutService from '../services/layoutService';
 import ReactFlow, {
@@ -23,8 +18,10 @@ import ReactFlow, {
     removeElements,
     ConnectionLineType,
 } from 'react-flow-renderer';
-import { NodeEdit } from './NodeEdit';
+import { NodeNaming } from './NodeNaming';
 import { Toolbar, ToolbarHandle } from './Toolbar';
+import { basicNode } from '../App';
+
 const graphStyle = {
     height: '100%',
     width: 'auto',
@@ -189,56 +186,50 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
             props.updateNode(n);
         } else {
-            console.log('INode data not found');
+            // eslint-disable-next-line no-console
+            console.error('INode data not found');
         }
     };
 
-    const onNodeDoubleClick = (
-        event: ReactMouseEvent<Element, MouseEvent>,
-        node: Node<INode>
-    ) => {
-        if (node.data && node.id !== 'TEMP' && permissions.edit) {
-            const form = <NodeEdit node={node} onNodeEdit={onNodeEdit} />;
+    const [lastCanceledName, setLastCanceledName] = useState('');
 
-            setElements((els) =>
-                els.map((el) => {
-                    if (el.id === node.id) {
-                        el.data = {
-                            ...el.data,
-                            label: form,
-                        };
-                    }
-                    return el;
-                })
-            );
+    const removeTempNode = () => {
+        setElements((els) => {
+            return els.filter((e) => e.id !== 'TEMP');
+        });
+    };
+
+    const onNodeNamingDone = async (label: string, node: Node) => {
+        if (selectedProject) {
+            if (!label) {
+                removeTempNode();
+
+                return;
+            }
+
+            setLastCanceledName('');
+
+            const data: INode = {
+                ...basicNode,
+                ...{
+                    label,
+                    x: node.position.x,
+                    y: node.position.y,
+                    project_id: selectedProject.id,
+                },
+            };
+
+            props.sendNode(data, node, setElements);
         }
+    };
+
+    const onNodeNamingCancel = (canceledName: string) => {
+        setLastCanceledName(canceledName);
+        removeTempNode();
     };
 
     // handle what happens on mousepress press
     const handleMousePress = (event: MouseEvent) => {
-        const onEditDone = async (data: INode, node: Node) => {
-            if (selectedProject) {
-                const n: INode = {
-                    status: 'ToDo',
-                    label: data.label,
-                    priority: 'Urgent',
-                    x: node.position.x,
-                    y: node.position.y,
-                    project_id: selectedProject.id,
-                };
-
-                if (!data.label) {
-                    setElements((els) => {
-                        return els.filter((e) => e.id !== 'TEMP');
-                    });
-
-                    return;
-                }
-
-                props.sendNode(n, node, setElements);
-            }
-        };
-
         // Don't do anything if clicking on Toolbar area
         if (ToolbarRef.current) {
             const toolbarBounds = ToolbarRef.current.getBounds();
@@ -256,37 +247,36 @@ export const Graph = (props: GraphProps): JSX.Element => {
         if (createState && reactFlowInstance && reactFlowWrapper?.current) {
             const reactFlowBounds =
                 reactFlowWrapper.current.getBoundingClientRect();
-            let position = reactFlowInstance.project({
-                x: event.clientX - reactFlowBounds.left,
-                y: event.clientY - reactFlowBounds.top,
+
+            const position = reactFlowInstance.project({
+                x: Math.floor(event.clientX - reactFlowBounds.left),
+                y: Math.floor(event.clientY - reactFlowBounds.top),
             });
 
-            position = { x: Math.floor(position.x), y: Math.floor(position.y) };
-
-            const tempExists =
-                elements.findIndex((el) => el.id === 'TEMP') >= 0;
-
-            const b: Node = {
+            const unnamedNode: Node = {
                 id: 'TEMP',
                 data: {},
                 type: props.DefaultNodeType,
                 position,
                 draggable: false,
             };
-            b.data.label = (
-                <NodeEdit
-                    node={b}
-                    onNodeEdit={async (_, data) => onEditDone(data, b)}
+
+            unnamedNode.data.label = (
+                <NodeNaming
+                    initialName={lastCanceledName}
+                    onNodeNamingDone={async (name) =>
+                        onNodeNamingDone(name, unnamedNode)
+                    }
+                    onCancel={onNodeNamingCancel}
                 />
             );
 
             setElements((els) =>
-                tempExists
-                    ? els.map((el) => (el.id === 'TEMP' ? b : el))
-                    : els.concat(b)
+                els.filter((el) => el.id !== 'TEMP').concat(unnamedNode)
             );
         }
     };
+
     const handleKeyPress = (event: KeyboardEvent) => {
         if (event.shiftKey) {
             switchConnectState(true);
@@ -381,13 +371,15 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 try {
                     await props.deleteNode(parseInt(e.id));
                 } catch (e) {
-                    console.log('Error in node deletion', e);
+                    // eslint-disable-next-line no-console
+                    console.error('Error in node deletion', e);
                 }
             } else if (isEdge(e)) {
                 await props
                     .deleteEdge(parseInt(e.source), parseInt(e.target))
                     .catch((e: Error) =>
-                        console.log('Error when deleting edge', e)
+                        // eslint-disable-next-line no-console
+                        console.error('Error when deleting edge', e)
                     );
             }
         }
@@ -443,7 +435,8 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
             props.sendEdge(edge);
         } else {
-            console.log(
+            // eslint-disable-next-line no-console
+            console.error(
                 'source or target of edge is null, unable to send to db'
             );
         }
@@ -457,19 +450,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             document.removeEventListener('keydown', handleKeyPress);
         };
     }, [handleKeyPress]);
-
-    const onNodeEdit = async (id: string, data: INode) => {
-        setElements((els) =>
-            els.map((el) => {
-                if (el.id === id) {
-                    el.data = data;
-                }
-                return el;
-            })
-        );
-
-        await props.updateNode(data);
-    };
 
     const onNodeDragStart = () => {
         setCreateState(false);
@@ -543,7 +523,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         onLoad={onLoad}
                         onNodeDragStart={onNodeDragStart}
                         onNodeDragStop={onNodeDragStop}
-                        onNodeDoubleClick={onNodeDoubleClick}
                         onElementClick={props.onElementClick}
                         selectionKeyCode={'e'}
                         nodesDraggable={permissions.edit}

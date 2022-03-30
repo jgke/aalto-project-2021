@@ -31,15 +31,15 @@ const addDummyUsers = async () => {
     await api.post(`${baseUrl}/register`).send(user);
 };
 
-beforeAll(async () => {
-    await db.initDatabase();
-});
-
-beforeEach(async () => {
-    await db.query('TRUNCATE users', []);
-});
-
 describe('User registration', () => {
+    beforeAll(async () => {
+        await db.initDatabase();
+    });
+
+    beforeEach(async () => {
+        await db.query('DELETE FROM users', []);
+    });
+
     test('sending a POST request with appropriate information should add a user', async () => {
         const person = {
             username: 'Tommy',
@@ -330,8 +330,4 @@ describe('Database', () => {
         q = await db.query('SELECT * FROM users;', []);
         expect(q.rowCount).toBeGreaterThan(0);
     });
-});
-
-afterAll(async () => {
-    await db.query('TRUNCATE users;', []);
 });
