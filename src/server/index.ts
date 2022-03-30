@@ -35,14 +35,19 @@ if (process.env.NODE_ENV !== 'test') {
     // eslint-disable-next-line no-console
     console.log(`App listening on ${port}`);
 
-    projectIo.on('connection', (socket: Socket) => {
-
-        socket.on('join-project', (room: string) => {
-            socket.join(room);
-        });
-
-        socket.on('leave-project', (room: string) => {
-            socket.leave(room);
-        });
-    });
 }
+
+projectIo.on('connection', (socket: Socket) => {
+
+    socket.on('join-project', (room: string) => {
+        socket.join(room);
+    });
+
+    socket.on('leave-project', (room: string) => {
+        socket.leave(room);
+    });
+
+    socket.on('hey', () => {
+        console.log('THE SOCKET SAYS HI!!!')
+    })
+});

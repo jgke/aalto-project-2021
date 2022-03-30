@@ -5,6 +5,7 @@ import {
     describe,
     beforeAll,
     jest,
+    afterAll
 } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { User, UserData } from '../../../types';
@@ -16,6 +17,7 @@ import {
     registerLoginUser,
 } from './testHelper';
 import { mockUser } from '../../../testmock';
+import { io } from '../helper/socket';
 
 const api = supertest(app);
 
@@ -29,6 +31,10 @@ describe('assignment', () => {
         const login = await registerLoginUser(api, user);
         user.id = login.id;
     });
+
+    afterAll(() => {
+        io.close()
+    })
 
     beforeEach(async () => {
         // DATABASE RESET

@@ -1,9 +1,10 @@
-import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll, afterAll } from '@jest/globals';
 import { db } from '../dbConfigs';
 import supertest from 'supertest';
 import { app } from '../index';
 import bcrypt from 'bcrypt';
 import { Registration } from '../../../types';
+import { io } from '../helper/socket';
 
 const api = supertest(app);
 const baseUrl = '/api/user';
@@ -35,6 +36,10 @@ describe('User registration', () => {
     beforeAll(async () => {
         await db.initDatabase();
     });
+
+    afterAll(() => {
+        io.close()
+    })
 
     beforeEach(async () => {
         await db.query('DELETE FROM users', []);

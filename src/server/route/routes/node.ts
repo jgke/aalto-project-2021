@@ -122,10 +122,16 @@ router
                 ]
             );
             if (projectIo) {
-                projectIo
-                    .except(req.get('socketId')!)
-                    .to(text.project_id.toString())
-                    .emit('add-node', { ...text, id: q.rows[0].id });
+                const socketId = req.get('socketId')
+                if (socketId) {
+                    projectIo
+                        .except(req.get('socketId')!)
+                        .to(text.project_id.toString())
+                        .emit('add-node', { ...text, id: q.rows[0].id });
+                } else {
+                    projectIo.to(text.project_id.toString()).emit('add-node', { ...text, id: q.rows[0].id });
+                }
+
             }
             res.status(200).json({ id: q.rows[0].id });
         } else {
@@ -165,7 +171,7 @@ router
             );
             if (projectIo) {
                 projectIo
-                    .except(req.get('socketId'))
+                    .except(req.get('socketId')!)
                     .to(n.project_id.toString())
                     .emit('update-node', n)
             }

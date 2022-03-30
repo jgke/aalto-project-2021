@@ -8,7 +8,7 @@ import {
     registerLoginUser,
     registerRandomUser,
 } from './testHelper';
-import { projectIo } from '../helper/socket';
+import { io } from '../helper/socket';
 
 const baseUrl = '/api/project';
 
@@ -56,6 +56,10 @@ describe('Projects', () => {
         user = login.user;
         token = login.token;
     });
+
+    afterAll(() => {
+        io.close();
+    })
 
     describe('GET request', () => {
         test('should give an empty array if there are no projects', async () => {

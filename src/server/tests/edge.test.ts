@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll, afterAll } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { IEdge, User } from '../../../types';
 import supertest from 'supertest';
@@ -9,6 +9,7 @@ import {
     registerRandomUser,
 } from './testHelper';
 import { mockUser } from '../../../testmock';
+import { io } from '../helper/socket';
 
 const baseUrl = '/api/edge';
 
@@ -28,6 +29,10 @@ describe('Edge', () => {
         const login = await registerRandomUser(api);
         user = login.user;
     });
+
+    afterAll(() => {
+        io.close();
+    })
 
     beforeEach(async () => {
         pId = await addDummyProject(db, user.id);

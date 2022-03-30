@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, describe, beforeAll } from '@jest/globals';
+import { beforeEach, expect, test, describe, beforeAll, afterAll, afterEach } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { INode, User } from '../../../types';
 import supertest from 'supertest';
@@ -8,23 +8,45 @@ import {
     addDummyProject,
     registerRandomUser,
 } from './testHelper';
+import { io as ServerIo, projectIo } from '../helper/socket';
+import io, { Socket } from 'socket.io-client';
 
 const api = supertest(app);
 
 let pId: number;
 let user: User;
 
+let clientSocket: Socket;
+
 describe('Node', () => {
     beforeAll(async () => {
         await db.initDatabase();
         const login = await registerRandomUser(api);
         user = login.user;
+
+        clientSocket = io('http://localhost:8051/project')
     });
+
+    afterAll(() => {
+        projectIo.disconnectSockets()
+        ServerIo.disconnectSockets();
+        ServerIo.close();
+        clientSocket.close();
+        clientSocket.disconnect();
+    })
 
     beforeEach(async () => {
         //adding project
         pId = await addDummyProject(db, user.id);
+        clientSocket.emit('join-project', pId.toString());
+
     });
+
+    afterEach(() => {
+        clientSocket.off('add-node')
+        clientSocket.off('update-node')
+        clientSocket.emit('leave-project', pId)
+    })
 
     describe('Basic GET request', () => {
         test('should work', async () => {
@@ -204,4 +226,85 @@ describe('Node', () => {
             expect(q.rowCount).toBeGreaterThan(0);
         });
     });
+
+    describe('sockets', () => {
+        test('should notice when a node is added', async () => {
+            const node1: INode = {
+                label: 'socket-tester',
+                priority: 'Urgent',
+                project_id: pId,
+                status: 'Doing',
+                x: 10,
+                y: 10,
+            }
+
+            clientSocket.on('add-node', (n) => {
+                delete n.id
+                expect(n).toEqual(node1)
+            })
+
+            await api.post('/api/node').send(node1).expect(200)
+        })
+
+
+        test('should not see a node if a faulty node was added', async () => {
+            const node1 = {
+                label: 'socket-tester',
+                priority: 'Urgent'
+            }
+
+
+            clientSocket.on('add-node', (n) => {
+                //Fails the test if if adding a node is noticed!
+                expect(0).toBe(1)
+            })
+
+            await api.post('/api/node').send(node1).expect(403)
+
+        });
+
+        test('should see if a node was updated', async () => {
+            const node1: INode = {
+                label: 'socket-tester2',
+                priority: 'Urgent',
+                project_id: pId,
+                status: 'Doing',
+                x: 10,
+                y: 10,
+            }
+
+            const q = await api.post('/api/node').send(node1).expect(200)
+
+            node1.id = q.body.id
+            node1.y = 99
+            node1.x = 99
+
+
+            clientSocket.on('update-node', (n) => {
+                expect(n).toEqual(node1)
+            })
+
+            await api.put('/api/node').send(node1).expect(200)
+        })
+
+        test('should notice when a node was deleted', async () => {
+            const node1: INode = {
+                label: 'socket-tester3',
+                priority: 'Urgent',
+                project_id: pId,
+                status: 'Doing',
+                x: 10,
+                y: 10,
+            }
+
+            const q = await api.post('/api/node').send(node1).expect(200)
+
+            clientSocket.on('delete-node', (id) => {
+                expect(id.id).toBe(q.body.id.toString())
+            })
+
+            await api.del(`/api/node/${q.body.id}`).expect(200)
+
+        })
+    })
 });
