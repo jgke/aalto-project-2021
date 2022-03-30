@@ -10,8 +10,8 @@ import { checkProjectPermission } from '../../helper/permissionHelper';
 /**
  * GET /api/project/:id
  * @summary Get a project
- * @description Get the specific project
- * @pathParam {string} id - Id of the project to retreive
+ * @description Get a project where the user has access to.
+ * @pathParam {string} id - Id of the project
  * @response 200 - OK
  * @response 401 - Unauthorized
  */
@@ -63,7 +63,7 @@ router
 
 /**
  * GET /api/project/:id/permission
- * @summary Check permissions of a project
+ * @summary Get permissions of a project
  * @description Depending on whether the user has been added to the project, they may view and/or edit the project
  * @pathParam {string} id - Id of the project to check permissions from
  * @response 200 - OK
@@ -79,8 +79,8 @@ router
 
 /**
  * GET /api/project
- * @description Given a user id in the body, retrieve all projects the user is the owner
- * @summary Get all owned projects
+ * @summary Get all projects
+ * @description Get all projects where the user has access to.
  * @response 200 - OK
  * @response 401 - Unauthorized
  */
@@ -108,7 +108,7 @@ router
      * POST /api/project
      * @summary Create a project
      * @description Create a **project** with predefined permissions. The given user in the body will automatically be the owner
-     * @bodyContent {Project} application/json
+     * @bodyContent {Project} - application/json
      * @bodyRequired
      * @response 200 - OK
      * @response 401 - Unauthorized
@@ -165,7 +165,7 @@ router
      * @summary Update project details
      * @description Update details of the **project** with the given id in the body with the settings in the body
      * @bodyRequired
-     * @bodyContent {Project} application/json
+     * @bodyContent {Project} - application/json
      * @response 200 - OK
      * @response 401 - Unauthorized
      *
@@ -203,6 +203,14 @@ router
         res.status(404).json({ message: 'Not implemented' });
     });
 
+/**
+ * GET /api/project/:id/members
+ * @summary Get members that belong to the project
+ * @description Gets every member that belongs to the corresponding project
+ * @pathParam {string} id - Project id
+ * @response 200 - OK
+ * @response 401 - Unauthorized
+ */
 router
     .route('/project/:id/members')
     .get(async (req: Request, res: Response) => {
@@ -224,6 +232,16 @@ router
 
         return res.status(200).json(query.rows);
     })
+    /**
+     * POST /api/project/:id/members
+     * @summary Add a member to the project
+     * @description Adds a member to a existing project. The added user gets the right to edit the project and invite users.
+     * @pathParam {string} id - Project id
+     * @bodyContent {string} - id of the user
+     * @bodyRequired
+     * @response 200 - OK
+     * @response 401 - Unauthorized
+     */
     .post(async (req: Request, res: Response) => {
         const projectId = parseInt(req.params.id);
         const permissions = await checkProjectPermission(req, projectId);
@@ -256,6 +274,15 @@ router
         }
     });
 
+/**
+ * DELETE /api/project/:id
+ * @summary Delete a project
+ * @description Deletes the specific project with id ':id'.
+ * @pathParam {string} id - Project id
+ * @response 200 - OK
+ * @response 401 - Unauthorized
+ * @response 403 - Forbidden
+ */
 router
     .route('/project/:pid/members/:uid')
     .delete(async (req: Request, res: Response) => {
