@@ -89,13 +89,16 @@
                     "content": {
                         "-": {
                             "schema": {
-                                "$ref": "#/components/schemas/FullNode"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/FullNode"
+                                }
                             }
                         }
                     }
                 },
-                "summary": "Update node",
-                "description": "Updates the value of a node.",
+                "summary": "Update node(s)",
+                "description": "Updates the value of a node(s).",
                 "responses": {
                     "200": { "description": "OK" },
                     "403": { "description": "Forbidden" }
