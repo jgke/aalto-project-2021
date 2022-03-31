@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-    title: 'My Site',
-    tagline: 'Dinosaurs are cool',
+    title: 'Depsee documentation',
+    tagline: 'Documentation for depsee',
     url: 'https://your-docusaurus-test-site.com',
     baseUrl: '/docs/',
     onBrokenLinks: 'throw',
@@ -59,20 +59,20 @@ const config = {
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
             navbar: {
-                title: 'Info',
+                title: 'Home',
                 logo: {
-                    alt: 'My Site Logo',
+                    alt: 'Logo for the site',
                     src: 'img/logo.svg',
                 },
                 items: [
                     {
                         to: '/help',
-                        label: 'Help',
+                        label: 'How to use',
                         position: 'left'
                     },
                     {
                         to: '/api',
-                        label: 'Api Documentation',
+                        label: 'API documentation',
                         position: 'left'
                     },
                     {
@@ -89,13 +89,17 @@ const config = {
                         title: 'Useful links',
                         items: [
                             {
-                                label: 'The app',
+                                label: 'The app at Heroku',
                                 href: 'https://aalto-project.herokuapp.com/',
+                            },
+                            {
+                                label: 'Github',
+                                href: 'https://github.com/bytecraftoy/aalto-project-2021',
                             },
                         ],
                     },
                 ],
-                copyright: `Copyright © ${new Date().getFullYear()} Bytecraft. Built with Docusaurus.`,
+                copyright: `Copyright © 2022 Bytecraft. Built with Docusaurus.`,
             },
             prism: {
                 theme: lightCodeTheme,
