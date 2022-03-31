@@ -170,6 +170,36 @@ describe('Node', () => {
                 expect(found.label).toBe('NEW NAME');
             }
         });
+
+        test('should update the label of multiple nodes', async () => {
+            await addDummyNodes(db, pId);
+
+            const res = await api.get(`/api/node/${pId}`);
+            const dummyNode: INode = {
+                ...res.body[0],
+                label: 'NEW NAME',
+            };
+            const dummyNode2: INode = {
+                ...res.body[1],
+                label: 'NEW NAME2',
+            };
+
+            await api
+                .put('/api/node')
+                .send([dummyNode, dummyNode2])
+                .expect(200);
+            const res2 = await api.get(`/api/node/${pId}`);
+            const found1: INode = res2.body.find(
+                (x: INode) => x.id == res.body[0].id
+            );
+            const found2: INode = res2.body.find(
+                (x: INode) => x.id == res.body[1].id
+            );
+            expect(found1).not.toBeFalsy();
+            expect(found1.label).toBe(dummyNode.label);
+            expect(found2).not.toBeFalsy();
+            expect(found2.label).toBe(dummyNode2.label);
+        });
     });
 
     describe('Database', () => {

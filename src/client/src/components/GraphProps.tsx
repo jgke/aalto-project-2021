@@ -1,7 +1,6 @@
 import React from 'react';
 import { INode, IEdge, IProject } from '../../../../types';
 import { Node, Elements, ArrowHeadType, isNode } from 'react-flow-renderer';
-import toast from 'react-hot-toast';
 
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
@@ -69,20 +68,20 @@ const updateNodes = async (
     elements: Elements,
     setElements: React.Dispatch<React.SetStateAction<Elements>>
 ): Promise<void> => {
-    for (const el of elements) {
-        if (isNode(el)) {
-            const node: INode = el.data;
-
-            if (node) {
+    const nodes: INode[] = elements
+        .map((el) => {
+            if (isNode(el) && el.data) {
+                const node = el.data;
                 node.x = el.position.x;
                 node.y = el.position.y;
-
-                await updateNode(node);
-            } else {
-                toast('❌ What is going on?');
+                return node;
             }
-        }
-    }
+            return null;
+        })
+        .filter((el) => el);
+
+    await nodeService.updateNodes(nodes);
+
     setElements(elements);
 };
 
