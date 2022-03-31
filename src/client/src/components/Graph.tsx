@@ -232,7 +232,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             };
 
             props.sendNode(data, node, setElements);
-
         }
     };
 
@@ -509,7 +508,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         socket.emit('join-project', url);
 
         socket.on('add-node', (node) => {
-
             const n: Node = {
                 id: String(node.id),
                 data: node,
@@ -517,6 +515,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 position: { x: node.x, y: node.y },
                 draggable: true,
             };
+
             setElements((els) => els.concat(n));
         });
 
@@ -568,23 +567,22 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 });
             });
         });
-        socket.on('update-node', (node: INode) => {
+
+        socket.on('update-node', (nodes: INode[]) => {
             setElements((els) =>
-                els.map(el => {
+                els.map((el) => {
+                    const node = nodes.find((n) => n.id === el.data.id);
 
-                    if (el.id === node.id!.toString()) {
-                        return {
-                            ...el,
-                            position: { x: node.x, y: node.y },
-                            data: node
-                        }
+                    if (!node) return el;
 
-                    } else {
-                        return el
-                    }
+                    return {
+                        ...el,
+                        data: node,
+                        position: { x: node.x, y: node.y },
+                    };
                 })
-            )
-        })
+            );
+        });
 
         return () => {
             socket.emit('leave-project', url);

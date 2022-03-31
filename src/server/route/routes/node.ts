@@ -194,13 +194,13 @@ router
             client.query('COMMIT');
 
             res.status(200).json();
-            /*
+
             if (projectIo) {
                 projectIo
                     .except(req.get('socketId'))
                     .to(array[0].project_id.toString())
-                    .emit('update-node', array)
-            }*/
+                    .emit('update-node', array);
+            }
         } catch (e) {
             // eslint-disable-next-line no-console
             await client.query('ROLLBACK');

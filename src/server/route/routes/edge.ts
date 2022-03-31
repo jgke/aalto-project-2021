@@ -115,7 +115,7 @@ router
                     projectIo
                         .except(req.get('socketId')!)
                         .to(newEdge.project_id.toString())
-                        .emit('reverse-edge', newEdge)
+                        .emit('reverse-edge', newEdge);
                 }
             } else {
                 res.status(403).json({ message: 'no duplicate edges allowed' });

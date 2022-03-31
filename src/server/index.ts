@@ -36,7 +36,6 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`App listening on ${port}`);
 
     projectIo.on('connection', (socket: Socket) => {
-
         socket.on('join-project', (room: string) => {
             socket.join(room);
         });

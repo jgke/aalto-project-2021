@@ -7,14 +7,13 @@ let projectIo: any | undefined;
 if (process.env.NODE_ENV !== 'test') {
     io = new Server(8051, {
         cors: {
-            origin: ['http://localhost:3000', 'http://localhost:8050']
-        }
-    })
+            origin: ['http://localhost:3000', 'http://localhost:8050'],
+        },
+    });
 
-    projectIo = io.of('/project')
-
+    projectIo = io.of('/project');
 } else {
-    projectIo = undefined
+    projectIo = undefined;
 }
 
 export { projectIo };
