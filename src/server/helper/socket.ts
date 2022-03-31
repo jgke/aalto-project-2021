@@ -1,19 +1,21 @@
-import { Server } from 'socket.io';
+import { Namespace, Server, Socket } from 'socket.io';
 
-let io: Server;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let projectIo: any | undefined;
+export let projectIo: Namespace | undefined;
 
-if (process.env.NODE_ENV !== 'test') {
-    io = new Server(8051, {
-        cors: {
-            origin: ['http://localhost:3000', 'http://localhost:8050'],
-        },
-    });
+export const initSockets = (io: Server) => {
+    if (process.env.NODE_ENV !== 'test') {
+        projectIo = io.of('/project');
 
-    projectIo = io.of('/project');
-} else {
-    projectIo = undefined;
-}
+        projectIo.on('connection', (socket: Socket) => {
+            socket.on('join-project', (room: string) => {
+                socket.join(room);
+            });
 
-export { projectIo };
+            socket.on('leave-project', (room: string) => {
+                socket.leave(room);
+            });
+        });
+    } else {
+        projectIo = undefined;
+    }
+};

@@ -55,12 +55,10 @@ router
 
         res.status(200).json();
 
-        if (projectIo) {
-            projectIo
-                .except(req.get('socketId')!)
-                .to(edgeQuery.rows[0].project_id.toString())
-                .emit('delete-edge', edge);
-        }
+        projectIo
+            ?.except(req.get('socketId')!)
+            .to(edge.project_id.toString())
+            .emit('delete-edge', edge);
     });
 
 // @bodyContent {string} text/plain gives a description of what the JSON body
@@ -111,12 +109,10 @@ router
             if (oppositeEdge.rowCount > 0) {
                 res.status(200).json();
 
-                if (projectIo) {
-                    projectIo
-                        .except(req.get('socketId')!)
-                        .to(newEdge.project_id.toString())
-                        .emit('reverse-edge', newEdge);
-                }
+                projectIo
+                    ?.except(req.get('socketId')!)
+                    .to(newEdge.project_id.toString())
+                    .emit('reverse-edge', newEdge);
             } else {
                 res.status(403).json({ message: 'no duplicate edges allowed' });
             }
@@ -128,12 +124,10 @@ router
 
             res.status(200).json();
 
-            if (projectIo) {
-                projectIo
-                    .except(req.get('socketId')!)
-                    .to(newEdge.project_id.toString())
-                    .emit('add-edge', newEdge);
-            }
+            projectIo
+                ?.except(req.get('socketId')!)
+                .to(newEdge.project_id.toString())
+                .emit('add-edge', newEdge);
         }
     })
     .put((req: Request, res: Response) => {

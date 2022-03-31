@@ -2,8 +2,9 @@ import express, { Request, Response, Router, Express } from 'express';
 require('express-async-errors'); //This needs to be imported before 'router' at least
 import * as router from './route';
 import { RequestHandler } from 'express-serve-static-core';
-import { projectIo } from './helper/socket';
-import { Socket } from 'socket.io';
+import { Server } from 'socket.io';
+import { initSockets } from './helper/socket';
+
 // call express
 export const app: Express = express(); // define our app using express
 
@@ -27,21 +28,15 @@ app.get('/*', (req: Request, res: Response) => {
     res.sendFile('/dist/index.html', { root: __dirname });
 });
 
+let io: Server | undefined;
+
 // START THE SERVER
 // =============================================================================
 if (process.env.NODE_ENV !== 'test') {
-    app.listen(port);
+    const server = app.listen(port);
+    io = new Server(server);
+    initSockets(io);
 
     // eslint-disable-next-line no-console
     console.log(`App listening on ${port}`);
-
-    projectIo.on('connection', (socket: Socket) => {
-        socket.on('join-project', (room: string) => {
-            socket.join(room);
-        });
-
-        socket.on('leave-project', (room: string) => {
-            socket.leave(room);
-        });
-    });
 }

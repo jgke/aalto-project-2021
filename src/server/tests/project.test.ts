@@ -1,4 +1,4 @@
-import { beforeAll, expect, test, describe, afterAll } from '@jest/globals';
+import { beforeAll, expect, test, describe } from '@jest/globals';
 import { db } from '../dbConfigs';
 import { INode, IProject, User } from '../../../types';
 import supertest from 'supertest';
@@ -8,7 +8,6 @@ import {
     registerLoginUser,
     registerRandomUser,
 } from './testHelper';
-import { projectIo } from '../helper/socket';
 
 const baseUrl = '/api/project';
 

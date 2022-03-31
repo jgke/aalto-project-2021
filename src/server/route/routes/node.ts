@@ -75,12 +75,10 @@ router
         await db.query('DELETE FROM node WHERE id = $1', [id]);
         res.status(200).json();
 
-        if (projectIo) {
-            projectIo
-                .except(req.get('socketId')!)
-                .to(projectId.toString())
-                .emit('delete-node', { id });
-        }
+        projectIo
+            ?.except(req.get('socketId')!)
+            .to(projectId.toString())
+            .emit('delete-node', { id });
     });
 
 /**
@@ -118,13 +116,13 @@ router
                     Math.round(text.y),
                 ]
             );
-            if (projectIo) {
-                projectIo
-                    .except(req.get('socketId')!)
-                    .to(text.project_id.toString())
-                    .emit('add-node', { ...text, id: q.rows[0].id });
-            }
+
             res.status(200).json({ id: q.rows[0].id });
+
+            projectIo
+                ?.except(req.get('socketId')!)
+                .to(text.project_id.toString())
+                .emit('add-node', { ...text, id: q.rows[0].id });
         } else {
             res.status(403).json({ message: 'Invalid node' });
         }
@@ -195,12 +193,10 @@ router
 
             res.status(200).json();
 
-            if (projectIo) {
-                projectIo
-                    .except(req.get('socketId'))
-                    .to(array[0].project_id.toString())
-                    .emit('update-node', array);
-            }
+            projectIo
+                ?.except(req.get('socketId')!)
+                .to(array[0].project_id.toString())
+                .emit('update-node', array);
         } catch (e) {
             // eslint-disable-next-line no-console
             await client.query('ROLLBACK');
