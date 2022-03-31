@@ -87,8 +87,6 @@ export class Database {
 
 const db = new Database();
 
-if (process.env.NODE_ENV !== 'production') {
-    db.initDatabase();
-}
+db.initDatabase();
 
 export { db };
