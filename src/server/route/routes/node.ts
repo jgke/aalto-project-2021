@@ -119,39 +119,73 @@ router
     /**
      * PUT /api/node
      * @bodyRequired
-     * @summary Update node
-     * @description Updates the value of a node.
+     * @summary Update node(s)
+     * @description Updates the value of a node(s).
      * @bodyRequired
-     * @bodyContent {FullNode} - application/json
+     * @bodyContent {FullNode[]} - application/json
      * @response 200 - OK
      * @response 403 - Forbidden
      */
     .put(async (req: Request, res: Response) => {
-        const n: INode = req.body;
+        const data: INode | INode[] = req.body;
 
-        if (nodeCheck(n) && n.id) {
-            const permissions = await checkProjectPermission(req, n.project_id);
+        let array: INode[];
+        if (Array.isArray(data)) {
+            const projectId = data[0].project_id;
+
+            if (
+                !data.every(
+                    (p: INode) => nodeCheck(p) && p.project_id === projectId
+                )
+            ) {
+                return res
+                    .status(403)
+                    .json({ message: 'Invalid node or multiple projectIds' });
+            }
+
+            const permissions = await checkProjectPermission(req, projectId);
+            if (!permissions.edit) {
+                return res.status(401).json({ message: 'No permission' });
+            }
+
+            array = data;
+        } else {
+            const permissions = await checkProjectPermission(
+                req,
+                data.project_id
+            );
 
             if (!permissions.edit) {
                 return res.status(401).json({ message: 'No permission' });
             }
 
-            await db.query(
-                'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5 WHERE id = $6',
-                [
-                    n.label,
-                    n.status,
-                    n.priority,
-                    Math.round(n.x),
-                    Math.round(n.y),
-                    n.id,
-                ]
-            );
+            array = [data];
+        }
+
+        const client = await db.getClient();
+        try {
+            await client.query('BEGIN');
+            for (const node of array) {
+                await client.query(
+                    'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5 WHERE id = $6',
+                    [
+                        node.label,
+                        node.status,
+                        node.priority,
+                        Math.round(node.x),
+                        Math.round(node.y),
+                        node.id,
+                    ]
+                );
+            }
+            client.query('COMMIT');
             res.status(200).json();
-        } else {
+        } catch (e) {
             // eslint-disable-next-line no-console
-            console.error('Invalid data', n);
-            res.status(403).json({ message: 'Invalid data' });
+            await client.query('ROLLBACK');
+            res.status(403).json();
+        } finally {
+            client.release();
         }
     });
 
