@@ -44,3 +44,24 @@ components:
                     description: The token created by the backend when the user logged in the first time.
             xml:
                 name: Token
+
+        Project:
+            type: object
+            properties:
+                name:
+                    type: string
+                    description: Name of the project.
+                owner_id:
+                    type: number
+                    description: UserId of the creator of the project.
+                description:
+                    type: string
+                    description: Description of the project.
+                public_view:
+                    type: boolean
+                    description: Whether the project is open for public viewing or not.
+                public_edit:
+                    type: string
+                    description: Whether the project is open for public editing or not.
+            xml:
+                name: Project
