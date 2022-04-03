@@ -48,7 +48,7 @@ Postgres:
 ```bash
 # IF you need to reset db, do this first
 docker-compose down
- 
+
 # Go inside the directory
 docker-compose up -d
 ```
@@ -62,6 +62,7 @@ npm run cypress:open
 ```
 
 Prettier:
+
 ```bash
 # In the root directory
 npm run prettier:write
