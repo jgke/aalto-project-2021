@@ -110,7 +110,7 @@ router
                     text.project_id,
                     Math.round(text.x),
                     Math.round(text.y),
-                    text.description
+                    text.description,
                 ]
             );
             res.status(200).json({ id: q.rows[0].id });
