@@ -40,7 +40,7 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
             setConnectText,
             getBounds,
         };
-    });
+    }); 
 
     /* The following input field will be removed or re-positioned at some point */
     return (
@@ -76,7 +76,7 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref): JSX.Element => {
             <button
                 className="button-layout"
                 id="forceDirected"
-                onClick={async () => await forceDirected()}
+                onClick={async () => await forceDirected() }
             >
                 Force-directed
             </button>

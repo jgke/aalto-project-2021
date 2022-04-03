@@ -262,7 +262,10 @@ code {
     border-radius: var(--target-handle-border-radius) !important;
     opacity: var(--target-handle-opacity) !important;
 }
+.react-flow__edge-path {
+    transition: all .01s;
+}
 
 .react-flow__node {
-    transition: all 1s;
+    transition: all .01s;
 }

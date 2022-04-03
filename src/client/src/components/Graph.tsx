@@ -476,12 +476,37 @@ export const Graph = (props: GraphProps): JSX.Element => {
         setConnectState(false);
     };
 
+    const transition = document.querySelector('.react-flow__node');
+    if (transition) {
+        transition.addEventListener('transitionend', () => {
+            handleLayoutAnimationEnd();
+        });
+    }
+
+
+    const handleLayoutAnimationStart = () => {
+        for (const e of elements) {
+            e.style = {transition: 'all 1s'}
+        }
+    }
+
+    const handleLayoutAnimationEnd = () => {
+        for (const e of elements) {
+            e.style = {transition: 'all 0s'}
+        }
+    }
+
+
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
+        handleLayoutAnimationStart();
         const newElements = layoutService.dagreLayout(elements, direction);
 
+
         //sends updated node positions to backend
-        await props.updateNodes(newElements, setElements);
+        await props.updateNodes(newElements, setElements)
+    
+            
     };
 
     //does force direced iterations, without scrambling the nodes
