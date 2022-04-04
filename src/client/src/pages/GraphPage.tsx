@@ -9,6 +9,7 @@ import {
     ProjectPermissions,
     RootState,
     UserData,
+    ITag,
 } from '../../../../types';
 import {
     ArrowHeadType,
@@ -25,6 +26,7 @@ import { BsFillPeopleFill } from 'react-icons/bs';
 import * as nodeService from '../services/nodeService';
 import * as edgeService from '../services/edgeService';
 import * as projectService from '../services/projectService';
+import * as tagService from '../services/tagService';
 import * as graphProps from '../components/GraphProps';
 import CSS from 'csstype';
 
@@ -63,6 +65,10 @@ export const GraphPage = (): JSX.Element => {
     const [elements, setElements] = useState<Elements>([]);
 
     const projects = useSelector((state: RootState) => state.project);
+
+    const [projTags, setProjTags] = useState<ITag[]>([]);
+
+    const [nodeTags, setNodeTags] = useState<ITag[]>([]);
 
     useEffect(() => {
         const project = projects.find((p) => p.id === projectId);
@@ -169,6 +175,26 @@ export const GraphPage = (): JSX.Element => {
         setSelectedDataType(null);
     };
 
+    const addNodeTag = async (nodeId: number | undefined, tagName: string): Promise<boolean> => {
+        if (nodeId) {
+            const newTag: ITag | undefined = await tagService.addNodeTagName(projectId, nodeId, tagName);
+
+            if (newTag) {
+                setProjTags(projTags.concat(newTag));
+                setNodeTags(nodeTags.concat(newTag));
+
+                return true;
+            }
+        }
+
+        // will prevent text input from clearing when entering tag name
+        return false;
+    };
+
+    const removeNodeTag = async (nodeId: number | undefined, tagId: number): Promise<void> => {
+        return;
+    };
+
     return (
         <>
             <Graph
@@ -186,6 +212,9 @@ export const GraphPage = (): JSX.Element => {
                 elements={elements}
                 setElements={setElements}
                 closeSidebar={closeSidebar}
+                nodeTags={nodeTags}
+                addNodeTag={addNodeTag}
+                removeNodeTag={removeNodeTag}
                 permissions={permissions}
             />
             {selectedProject && (
