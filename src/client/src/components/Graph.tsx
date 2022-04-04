@@ -22,8 +22,6 @@ import { NodeNaming } from './NodeNaming';
 import { Toolbar, ToolbarHandle } from './Toolbar';
 import { basicNode } from '../App';
 import { socket } from '../services/socket';
-import { toast } from 'react-hot-toast';
-import 'setimmediate';
 
 // This is left here as a possible tip. You can check here whenever
 // the socket connects to the server. Right now it happens even though graph is no rendered
@@ -90,7 +88,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
     const [nodeHidden, setNodeHidden] = useState(false);
 
     const href = window.location.href;
-    const url = href.substring(href.indexOf('project'), href.length);
+    const url = href.substring(href.indexOf('project') + 8, href.length);
 
     const ToolbarRef = useRef<ToolbarHandle>();
 
@@ -198,7 +196,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                 })
             );
             props.updateNode(n);
-            socket.emit('anything', {}, url);
         } else {
             // eslint-disable-next-line no-console
             console.error('INode data not found');
@@ -234,8 +231,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             };
 
             props.sendNode(data, node, setElements);
-
-            socket.emit('anything', {}, url);
         }
     };
 
@@ -386,7 +381,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             if (isNode(e)) {
                 try {
                     props.deleteNode(parseInt(e.id));
-                    socket.emit('anything', {}, url);
                 } catch (e) {
                     // eslint-disable-next-line no-console
                     console.error('Error in node deletion', e);
@@ -398,7 +392,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
                         // eslint-disable-next-line no-console
                         console.error('Error when deleting edge', e)
                     );
-                socket.emit('anything', {}, url);
             }
         }
 
@@ -452,7 +445,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
             );
 
             props.sendEdge(edge);
-            socket.emit('anything', {}, url);
         } else {
             // eslint-disable-next-line no-console
             console.error(
@@ -481,7 +473,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
         //sends updated node positions to backend
         props.updateNodes(newElements, setElements);
-        socket.emit('anything', {}, url);
     };
 
     //does force direced iterations, without scrambling the nodes
@@ -489,7 +480,6 @@ export const Graph = (props: GraphProps): JSX.Element => {
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
         props.updateNodes(newElements, setElements);
-        socket.emit('anything', {}, url);
     };
     useEffect(() => {
         setElements((els) =>
@@ -516,8 +506,81 @@ export const Graph = (props: GraphProps): JSX.Element => {
     useEffect(() => {
         socket.emit('join-project', url);
 
-        socket.on('anything', () => {
-            toast('A change was done in this project! Please refresh!');
+        socket.on('add-node', (node) => {
+            const n: Node = {
+                id: String(node.id),
+                data: node,
+                type: 'default',
+                position: { x: node.x, y: node.y },
+                draggable: true,
+            };
+
+            setElements((els) => els.concat(n));
+        });
+
+        socket.on('delete-node', ({ id }) => {
+            setElements((els) => els.filter((e) => e.id !== String(id)));
+        });
+
+        socket.on('add-edge', (edge: IEdge) => {
+            setElements((els) =>
+                els.concat({
+                    id: String(edge.source_id) + '-' + String(edge.target_id),
+                    source: String(edge.source_id),
+                    target: String(edge.target_id),
+                    type: 'straight',
+                    arrowHeadType: ArrowHeadType.ArrowClosed,
+                    data: edge,
+                })
+            );
+        });
+
+        socket.on('delete-edge', (edge: IEdge) => {
+            setElements((els) => {
+                return els.filter((e) => {
+                    return (
+                        !isEdge(e) ||
+                        e.id !== `${edge.source_id}-${edge.target_id}`
+                    );
+                });
+            });
+        });
+
+        socket.on('reverse-edge', (edge: IEdge) => {
+            setElements((els) => {
+                return els.map((e) => {
+                    if (
+                        isEdge(e) &&
+                        e.id === `${edge.target_id}-${edge.source_id}`
+                    ) {
+                        return {
+                            ...e,
+                            id: `${edge.source_id}-${edge.target_id}`,
+                            source: e.target,
+                            target: e.source,
+                            data: edge,
+                        };
+                    }
+
+                    return e;
+                });
+            });
+        });
+
+        socket.on('update-node', (nodes: INode[]) => {
+            setElements((els) =>
+                els.map((el) => {
+                    const node = nodes.find((n) => n.id === el.data.id);
+
+                    if (!node) return el;
+
+                    return {
+                        ...el,
+                        data: node,
+                        position: { x: node.x, y: node.y },
+                    };
+                })
+            );
         });
 
         return () => {

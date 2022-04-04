@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { IEdge } from '../../../../types';
 import { db } from '../../dbConfigs';
 import { checkProjectPermission } from '../../helper/permissionHelper';
+import { projectIo } from '../../helper/socket';
 
 /**
  * GET /api/edge/:id
@@ -31,7 +32,7 @@ router
         const target = req.params.target;
 
         const edgeQuery = await db.query(
-            'SELECT project_id FROM edge WHERE source_id = $1 AND target_id = $2',
+            'SELECT * FROM edge WHERE source_id = $1 AND target_id = $2',
             [source, target]
         );
 
@@ -39,10 +40,10 @@ router
             return res.status(403).json({ message: 'Edge does not exist' });
         }
 
-        const permissions = await checkProjectPermission(
-            req,
-            edgeQuery.rows[0].project_id
-        );
+        const edge: IEdge = edgeQuery.rows[0];
+
+        const permissions = await checkProjectPermission(req, edge.project_id);
+
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
         }
@@ -51,7 +52,13 @@ router
             'DELETE FROM edge WHERE source_id = $1 AND target_id = $2',
             [source, target]
         );
+
         res.status(200).json();
+
+        projectIo
+            ?.except(req.get('socketId')!)
+            .to(edge.project_id.toString())
+            .emit('delete-edge', edge);
     });
 
 // @bodyContent {string} text/plain gives a description of what the JSON body
@@ -101,6 +108,11 @@ router
 
             if (oppositeEdge.rowCount > 0) {
                 res.status(200).json();
+
+                projectIo
+                    ?.except(req.get('socketId')!)
+                    .to(newEdge.project_id.toString())
+                    .emit('reverse-edge', newEdge);
             } else {
                 res.status(403).json({ message: 'no duplicate edges allowed' });
             }
@@ -111,6 +123,11 @@ router
             );
 
             res.status(200).json();
+
+            projectIo
+                ?.except(req.get('socketId')!)
+                .to(newEdge.project_id.toString())
+                .emit('add-edge', newEdge);
         }
     })
     .put((req: Request, res: Response) => {

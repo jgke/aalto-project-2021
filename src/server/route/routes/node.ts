@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { INode } from '../../../../types';
 import { db } from '../../dbConfigs';
 import { checkProjectPermission } from '../../helper/permissionHelper';
+import { projectIo } from '../../helper/socket';
 
 // Checks need to make sure the node is valid
 const nodeCheck = (node: INode): boolean => {
@@ -64,16 +65,20 @@ router
             return res.status(403).json({ message: 'Node does not exist' });
         }
 
-        const permissions = await checkProjectPermission(
-            req,
-            nodeQuery.rows[0].project_id
-        );
+        const projectId = nodeQuery.rows[0].project_id;
+
+        const permissions = await checkProjectPermission(req, projectId);
         if (!permissions.edit) {
             return res.status(401).json({ message: 'No permission' });
         }
 
         await db.query('DELETE FROM node WHERE id = $1', [id]);
         res.status(200).json();
+
+        projectIo
+            ?.except(req.get('socketId')!)
+            .to(projectId.toString())
+            .emit('delete-node', { id });
     });
 
 /**
@@ -111,7 +116,13 @@ router
                     Math.round(text.y),
                 ]
             );
+
             res.status(200).json({ id: q.rows[0].id });
+
+            projectIo
+                ?.except(req.get('socketId')!)
+                .to(text.project_id.toString())
+                .emit('add-node', { ...text, id: q.rows[0].id });
         } else {
             res.status(403).json({ message: 'Invalid node' });
         }
@@ -179,7 +190,13 @@ router
                 );
             }
             client.query('COMMIT');
+
             res.status(200).json();
+
+            projectIo
+                ?.except(req.get('socketId')!)
+                .to(array[0].project_id.toString())
+                .emit('update-node', array);
         } catch (e) {
             // eslint-disable-next-line no-console
             await client.query('ROLLBACK');
