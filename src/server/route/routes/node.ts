@@ -189,4 +189,48 @@ router
         }
     });
 
+router
+    .route('/node/:id/:nodeId/comment')
+    .get(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.id);
+        const nodeId = parseInt(req.params.nodeId);
+
+        const permissions = await checkProjectPermission(req, projectId);
+
+        if (!permissions.view || !req.user) {
+            return res.status(401).json({ message: 'No permission' });
+        }
+
+        const userId = req.user.id;
+
+        const query = `
+            SELECT username, users_id, node_id, created, content
+            FROM comment
+            LEFT JOIN users ON users_id = users.id
+            WHERE node_id = $1 AND users_id = $2
+            ORDER BY created ASC
+        `;
+
+        const q = await db.query(query, [nodeId, userId]);
+        res.json(q.rows);
+    })
+    .post(async (req: Request, res: Response) => {
+        const projectId = parseInt(req.params.id);
+        const nodeId = parseInt(req.params.nodeId);
+        const content: string = req.body.content;
+
+        const permissions = await checkProjectPermission(req, projectId);
+        if (!permissions.edit || !req.user) {
+            return res.status(401).json({ message: 'No permission' });
+        }
+
+        const userId = req.user.id;
+
+        await db.query(
+            'INSERT INTO comment (users_id, node_id, content) VALUES ($1, $2, $3)',
+            [userId, nodeId, content]
+        );
+        res.status(200).json();
+    });
+
 export { router as node };
