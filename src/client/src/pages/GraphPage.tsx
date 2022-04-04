@@ -8,6 +8,7 @@ import {
     IProject,
     ProjectPermissions,
     RootState,
+    UserToken,
     UserData,
 } from '../../../../types';
 import {
@@ -37,7 +38,11 @@ const buttonStyle: CSS.Properties = {
     zIndex: '4',
 };
 
-export const GraphPage = (): JSX.Element => {
+interface GraphPageProps {
+    user?: UserToken;
+}
+
+export const GraphPage = (props: GraphPageProps): JSX.Element => {
     const { id } = useParams();
     const projectId = parseInt(id || '');
 
@@ -187,6 +192,7 @@ export const GraphPage = (): JSX.Element => {
                 setElements={setElements}
                 closeSidebar={closeSidebar}
                 permissions={permissions}
+                user={props.user}
             />
             {selectedProject && (
                 <>

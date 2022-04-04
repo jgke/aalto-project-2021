@@ -1,6 +1,6 @@
 import React from 'react';
 import { Elements, Node } from 'react-flow-renderer';
-import { INode } from '../../../../types';
+import { INode, UserToken } from '../../../../types';
 import { AssignedUsers } from './AssignedUsers';
 import { AssignUsers } from './AssignUsers';
 import { NodeForm } from './NodeForm';
@@ -10,6 +10,7 @@ interface NodeDetailProps {
     editMode: boolean;
     setElements: React.Dispatch<React.SetStateAction<Elements>>;
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+    user?: UserToken;
 }
 
 export const NodeDetail = (props: NodeDetailProps): JSX.Element => {
