@@ -97,7 +97,7 @@ export interface ITag {
 }
 
 export interface ITaggedNode {
-    node_id: string;
+    node_id: number;
     tag_id: number;
     project_id: number;
 }
