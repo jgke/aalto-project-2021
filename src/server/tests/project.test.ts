@@ -229,6 +229,7 @@ describe('Projects', () => {
                 x: 0,
                 y: 0,
                 project_id: onlyViewId,
+                description: 'this should not be posted',
             };
 
             await api.post('/api/node').send(n).expect(401);
@@ -257,6 +258,7 @@ describe('Projects', () => {
                 x: 0,
                 y: 0,
                 project_id: noViewId,
+                description: 'this should be posted',
             };
 
             await api

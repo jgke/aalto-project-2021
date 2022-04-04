@@ -16,7 +16,8 @@ const nodeCheck = (node: INode): boolean => {
             node.hasOwnProperty('x') &&
             // eslint-disable-next-line no-prototype-builtins
             node.hasOwnProperty('y') &&
-            node.project_id
+            node.project_id &&
+            node.description
     );
 };
 
@@ -106,7 +107,7 @@ router
             }
 
             const q = await db.query(
-                'INSERT INTO node (label, status, priority, project_id, x, y) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+                'INSERT INTO node (label, status, priority, project_id, x, y, description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
                 [
                     text.label,
                     text.status,
@@ -114,6 +115,7 @@ router
                     text.project_id,
                     Math.round(text.x),
                     Math.round(text.y),
+                    text.description,
                 ]
             );
 
@@ -178,13 +180,14 @@ router
             await client.query('BEGIN');
             for (const node of array) {
                 await client.query(
-                    'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5 WHERE id = $6',
+                    'UPDATE node SET label = $1, status = $2, priority = $3, x = $4, y = $5, description = $6 WHERE id = $7',
                     [
                         node.label,
                         node.status,
                         node.priority,
                         Math.round(node.x),
                         Math.round(node.y),
+                        node.description,
                         node.id,
                     ]
                 );
