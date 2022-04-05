@@ -163,9 +163,7 @@ router
             array = data;
         } else {
             if (!nodeCheck(data)) {
-                return res
-                    .status(403)
-                    .json({ message: 'Invalid node' });
+                return res.status(403).json({ message: 'Invalid node' });
             }
 
             const permissions = await checkProjectPermission(
