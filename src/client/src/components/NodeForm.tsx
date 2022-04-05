@@ -22,6 +22,7 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
     const [label, setLabel] = useState<string>(data.label);
     const [status, setStatus] = useState<Status>(data.status);
     const [priority, setPriority] = useState<string>(data.priority);
+    const [description, setDescription] = useState<string>(data.description);
     const [validated, setValidated] = useState<boolean>(false);
 
     //const socket = React.useContext(SocketContext)
@@ -38,6 +39,7 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                 label,
                 status,
                 priority,
+                description,
             };
 
             props.setElements((els) =>
@@ -108,6 +110,19 @@ export const NodeForm = (props: NodeFormProps): JSX.Element => {
                     <option value={'Normal'}>Normal</option>
                     <option value={'Lax'}>Lax</option>
                 </Form.Select>
+            </Form.Group>
+            <Form.Group
+                id="description-field"
+                className="mb-3"
+                controlId="descriptionId"
+            >
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                    type="text"
+                    placeholder="Enter description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
             </Form.Group>
 
             <div id="node-form-button-row" className="flex-space-between">

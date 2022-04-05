@@ -21,7 +21,7 @@ export const basicNode: INode = {
     x: 0,
     y: 0,
     project_id: 0,
-    description: 'this is a basic node',
+    description: '',
 };
 
 export const App: FC = () => {

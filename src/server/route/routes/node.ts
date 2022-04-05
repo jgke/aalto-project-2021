@@ -16,8 +16,7 @@ const nodeCheck = (node: INode): boolean => {
             node.hasOwnProperty('x') &&
             // eslint-disable-next-line no-prototype-builtins
             node.hasOwnProperty('y') &&
-            node.project_id &&
-            node.description
+            node.project_id
     );
 };
 
