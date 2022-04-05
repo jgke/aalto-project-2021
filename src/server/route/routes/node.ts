@@ -152,7 +152,7 @@ router
             ) {
                 return res
                     .status(403)
-                    .json({ message: 'Invalid node or multiple projectIds' });
+                    .json({ message: 'Invalid nodes or multiple projectIds' });
             }
 
             const permissions = await checkProjectPermission(req, projectId);
@@ -162,6 +162,10 @@ router
 
             array = data;
         } else {
+            if (!nodeCheck(data)) {
+                return res.status(403).json({ message: 'Invalid node' });
+            }
+
             const permissions = await checkProjectPermission(
                 req,
                 data.project_id
