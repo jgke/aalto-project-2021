@@ -476,30 +476,27 @@ export const Graph = (props: GraphProps): JSX.Element => {
         setConnectState(false);
     };
 
-    const transition = document.querySelector('.react-flow__node');
-    if (transition) {
-        transition.addEventListener('transitionend', () => {
-            handleLayoutAnimationEnd();
-        });
+    const layoutAnimationStart = () => {
+        document.body.style.setProperty('--node-transition','all 1s');
+        document.body.style.setProperty('--edge-transition','all 1s');
+
     }
 
-
-    const handleLayoutAnimationStart = () => {
-        for (const e of elements) {
-            e.style = {transition: 'all 1s'}
-        }
+    const layoutAnimationEnd = () => {
+        document.body.style.setProperty('--node-transition','all 0s');
+        document.body.style.setProperty('--edge-transition','all 0s');
     }
 
-    const handleLayoutAnimationEnd = () => {
-        for (const e of elements) {
-            e.style = {transition: 'all 0s'}
-        }
-    }
+    const transition = document.querySelector('.react-flow__node')
+    
+    transition?.addEventListener('transitionend', () => {
+        layoutAnimationEnd();
+    });
 
 
     const layoutWithDagre = async (direction: string) => {
         //applies the layout
-        handleLayoutAnimationStart();
+        layoutAnimationStart();
         const newElements = layoutService.dagreLayout(elements, direction);
 
 
@@ -511,6 +508,7 @@ export const Graph = (props: GraphProps): JSX.Element => {
 
     //does force direced iterations, without scrambling the nodes
     const forceDirected = async () => {
+        layoutAnimationStart();
         const newElements = layoutService.forceDirectedLayout(elements, 5);
 
         await props.updateNodes(newElements, setElements);
